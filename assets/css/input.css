@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn-primary {
+  @apply text-white bg-red-600 rounded-[10px] py-[7px] px-4 text-[20px] 
+         hover:bg-red-800 hover:text-white transition-all duration-300 
+         w-fit mx-auto flex mt-8;
+}
+
+.text-h2 {
+  @apply text-red-600 text-[26px] md:text-[32px] mt-2 mb-4 ml-0 md:ml-[-1rem];
+}
+
+.text-h3 {
+  @apply text-red-500 text-[24px] md:text-[28px] mb-4 ml-0 md:ml-[-1rem];
+}
+
+.text-h4 {
+  @apply text-red-400 text-[22px] md:text-[25px] mb-4 ml-0 md:ml-[-1rem];
+}
+
+.text-str {
+  @apply font-bold text-[18px] md:text-[24px];
+}
+
+.ul-banner {
+  @apply list-disc list-inside text-white text-[20px] md:text-[24px] mb-4;
+}
+
+.p-home {
+  @apply mb-4 text-[20px] md:text-[20px];
+}
+
+.layout-h1 {
+  @apply text-black text-[28px] font-bold md:text-[36px] text-center;
+}
+
+.layout-h2 {
+  @apply text-black text-[28px] font-bold md:text-[36px] mb-4 text-center;
+}
+
+.layout-h3 {
+  @apply text-black text-[14px] font-bold md:text-[20px] mb-4 text-center;
+}
+
+.a-layout {
+  @apply font-bold;
+}
+
+strong {
+  @apply font-bold text-[20px];
+}
+
+.img-layout {
+  @apply mx-auto rounded-lg;
+}
+
+h2 {
+  @apply font-semibold text-[28px];
+}
+
+h3 {
+  @apply font-semibold text-[24px];
+}
+
+@layer components {
+  .category {
+    @apply flex flex-col bg-white p-4 rounded-lg border border-red-600 max-h-[70vh] shadow-lg overflow-y-auto overflow-x-hidden;
+  }
+  .category-title {
+    @apply text-red-500 font-semibold text-2xl mb-2 hover:text-red-400 transition-colors duration-200;
+  }
+  .category-p {
+    @apply text-red-300 font-semibold text-lg mb-2 hover:text-red-400 transition-colors duration-200;
+  }
+  .category-list {
+    @apply text-black text-base space-y-2;
+  }
+  .category-list a {
+    @apply hover:text-red-400 transition-colors duration-200 block;
+  }
+}
+
+.swiper-pagination-bullet-active {
+  @apply !bg-[#E50914];
+}
+
+/* Скрываем стандартную полоску прокрутки */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
