@@ -390,16 +390,10 @@ add_action('pre_get_posts', function($query) {
 });
 
 
-
-
-
-
-
-
-define('WP_DEBUG', true);  
-define('WP_DEBUG_LOG', true);  
-define('WP_DEBUG_DISPLAY', true);  
-@ini_set('display_errors', 1);  
+// define('WP_DEBUG', true);  
+// define('WP_DEBUG_LOG', true);  
+// define('WP_DEBUG_DISPLAY', true);  
+// @ini_set('display_errors', 1);  
 
 
 

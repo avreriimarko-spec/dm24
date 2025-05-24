@@ -65,6 +65,8 @@ $keywords = get_field('keywords');
                                         <li><a href="/prsotitutki-bez-retushi/"
                                                         class="text-red-600 transition-text duration-200">Без
                                                         ретуши</a></li>
+                                <li><a href="/blog/" class="block text-red-500 hover:text-red-600"
+                                                data-x-on-click="openMenu = false">Блог</a></li>
                                 </ul>
                         </nav>
                         <!-- links -->
@@ -116,6 +118,8 @@ $keywords = get_field('keywords');
                                 <li><a href="/prsotitutki-bez-retushi/" class="block text-red-500 hover:text-red-600"
                                                 data-x-on-click="openMenu = false">Без
                                                 ретуши</a></li>
+                                <li><a href="/blog/" class="block text-red-500 hover:text-red-600"
+                                                data-x-on-click="openMenu = false">Блог</a></li>
                         </ul>
                 </div>
 
