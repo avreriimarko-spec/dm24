@@ -71,13 +71,11 @@ function render_model_filter(): string
 
     <?= render_filter_section('price_tax',        'Цена') ?>
     <?= render_filter_section('vozrast_tax',      'Возраст') ?>
-    <?= render_filter_section('vneshnost_tax',    'Внешность') ?>
     <?= render_filter_section('nationalnost_tax', 'Национальность') ?>
-    <?= render_filter_section('uslugi_tax', 'Услуги') ?>
+    <?= render_filter_section('ves_tax',          'Вес') ?>
     <?= render_filter_section('rayonu_tax',       'Районы') ?>
     <?= render_filter_section('metro_tax',        'Метро') ?>
     <?= render_filter_section('cvet-volos_tax',   'Цвет волос') ?>
-    <?= render_filter_section('figura_tax',       'Вес') ?>
     <?= render_filter_section('rost_tax',         'Рост') ?>
     <?= render_filter_section('grud_tax',         'Грудь') ?>
   </form>
