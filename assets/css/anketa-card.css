@@ -1,0 +1,259 @@
+.anketa-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 9px;
+  overflow: hidden;
+  cursor: pointer;
+  color: #141414;
+  padding: 10px;
+  font-family: 'Calibri', sans-serif;
+}
+
+.anketa-card__link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.anketa-card__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.anketa-card__title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* #region main */
+
+.anketa-card__main {
+  display: flex;
+  margin-top: 10px;
+  gap: 14px;
+}
+
+.anketa-card__media-block,
+.anketa-card__content {
+  position: relative;
+  z-index: 2;
+}
+
+.anketa-card__media-block {
+  flex: 0.38;
+}
+
+.anketa-card__content {
+  flex: 0.62;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* #endregion */
+
+/* #region img */
+
+.anketa-card__img-wrapper {
+  border-radius: 5px;
+  overflow: hidden;
+  height: 200px;
+}
+
+.anketa-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* #endregion */
+
+.anketa-card__badge {
+  display: flex;
+  align-items: center;
+  padding-inline: 10px;
+  border-radius: 30px;
+  background: #ff2d72;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: normal;
+}
+
+/* #region icons */
+
+.anketa-card__icons {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.anketa-card__icons img {
+  width: 26px;
+  height: 26px;
+  display: block;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+}
+
+/* #endregion */
+
+/* #region comments */
+
+.anketa-card__comments {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.anketa-card__comments span {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #22c55e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 5px;
+  line-height: 1;
+}
+
+/* #endregion */
+
+/* #region stats-and-prices */
+
+.anketa-card__stats-and-prices {
+  display: flex;
+  gap: 10px;
+}
+
+.anketa-card__stats {
+  flex: 0.45;
+}
+
+.anketa-card__prices {
+  flex: 0.55;
+}
+
+.anketa-card__stats div,
+.anketa-card__prices div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.anketa-card__stats span,
+.anketa-card__prices span {
+  opacity: 0.8;
+  margin-right: 6px;
+  font-size: 12px;
+}
+
+.anketa-card__stats strong,
+.anketa-card__prices strong {
+  font-size: 13px;
+}
+
+
+/* #endregion */
+
+/* #region services */
+
+.anketa-card__services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.anketa-card__service {
+  color: white;
+  background-color: #2aabee;
+  border-radius: 5px;
+  padding-inline: 5px;
+  font-size: 11px;
+}
+
+/* #endregion */
+
+.anketa-card__district, .anketa-card__metro {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.anketa-card__metro {
+  color: #ff2d72;
+}
+
+/* #region about */
+
+.anketa-card__about span {
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.anketa-card__about p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.35;
+  color: #222;
+}
+
+/* #endregion */
+
+.anketa-card__actions {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+/* #region card__cta */
+
+.anketa-card__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.anketa-card__cta svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.anketa-card__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2);
+}
+
+.anketa-card__cta--tg {
+  background: #2aabee;
+}
+
+.anketa-card__cta--wa {
+  background: #25d366;
+}
+
+/* #endregion */
+
+.anketa-card__footer {
+  margin-top: 10px;
+}

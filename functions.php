@@ -1,74 +1,101 @@
 <?php
 
+// Подключение модуля защиты контактов от Google
+require_once get_template_directory() . '/security-contacts.php'; 
+// Если файл положили в папку inc, то: . '/inc/security-contacts.php';
+
 add_action('wp_enqueue_scripts', function () {
+    // 1️⃣ Всегда: Tailwind и ваш основной стиль
+    wp_enqueue_style(
+        'tailwind',
+        get_template_directory_uri() . '/assets/css/output.css',
+        [],
+        null,
+        'all'
+    );
+    wp_enqueue_style(
+        'anketa-card',
+        get_template_directory_uri() . '/assets/css/anketa-card.css',
+        [],
+        null,
+        'all'
+    );
+    wp_enqueue_style(
+        'cards',
+        get_template_directory_uri() . '/assets/css/cards.css',
+        [],
+        null,
+        'all'
+    );
+    wp_enqueue_style(
+        'style',
+        get_template_directory_uri() . '/style.css',
+        ['tailwind'],
+        null,
+        'all'
+    );
 
-    // 1️⃣ Загружаем Tailwind ПЕРВЫМ, чтобы стили применялись сразу
-    wp_enqueue_style('tailwind', get_template_directory_uri() . '/assets/css/output.css', [], null, 'all');
+    // Предзагрузка Tailwind
+    echo '<link rel="preload" href="'
+        . get_template_directory_uri()
+        . '/assets/css/output.css" as="style">';
 
-    // 2️⃣ Загружаем главный стиль после Tailwind, чтобы он его мог переопределять
-    wp_enqueue_style('style', get_template_directory_uri() . '/style.css', ['tailwind'], null, 'all');
+    // Ваш основной скрипт (если нужен везде)
+    wp_enqueue_script(
+        'smain-js',
+        get_template_directory_uri() . '/assets/js/main.js',
+        [],
+        null,
+        true
+    );
 
-    // 3️⃣ Загружаем Swiper CSS
-    wp_enqueue_style('swiper-css', get_template_directory_uri() . '/assets/css/swiper-bundle.min.css', [], null, 'all');
 
-    // 4️⃣ Загружаем Alpine первым из JS и ставим defer
-    wp_enqueue_script('alpine-js', get_template_directory_uri() . '/assets/js/alpine.min.js', [], null, true);
-    wp_script_add_data('alpine-js', 'defer', true);
-
-    // 5️⃣ Конфиг Alpine загружается после Alpine
-    wp_enqueue_script('alpine-config', get_template_directory_uri() . '/assets/js/alpine-config.js', ['alpine-js'], null, true);
-
-    // 6️⃣ Загружаем Swiper JS (defer, чтобы не блокировал рендеринг)
-    wp_enqueue_script('swiper-js', get_template_directory_uri() . '/assets/js/swiper-bundle.min.js', [], null, true);
+    // Swiper CSS
+    wp_enqueue_style(
+        'swiper-css',
+        get_template_directory_uri() . '/assets/css/swiper-bundle.min.css',
+        [],
+        null,
+        'all'
+    );
+    // Swiper JS (defer)
+    wp_enqueue_script(
+        'swiper-js',
+        get_template_directory_uri() . '/assets/js/swiper-bundle.min.js',
+        [],
+        null,
+        true
+    );
     wp_script_add_data('swiper-js', 'defer', true);
-
-    // 7️⃣ Inline-скрипт для Swiper
-    wp_add_inline_script('swiper-js', "
-        document.addEventListener('DOMContentLoaded', function () { 
-            new Swiper('.swiper', { 
-                loop: true, 
-                navigation: { 
-                    nextEl: '.swiper-button-next', 
-                    prevEl: '.swiper-button-prev' 
-                } 
-            }); 
-        });
-    ");
-
-    // 8️⃣ Предзагрузка важных файлов (ускоряет загрузку)
-    echo '<link rel="preload" href="' . get_template_directory_uri() . '/assets/css/output.css" as="style">';
-    echo '<link rel="preload" href="' . get_template_directory_uri() . '/assets/js/alpine.min.js" as="script">';
-    
 }, 1);
 
 
+// 1.1. Подключаем наш фронтенд-скрипт и даём ему параметры
 
-add_action('template_redirect', 'force_trailing_slash_redirect');
-
-function force_trailing_slash_redirect() {
-    if (is_404() || is_admin()) return;
-
-    $current_url = home_url(add_query_arg(array(), $GLOBALS['wp']->request));
-    $has_slash = substr($_SERVER['REQUEST_URI'], -1) === '/';
-
-    if (!is_front_page() && !is_singular('attachment') && !$has_slash) {
-        wp_redirect(trailingslashit($current_url), 301);
-        exit;
-    }
-}
-
+add_action('template_redirect', function () {
+    ob_start(function ($buffer) {
+        // Удаляем блок <script type="speculationrules">...</script>
+        return preg_replace(
+            '/<script[^>]*type="speculationrules"[^>]*>.*?<\/script>/is',
+            '',
+            $buffer
+        );
+    });
+});
 
 add_theme_support('post-thumbnails');
 add_theme_support('title-tag');
 add_theme_support('custom-logo');
 
-function remove_unused_scripts() {
+function remove_unused_scripts()
+{
     wp_dequeue_script('jquery'); // Отключаем jQuery, если не нужен
 }
 add_action('wp_enqueue_scripts', 'remove_unused_scripts', 100);
 
 
-function disable_classic_theme_styles() {
+function disable_classic_theme_styles()
+{
     remove_action('wp_enqueue_scripts', 'wp_enqueue_classic_theme_styles');
 }
 add_action('wp_enqueue_scripts', 'disable_classic_theme_styles', 1);
@@ -93,7 +120,8 @@ remove_action('wp_head', 'print_emoji_detection_script', 7);
 remove_action('wp_print_styles', 'print_emoji_styles');
 
 
-function move_jquery_to_footer() {
+function move_jquery_to_footer()
+{
     if (!is_admin()) {
         wp_deregister_script('jquery'); // Отключаем стандартное подключение
         wp_register_script(
@@ -108,14 +136,16 @@ function move_jquery_to_footer() {
 }
 add_action('wp_enqueue_scripts', 'move_jquery_to_footer');
 
-function disable_global_styles() {
+function disable_global_styles()
+{
     wp_dequeue_style('global-styles'); // Отключаем стили
     wp_dequeue_style('wp-block-library'); // Отключаем базовые стили блоков
     wp_dequeue_style('wp-block-library-theme'); // Отключаем стили темы
 }
 add_action('wp_enqueue_scripts', 'disable_global_styles', 100);
 
-function remove_block_css() {
+function remove_block_css()
+{
     wp_dequeue_style('wp-block-library');
     wp_dequeue_style('wp-block-library-theme');
     wp_dequeue_style('wc-blocks-style'); // Для WooCommerce
@@ -123,7 +153,7 @@ function remove_block_css() {
 add_action('wp_enqueue_scripts', 'remove_block_css', 100);
 
 add_filter('use_block_editor_for_post', '__return_false', 10);
-add_action('wp_enqueue_scripts', function() {
+add_action('wp_enqueue_scripts', function () {
     wp_dequeue_style('wp-block-library');
     wp_dequeue_style('wp-block-library-theme');
     wp_dequeue_style('global-styles');
@@ -132,158 +162,166 @@ add_action('wp_enqueue_scripts', function() {
 
 function custom_contact_settings($wp_customize)
 {
-    // Добавляем раздел в настройках
-    $wp_customize->add_section('contact_section', array(
-        'title' => __('Контактные данные', 'textdomain'),
-        'description' => __('Здесь вы можете настроить контактные данные', 'textdomain'),
-        'priority' => 30,
-    ));
+    // Раздел "Контактные данные"
+    $wp_customize->add_section('contact_section', [
+        'title'       => __('Контактные данные', 'textdomain'),
+        // Обновили описание
+        'description' => __('Здесь вы можете настроить контактные данные. Telegram и WhatsApp поддерживают до 5 вариантов.', 'textdomain'),
+        'priority'    => 30,
+    ]);
 
-    // Добавляем настройку для Telegram
-    $wp_customize->add_setting('contact_telegram', array(
-        'default' => '',
+    // Телефон
+    $wp_customize->add_setting('contact_number', [
+        'default'           => '',
         'sanitize_callback' => 'sanitize_text_field',
-    ));
+    ]);
+    $wp_customize->add_control('contact_number', [
+        'label'       => __('Телефон', 'textdomain'),
+        'section'     => 'contact_section',
+        'type'        => 'text',
+        'description' => __('Введите основной номер, например: +7 999 123-45-67', 'textdomain'),
+    ]);
 
-    $wp_customize->add_control('contact_telegram', array(
-        'label' => __('Telegram', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
-        'description' => __('Введите ваш Telegram-ник или ссылку, например: username', 'textdomain'),
-    ));
-
-    // Добавляем настройку для WhatsApp
-    $wp_customize->add_setting('contact_whatsapp', array(
-        'default' => '',
+    $wp_customize->add_setting('contact_telegram_channel', array(
+        'default'           => '',
         'sanitize_callback' => 'sanitize_text_field',
+        'transport'         => 'refresh',
     ));
 
-    $wp_customize->add_control('contact_whatsapp', array(
-        'label' => __('WhatsApp', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
-        'description' => __('Введите номер телефона для WhatsApp в формате: +1234567890', 'textdomain'),
+    $wp_customize->add_control('contact_telegram_channel', array(
+        'label'       => __('Telegram-канал', 'textdomain'),
+        'section'     => 'contact_section',
+        'type'        => 'text',
+        'description' => __('Введите username (без @) или полный URL.', 'textdomain'),
     ));
 
-    // Добавляем настройку для Number
+    // === Telegram (5 вариантов с особым заголовком для 5-го) ===
+    for ($i = 1; $i <= 5; $i++) {
+        // Обычный заголовок или специальный для 5-го элемента
+        $label = ($i === 5)
+            ? __('Telegram (для Дешевых анкет и страницы)', 'textdomain')
+            : __("Telegram #$i", 'textdomain');
 
-    $wp_customize->add_setting('contact_number', array(
-        'default' => '',
+        $wp_customize->add_setting("contact_telegram_$i", [
+            'default'           => '',
+            'sanitize_callback' => 'sanitize_text_field',
+        ]);
+        $wp_customize->add_control("contact_telegram_$i", [
+            'label'       => $label,
+            'section'     => 'contact_section',
+            'type'        => 'text',
+            'description' => __('Введите username без @ или ссылку, например: t.me/username', 'textdomain'),
+        ]);
+    }
+
+    // === WhatsApp (5 вариантов с особым заголовком для 5-го) ===
+    for ($i = 1; $i <= 5; $i++) {
+        // Обычный заголовок или специальный для 5-го элемента
+        $label = ($i === 5)
+            ? __('WhatsApp (для Дешевых анкет и страницы)', 'textdomain')
+            : __("WhatsApp #$i", 'textdomain');
+
+        $wp_customize->add_setting("contact_whatsapp_$i", [
+            'default'           => '',
+            'sanitize_callback' => 'sanitize_text_field',
+        ]);
+        $wp_customize->add_control("contact_whatsapp_$i", [
+            'label'       => $label,
+            'section'     => 'contact_section',
+            'type'        => 'text',
+            'description' => __('Введите номер WhatsApp в формате: +79991234567', 'textdomain'),
+        ]);
+    }
+
+    // Email
+    $wp_customize->add_setting('contact_email', [
+        'default'           => '',
         'sanitize_callback' => 'sanitize_text_field',
-    ));
-
-    $wp_customize->add_control('contact_number', array(
-        'label' => __('Number', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
-        'description' => __('Введите номер телефона формате: +1234567890', 'textdomain'),
-    ));
-
-    // Добавляем настройку для Escort Telegram
-
-    $wp_customize->add_setting('contact_escort_telegram', array(
-        'default' => '',
-        'sanitize_callback' => 'sanitize_text_field',
-    ));
-
-    $wp_customize->add_control('contact_escort_telegram', array(
-        'label' => __('Escort Москва Telegram', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
-        'description' => __('Введите ваш Telegram-ник или ссылку, например: username', 'textdomain'),
-    ));
-
-
-    // Добавляем настройку для EMAIL
-
-    $wp_customize->add_setting('contact_email', array(
-        'default' => '',
-        'sanitize_callback' => 'sanitize_text_field',
-    ));
-
-    $wp_customize->add_control('contact_email', array(
-        'label' => __('Email', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
+    ]);
+    $wp_customize->add_control('contact_email', [
+        'label'       => __('Email', 'textdomain'),
+        'section'     => 'contact_section',
+        'type'        => 'text',
         'description' => __('Введите вашу почту', 'textdomain'),
-    ));
+    ]);
 
-
-    // Добавляем настройку для Agency
-
-    $wp_customize->add_setting('contact_agency', array(
-        'default' => '',
+    // Agency
+    $wp_customize->add_setting('contact_agency', [
+        'default'           => '',
         'sanitize_callback' => 'sanitize_text_field',
-    ));
+    ]);
+    $wp_customize->add_control('contact_agency', [
+        'label'       => __('Agency', 'textdomain'),
+        'section'     => 'contact_section',
+        'type'        => 'text',
+        'description' => __('Введите название агентства', 'textdomain'),
+    ]);
 
-    $wp_customize->add_control('contact_agency', array(
-        'label' => __('Agency', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
-        'description' => __('Введите вашу агенцию', 'textdomain'),
-    ));
-
-
-    // Добавляем настройку для STREET
-
-    $wp_customize->add_setting('contact_street', array(
-        'default' => '',
+    // Street
+    $wp_customize->add_setting('contact_street', [
+        'default'           => '',
         'sanitize_callback' => 'sanitize_text_field',
-    ));
+    ]);
+    $wp_customize->add_control('contact_street', [
+        'label'       => __('Street', 'textdomain'),
+        'section'     => 'contact_section',
+        'type'        => 'text',
+        'description' => __('Введите адрес агентства', 'textdomain'),
+    ]);
+}
+add_action('customize_register', 'custom_contact_settings');
 
-    $wp_customize->add_control('contact_street', array(
-        'label' => __('Street', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
-        'description' => __('Введите улицы вашей агенции', 'textdomain'),
-    ));
+function custom_model_card_settings($wp_customize)
+{
+    $wp_customize->add_section('model_card_section', [
+        'title'       => __('Анкеты: карточка', 'textdomain'),
+        'description' => __('Настройки отображения карточек анкет.', 'textdomain'),
+        'priority'    => 31,
+    ]);
 
+    $wp_customize->add_setting('model_card_desc_length', [
+        'default'           => 220,
+        'sanitize_callback' => static function ($value) {
+            $val = (int) $value;
+            if ($val < 160) $val = 160;
+            if ($val > 260) $val = 260;
+            return $val;
+        },
+    ]);
 
-    // Добавляем настройку для INN
+    $wp_customize->add_control('model_card_desc_length', [
+        'label'       => __('Длина описания в карточке (160–260)', 'textdomain'),
+        'section'     => 'model_card_section',
+        'type'        => 'number',
+        'input_attrs' => [
+            'min'  => 160,
+            'max'  => 260,
+            'step' => 10,
+        ],
+    ]);
+}
+add_action('customize_register', 'custom_model_card_settings');
 
-    $wp_customize->add_setting('contact_inn', array(
-        'default' => '',
-        'sanitize_callback' => 'sanitize_text_field',
-    ));
+function get_random_contacts()
+{
+    $i = rand(1, 4); // случайный вариант от 1 до 4
 
-    $wp_customize->add_control('contact_inn', array(
-        'label' => __('INN', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
-        'description' => __('Введите ИНН агенции', 'textdomain'),
-    ));
+    $tg  = get_theme_mod("contact_telegram_$i");
+    $wa  = get_theme_mod("contact_whatsapp_$i");
+    $tel = get_theme_mod("contact_number");
+    $mail = get_theme_mod("contact_email");
 
-
-    // Добавляем настройку для OGRN
-
-    $wp_customize->add_setting('contact_ogrn', array(
-        'default' => '',
-        'sanitize_callback' => 'sanitize_text_field',
-    ));
-
-    $wp_customize->add_control('contact_ogrn', array(
-        'label' => __('OGRN', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
-        'description' => __('Введите ОГРН вашей агенции', 'textdomain'),
-    ));
-
-    // Добавляем настройку для KPP
-
-    $wp_customize->add_setting('contact_kpp', array(
-        'default' => '',
-        'sanitize_callback' => 'sanitize_text_field',
-    ));
-
-    $wp_customize->add_control('contact_kpp', array(
-        'label' => __('KPP', 'textdomain'),
-        'section' => 'contact_section',
-        'type' => 'text',
-        'description' => __('Введите КПП вашей агенции', 'textdomain'),
-    ));
+    return [
+        'telegram' => $tg,
+        'whatsapp' => $wa,
+        'number'   => $tel,
+        'email'    => $mail,
+        'agency'   => get_theme_mod('contact_agency'),
+        'street'   => get_theme_mod('contact_street'),
+        'index'    => $i, // для отладки или аналитики
+    ];
 }
 
-add_action('customize_register', 'custom_contact_settings');
 
 function get_contact_whatsapp()
 {
@@ -307,25 +345,12 @@ function get_contact_telegram()
 add_shortcode('telegram_button', 'get_contact_telegram');
 
 
-function get_contact_phone()
-{
-    $number = get_theme_mod('contact_number');
-    if ($number) {
-        return 'tel:' . esc_attr($number);
+add_filter('redirect_canonical', function ($redirect_url, $requested_url) {
+    if (strpos($requested_url, 'sitemap.xml') !== false) {
+        return false; // отключаем редирект именно для sitemap.xml
     }
-}
-add_shortcode('phone_button', 'get_contact_phone');
-
-function dequeue_swiper_on_pages()
-{
-    if (is_page(['home', 'contacts', 'pagelayout', 'policy', 'rabota', 'terms', '404'])) {
-        wp_dequeue_script('swiper-js');
-        wp_dequeue_style('swiper-css');
-    }
-}
-add_action('wp_enqueue_scripts', 'dequeue_swiper_on_pages', 99);
-
-
+    return $redirect_url;
+}, 10, 2);
 
 
 
@@ -352,8 +377,9 @@ remove_action('wp_head', '_wp_render_title_tag', 1);
 add_filter('xmlrpc_enabled', '__return_false');
 
 // Полное отключение всех RSS-лент
-function disable_feed() {
-    wp_die( __('RSS-фиды отключены. Пожалуйста, заходите напрямую на сайт.') );
+function disable_feed()
+{
+    wp_die(__('RSS-фиды отключены. Пожалуйста, заходите напрямую на сайт.'));
 }
 add_action('do_feed', 'disable_feed', 1);
 add_action('do_feed_rdf', 'disable_feed', 1);
@@ -363,16 +389,8 @@ add_action('do_feed_atom', 'disable_feed', 1);
 remove_action('wp_head', 'feed_links', 2);
 remove_action('wp_head', 'feed_links_extra', 3);
 
-add_action('save_post', function($post_id) {
-    if (get_post_type($post_id) !== 'page') return;
 
-    // Принудительно обновляем `content`, даже если он есть
-    $acf_data = get_post_meta($post_id, 'content', true);
-    update_post_meta($post_id, 'content', $acf_data);
-}, 10, 1);
-
-
-add_action('pre_get_posts', function($query) {
+add_action('pre_get_posts', function ($query) {
     if (!is_admin() && $query->is_main_query() && is_tax()) {
         $slug = get_query_var('term');
         $page = get_page_by_path($slug, OBJECT, 'page');
@@ -390,13 +408,23 @@ add_action('pre_get_posts', function($query) {
 });
 
 
-// define('WP_DEBUG', true);  
-// define('WP_DEBUG_LOG', true);  
-// define('WP_DEBUG_DISPLAY', true);  
-// @ini_set('display_errors', 1);  
 
+// Отключаем meta name="robots", который WP добавляет через wp_head
+add_action('init', function () {
+    // В ядре он вешается как add_action( 'wp_head', 'wp_robots', 1 )
+    remove_action('wp_head', 'wp_robots', 1);
+}, 11);
 
+// Глобальный массив для сбора моделей
+$GLOBALS['site_ldjson_models'] = [];
 
+function site_ldjson_collect_model($model)
+{
+    if (!empty($model)) {
+        $GLOBALS['site_ldjson_models'][] = $model;
+    }
+}
 
+add_image_size('model_card', 334, 500, true); // hard crop
 
-
+add_filter('acf/settings/show_updates', '__return_false');

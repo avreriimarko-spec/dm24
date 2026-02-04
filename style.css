@@ -1,53 +1,40 @@
 /* 
-Theme name: Style
+Theme name: Kyzdarki
 */
 
 body {
-    background-color: #02293D;
-    color: white;
+  background-color: #02293d;
+  color: white;
 }
-
 
 .custom-img {
-    margin: 0 auto;
-    object-fit: cover;
+  margin: 0 auto;
+  object-fit: cover;
 }
 
-@font-face {
-    font-family: 'Font Awesome 5 Free';
-    src: url('assets/webfonts/fa-solid-900.woff2') format('woff2'),
-         url('assets/webfonts/fa-solid-900.woff') format('woff');
-    font-weight: 900;
-    font-style: normal;
+.latest-swiper .swiper-wrapper {
+  align-items: stretch;
 }
 
-[data-x-cloak] {
-    display: none !important;
+.latest-swiper .swiper-slide {
+  height: auto;
 }
 
-/* Стили для кнопки WhatsApp */
-.whatsapp-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: white;
-    padding: 10px;
-    border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.latest-card.anketa-card {
+  height: 100%;
+  flex-direction: column;
 }
 
-/* Стили для иконки WhatsApp */
-.whatsapp-icon {
-    width: 50px;
-    height: 50px;
-    display: block;
+.latest-card .anketa-card__media-block {
+  flex: 0 0 auto;
 }
 
-/* Эффект наведения */
-.whatsapp-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+.latest-card .anketa-card__img {
+  min-height: 260px;
 }
 
+@media (min-width: 1024px) {
+  .latest-card .anketa-card__img {
+    min-height: 300px;
+  }
+}

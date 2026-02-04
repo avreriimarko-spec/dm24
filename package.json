@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-     "build-css": "npx tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css --watch",
+    "build-css": "npx tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css --watch",
     "build": "npx tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css --minify"
   },
   "author": "",
@@ -12,7 +12,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
-    "tailwindcss": "^3.4.0"
+    "tailwindcss": "^3.4.17"
   },
   "dependencies": {
     "ansi-regex": "^6.1.0",
@@ -95,10 +95,6 @@
     "shebang-regex": "^3.0.0",
     "signal-exit": "^4.1.0",
     "source-map-js": "^1.2.1",
-    "string-width": "^5.1.2",
-    "string-width-cjs": "^4.2.3",
-    "strip-ansi": "^7.1.0",
-    "strip-ansi-cjs": "^6.0.1",
     "sucrase": "^3.35.0",
     "supports-preserve-symlinks-flag": "^1.0.0",
     "thenify": "^3.3.1",
@@ -113,5 +109,9 @@
     "yaml": "^2.8.0"
   },
   "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git@github-write:DariySeoWeb/escortminsk.com2.git"
+  },
   "description": ""
 }

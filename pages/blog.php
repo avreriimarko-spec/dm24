@@ -1,187 +1,202 @@
-<!-- 
-Template Name: Блог
--->
+<?php
 
-<?php get_header();
-$h1 = get_field('h1');
-$img = get_field('img');
-$p = get_field('p');
+/**
+ * Template Name: Блог
+ */
+get_header();
 
+$heading = function_exists('get_field') ? (get_field('h1') ?: get_the_title()) : get_the_title();
+$lead    = function_exists('get_field') ? (get_field('p')  ?: '') : '';
+
+$is_ajax = isset($_GET['ajax_blog']) && $_GET['ajax_blog'] == '1';
+
+$paged = max(1, get_query_var('paged') ?: get_query_var('page') ?: 1);
+$ppp   = 12;
+
+$q = new WP_Query([
+    'post_type'      => 'blog',
+    'post_status'    => 'publish',
+    'posts_per_page' => $ppp,
+    'paged'          => $paged,
+    'no_found_rows'  => false,
+]);
+
+/** Получить URL картинки из ACF photo_statiya (ID/array/url) */
+function blog_get_img_url($photo, $size = 'large')
+{
+    if (!$photo) return '';
+    if (is_numeric($photo)) {
+        $img = wp_get_attachment_image_src((int)$photo, $size);
+        return $img ? $img[0] : '';
+    }
+    if (is_array($photo)) {
+        if (!empty($photo['url'])) return $photo['url'];
+        if (!empty($photo['ID'])) {
+            $img = wp_get_attachment_image_src((int)$photo['ID'], $size);
+            return $img ? $img[0] : '';
+        }
+        return '';
+    }
+    if (is_string($photo)) return $photo;
+    return '';
+}
+?>
+<?php
+if ($is_ajax) {
+    ob_start();
+}
 ?>
 
-<main class="max-w-[1500px] mx-auto mt-6">
-    <!-- Обёртка -->
-    <div class="bg-gradient-to-r from-black via-[#330000] to-[#660000] border border-red-600 p-5 rounded-xl shadow-lg hover:shadow-xl transition duration-300 w-full ">
-        <!-- Хлебные крошки -->
-        <div class="bg-gradient-to-r from-deepred to-darkgray px-6 py-3 text-sm md:text-base text-gray-300">
-            <nav>
-                <ul class="flex flex-wrap justify-start items-center space-x-2">
-                    <li>
-                        <a href="/" class="hover:text-white transition flex items-center gap-1">
-                            Главная
-                        </a>
-                    </li>
-                    <li class="text-gray-500">»</li>
-                    <li><?php echo esc_html(get_the_title()); ?></li>
-                </ul>
-            </nav>
-        </div>
+<main class="px-4 py-12 bg-white text-black">
+    <div class="max-w-[1200px] mx-auto">
 
-        <div class="mx-auto flex flex-col gap-2">
-
-            <!-- H1 с градиентом -->
-            <div class="text-center bg-gradient-to-r from-deepred to-darkgray">
-                <h1 class="text-2xl md:text-3xl font-extrabold uppercase tracking-wide leading-snug text-white ">
-                    <?php echo esc_html($h1); ?>
+        <?php if (!$is_ajax): ?>
+            <!-- Заголовок и лид -->
+            <header class="mb-10 text-center">
+                <h1 class="text-[32px] md:text-[40px] font-extrabold tracking-tight">
+                    <?php echo esc_html($heading); ?>
                 </h1>
-            </div>
+                <?php if ($lead): ?>
+                    <p class="mt-2 text-neutral-700"><?php echo esc_html($lead); ?></p>
+                <?php endif; ?>
+            </header>
+        <?php endif; ?>
 
-            <!-- Описание -->
-            <div class="bg-gradient-to-r from-deepred to-darkgray text-center">
-                <p class="text-base md:text-lg text-gray-300 leading-relaxed max-w-5xl mx-auto">
-                    <?php echo esc_html($p); ?>
-                </p>
-            </div>
+        <?php if ($q->have_posts()): ?>
+            <!-- Две колонки: слева картинка, справа текст -->
+            <section id="blog-list" class="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-10">
+                <?php while ($q->have_posts()): $q->the_post();
+                    $acf_h1    = function_exists('get_field') ? (get_field('h1_statiya')   ?: '') : '';
+                    $acf_p     = function_exists('get_field') ? (get_field('p_statiya')    ?: '') : '';
+                    $acf_seo   = function_exists('get_field') ? (get_field('seo_statiya')  ?: '') : '';
+                    $acf_photo = function_exists('get_field') ? (get_field('photo_statiya') ?: '') : '';
 
-        </div>
+                    $permalink = get_permalink();
+                    $title     = $acf_h1 !== '' ? $acf_h1 : get_the_title();
 
-    </div>
+                    $desc_source = $acf_p !== '' ? $acf_p
+                        : ($acf_seo !== '' ? wp_strip_all_tags($acf_seo)
+                            : (has_excerpt() ? get_the_excerpt() : wp_strip_all_tags(get_the_content(''))));
+                    $desc = wp_trim_words($desc_source, 28, '…');
 
-
-    <!-- Контент -->
-    <div class="container mx-auto px-4 mt-8">
-        <!-- Первый пост (самый новый) -->
-        <div class="flex flex-col md:flex-row mb-12 justify-start w-full">
-            <?php
-            $args = array(
-                'post_type' => 'blog', // Кастомный тип записей
-                'posts_per_page' => 1, // Получаем только первый (самый новый) пост
-                'orderby' => 'date',
-                'order' => 'DESC'
-            );
-
-            $blog_posts = new WP_Query($args);
-
-            if ($blog_posts->have_posts()):
-                while ($blog_posts->have_posts()):
-                    $blog_posts->the_post();
-                    $post_id = get_the_ID();
-
-                    // Получаем данные из ACF
-                    $post_h1 = get_field('h1') ?: get_the_title();
-                    $post_p = get_field('p') ?: wp_trim_words(get_the_excerpt(), 20, '...');
-                    $img = get_field("img"); // ACF поле возвращает ID изображения
-                    if ($img) {
-                        $post_img = wp_get_attachment_image_url($img, 'medium_large'); // получаем URL нужного размера
+                    $img_url = blog_get_img_url($acf_photo, 'large');
+                    if (!$img_url) {
+                        $thumb_id = get_post_thumbnail_id();
+                        $img      = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
+                        $img_url  = $img ? $img[0] : '';
                     }
-                    $post_url = get_permalink();
-                    ?>
 
-                    <!-- Фото -->
-                    <div class="mb-6 md:mb-0">
-                        <a href="<?php echo esc_url($post_url); ?>">
-                            <div class="overflow-hidden rounded-sm shadow-md">
-                                <img src="<?php echo esc_url($post_img); ?>" alt="<?php echo esc_attr($post_h1); ?>"
-                                    class="w-[600px] h-[400px] object-cover transition-transform duration-500 hover:scale-105 rounded rounded-lg">
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Контент -->
-                    <div class="w-full md:w-1/4 flex flex-col justify-start md:pl-10">
-
-                        <!-- Дата публикации -->
-                        <p class="text-sm text-gray-500 mb-4">
-                            <?php echo get_the_date('F j, Y'); ?> <!-- Формат даты: Месяц день, год -->
-                        </p>
-
-                        <!-- Заголовок поста -->
-                        <h2 class="text-3xl font-bold mb-6 uppercase text-red-600">
-                            <?php echo esc_html($post_h1); ?>
-                        </h2>
-
-                        <!-- Краткое описание -->
-                        <p class="text-[17px] text-gray-700 leading-relaxed mb-6">
-                            <?php echo esc_html($post_p); ?>
-                        </p>
-
-                    </div>
-
-
-
-                    <?php
-                endwhile;
-                wp_reset_postdata();
-            else:
-                echo '<p class="text-center text-lg text-gray-600">Постов пока нет</p>';
-            endif;
-            ?>
-        </div>
-
-        <!-- Остальные посты (по 3 в строке) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <?php
-            $args = array(
-                'post_type' => 'blog', // Кастомный тип записей
-                'posts_per_page' => 9, // Количество постов (оставляем 9, так как первый уже показан)
-                'orderby' => 'date',
-                'order' => 'DESC'
-            );
-
-            $blog_posts = new WP_Query($args);
-
-            if ($blog_posts->have_posts()):
-                while ($blog_posts->have_posts()):
-                    $blog_posts->the_post();
-                    $post_id = get_the_ID();
-
-                    // Получаем данные из ACF
-                    $post_h1 = get_field('h1') ?: get_the_title();
-                    $post_p = get_field('p') ?: wp_trim_words(get_the_excerpt(), 20, '...');
-                    $img = get_field("img"); // ACF поле возвращает ID изображения
-                    if ($img) {
-                        $post_img = wp_get_attachment_image_url($img, 'medium_large'); // получаем URL нужного размера
-                    }
-                    $post_url = get_permalink();
-                    ?>
-
-                    <div class="flex flex-col mb-8">
-                        <a href="<?php echo esc_url($post_url); ?>">
-                            <!-- Фото -->
-                            <div class="w-full mb-6">
-                                <div class="overflow-hidden rounded-sm shadow-md">
-                                    <img src="<?php echo esc_url($post_img); ?>" alt="<?php echo esc_attr($post_h1); ?>"
-                                        class="w-full h-[300px] object-cover transition-transform duration-500 hover:scale-105 rounded rounded-lg">
+                    $date_human = date_i18n('j F Y', get_the_time('U'));
+                    $date_iso   = get_the_date('c');
+                ?>
+                    <article class="group rounded-2xl border border-[rgba(255,45,114,.18)] bg-white shadow-[0_2px_18px_rgba(0,0,0,.04)] hover:shadow-[0_6px_24px_rgba(0,0,0,.06)] transition overflow-hidden">
+                        <a href="<?php echo esc_url($permalink); ?>" class="grid grid-cols-1 md:grid-cols-[320px_1fr] items-stretch gap-0 md:gap-6 h-full">
+                            <!-- Медиа слева -->
+                            <div class="w-full h-full">
+                                <div class="w-full h-full md:aspect-auto aspect-[16/9] bg-neutral-100 overflow-hidden md:rounded-none">
+                                    <?php if ($img_url): ?>
+                                        <img
+                                            src="<?php echo esc_url($img_url); ?>"
+                                            alt="<?php echo esc_attr($title); ?>"
+                                            class="w-full h-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                                            loading="lazy" decoding="async">
+                                    <?php else: ?>
+                                        <div class="w-full h-full flex items-center justify-center text-neutral-500 text-sm">Нет изображения</div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
 
-                            <!-- Контент -->
-                            <div class="flex flex-col justify-center">
-                                <h2 class="text-2xl font-semibold mb-4 text-red-600 inline-block ">
-                                    <?php echo esc_html($post_h1); ?>
-                                </h2>
-                                <p class="text-base text-gray-600 leading-relaxed mb-6">
-                                    <?php echo esc_html($post_p); ?>
-                                </p>
+                            <!-- Текст справа -->
+                            <div class="p-5 md:py-5 md:pr-5 md:pl-0 flex flex-col">
+                                <div class="mb-3">
+                                    <div class="inline-flex items-center gap-2 text-[13px] font-semibold">
+                                        <span class="inline-block rounded-full bg-[rgba(255,45,114,.08)] text-[#ff2d72] px-2 py-0.5">
+                                            <time datetime="<?php echo esc_attr($date_iso); ?>"><?php echo esc_html($date_human); ?></time>
+                                        </span>
+                                    </div>
+                                </div>
 
+                                <h2 class="text-xl md:text-2xl font-extrabold leading-snug">
+                                    <span class="group-hover:underline decoration-2 underline-offset-4 decoration-[#ff2d72]">
+                                        <?php echo esc_html($title); ?>
+                                    </span>
+                                </h2>
+
+                                <?php if ($desc): ?>
+                                    <p class="mt-3 text-[15px] leading-6 text-neutral-700 line-clamp-3">
+                                        <?php echo esc_html($desc); ?>
+                                    </p>
+                                <?php endif; ?>
+
+                                <span class="mt-4 inline-flex items-center gap-2 text-[#ff2d72] font-semibold">
+                                    Читать
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M13 5l7 7-7 7v-4H4v-6h9V5z" />
+                                    </svg>
+                                </span>
                             </div>
                         </a>
-                    </div>
+                    </article>
+                <?php endwhile;
+                wp_reset_postdata(); ?>
+            </section>
 
-                    <?php
-                endwhile;
-                wp_reset_postdata();
-            else:
-                echo '<p class="text-center text-lg text-gray-600">Постов пока нет</p>';
-            endif;
-            ?>
-        </div>
+            <?php if (!$is_ajax && $q->max_num_pages > 1): ?>
+                <div class="mt-10 flex justify-center">
+                    <button id="blog-load-more"
+                        class="px-4 h-10 rounded-[10px] border text-[15px] font-semibold bg-white text-[#ff2d72] border-[#ff2d72] hover:bg-[#ff2d72] hover:text-white transition"
+                        data-current="<?php echo (int)$paged; ?>"
+                        data-total="<?php echo (int)$q->max_num_pages; ?>"
+                        data-ppp="<?php echo (int)$ppp; ?>"
+                    >Показать ещё</button>
+                </div>
+            <?php endif; ?>
+
+        <?php else: ?>
+            <p class="text-neutral-600">Пока нет опубликованных статей.</p>
+        <?php endif; ?>
+
     </div>
 </main>
+<?php if ($is_ajax) {
+    echo ob_get_clean();
+    wp_die();
+} ?>
 
-
-
-
-
+<?php if (!$is_ajax): ?>
+    <script>
+    (function() {
+      const btn = document.getElementById('blog-load-more');
+      if (!btn) return;
+      const list = document.getElementById('blog-list');
+      let current = parseInt(btn.dataset.current || '1', 10);
+      const total = parseInt(btn.dataset.total || '1', 10);
+      btn.addEventListener('click', async () => {
+        if (current >= total) return;
+        btn.disabled = true;
+        btn.textContent = 'Загрузка...';
+        const next = current + 1;
+        try {
+          const res = await fetch(window.location.pathname + '?ajax_blog=1&paged=' + next, { credentials: 'same-origin' });
+          const html = await res.text();
+          const tmp = document.createElement('div');
+          tmp.innerHTML = html;
+          tmp.querySelectorAll('#blog-list article').forEach(card => list.appendChild(card));
+          current = next;
+          btn.dataset.current = String(current);
+          if (current >= total) {
+            btn.style.display = 'none';
+          } else {
+            btn.disabled = false;
+            btn.textContent = 'Показать ещё';
+          }
+        } catch(e) {
+          btn.disabled = false;
+          btn.textContent = 'Показать ещё';
+        }
+      });
+    })();
+    </script>
+<?php endif; ?>
 
 <?php get_footer(); ?>

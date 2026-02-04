@@ -1,0 +1,11 @@
+.cards-grid--models {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .cards-grid--models {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

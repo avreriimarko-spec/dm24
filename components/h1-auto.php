@@ -1,0 +1,151 @@
+<?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+if (!function_exists('_auto_heading_clean')) {
+    function _auto_heading_clean(string $s): string
+    {
+        $s = html_entity_decode($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $s = html_entity_decode($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $s = preg_replace('~\s+~u', ' ', $s);
+        return trim((string) $s);
+    }
+}
+
+if (!function_exists('_auto_heading_ru_years')) {
+    function _auto_heading_ru_years(int $age): string
+    {
+        $n  = abs($age) % 100;
+        $n1 = $n % 10;
+
+        if ($n > 10 && $n < 20) {
+            return 'лет';
+        }
+        if ($n1 > 1 && $n1 < 5) {
+            return 'года';
+        }
+        if ($n1 == 1) {
+            return 'год';
+        }
+        return 'лет';
+    }
+}
+
+$h1 = '';
+$h2 = '';
+
+$qo          = get_queried_object();
+$id          = 0;
+$post_type   = '';
+$taxonomy    = '';
+$title_piece = '';
+
+if ($qo instanceof WP_Post) {
+    $id          = $qo->ID;
+    $post_type   = $qo->post_type;
+    $title_raw   = get_the_title($qo);
+    $title_piece = is_string($title_raw) ? _auto_heading_clean(wp_strip_all_tags($title_raw)) : '';
+} elseif ($qo instanceof WP_Term) {
+    $id          = $qo->term_id;
+    $taxonomy    = $qo->taxonomy;
+    $name_raw    = $qo->name ?? '';
+    $title_piece = is_string($name_raw) ? _auto_heading_clean(wp_strip_all_tags($name_raw)) : '';
+} else {
+    $id          = get_queried_object_id();
+    $post_type   = $id ? get_post_type($id) : '';
+    $title_raw   = $id ? get_the_title($id) : '';
+    $title_piece = is_string($title_raw) ? _auto_heading_clean(wp_strip_all_tags($title_raw)) : '';
+}
+
+/**
+ * Для моделей используем ACF-поле name как имя, если оно задано.
+ */
+if ($post_type === 'models' && function_exists('get_field') && $id) {
+    $acf_name = get_field('name', $id);
+    if (is_string($acf_name) && $acf_name !== '') {
+        $title_piece = _auto_heading_clean($acf_name);
+    }
+}
+
+$context = '';
+
+if ($post_type === 'models') {
+    $context = 'models';
+} elseif ($post_type === 'metro' || $taxonomy === 'metro') {
+    $context = 'metro';
+} elseif ($post_type === 'rajon' || $taxonomy === 'rajon') {
+    $context = 'rajon';
+} elseif ($post_type === 'uslugi' || $taxonomy === 'uslugi') {
+    $context = 'uslugi';
+}
+
+if ($context === 'models' && $title_piece !== '') {
+
+    // Берём возраст ТАК ЖЕ, как в шаблоне
+    $age_raw = trim((string) (function_exists('get_field') ? get_field('age', $id) : ''));
+
+    // Фолбэк, если age пустое — пробуем vozrast
+    if ($age_raw === '') {
+        $age_raw = trim((string) (function_exists('get_field') ? get_field('vozrast', $id) : ''));
+    }
+
+    // Доп. фолбэк на метаполя, если вдруг ACF нет/не сработал
+    if ($age_raw === '' && $id) {
+        $meta_age = get_post_meta($id, 'age', true);
+        if ($meta_age === '' || $meta_age === null) {
+            $meta_age = get_post_meta($id, 'vozrast', true);
+        }
+        $age_raw = trim((string) $meta_age);
+    }
+
+    $age_int = 0;
+    if ($age_raw !== '') {
+        $age_int = (int) preg_replace('~\D+~', '', $age_raw);
+    }
+
+    if ($age_int > 0) {
+        $years_word = _auto_heading_ru_years($age_int);
+        $h1 = "Проститутка {$title_piece}, {$age_int} {$years_word}, Алматы";
+    } else {
+        $h1 = "Проститутка {$title_piece}, Алматы";
+    }
+} elseif ($context === 'metro' && $title_piece !== '') {
+
+    $h1 = "Проститутки у метро {$title_piece}";
+    $h2 = "Анкеты проституток {$title_piece}";
+} elseif ($context === 'rajon' && $title_piece !== '') {
+
+    $h1 = "Проститутки районе {$title_piece}";
+    $h2 = "Анкеты проституток {$title_piece}";
+} elseif ($context === 'uslugi' && $title_piece !== '') {
+
+    $h1 = "Проститутки с услугой {$title_piece} в Алматы";
+    $h2 = "Анкеты проституток с услугой {$title_piece}";
+} else {
+
+    if (function_exists('get_field') && $id) {
+        $h1 = (string) get_field('h1_atc', $id);
+        $h2 = (string) get_field('h2_title', $id);
+    }
+
+    $h1 = _auto_heading_clean($h1);
+
+    if ($h1 === '' && $title_piece !== '') {
+        $h1 = $title_piece;
+    }
+}
+
+if ($h2 === '' && function_exists('get_field') && $id) {
+    $h2 = (string) get_field('h2_title', $id);
+}
+
+$h1 = _auto_heading_clean((string) $h1);
+$h2 = _auto_heading_clean((string) $h2);
+
+set_query_var('auto_h1', $h1);
+set_query_var('auto_h2', $h2);
+
+$GLOBALS['auto_h1'] = $h1;
+$GLOBALS['auto_h2'] = $h2;

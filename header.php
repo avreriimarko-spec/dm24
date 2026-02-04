@@ -1,795 +1,774 @@
-<?php $title = get_field('title');
-$descr = get_field('descr');
-$keywords = get_field('keywords');
+<?php
+
+/**
+ * The header for our theme
+ */
+
+// ===== SEO: генерация title/descr =====
+$post_id   = get_queried_object_id();
+$post_type = get_post_type($post_id);
+
+$title     = '';
+$descr     = '';
+$canonical = ($post_id ? get_permalink($post_id) : home_url('/'));
+
+// Пробрасываем в шаблоны
+set_query_var('seo_title', $title);
+set_query_var('seo_descr', $descr);
+$GLOBALS['seo_title'] = $title;
+$GLOBALS['seo_descr'] = $descr;
 ?>
 
-
 <!DOCTYPE html>
-<html lang="ru">
+<html <?php language_attributes(); ?>>
 
 <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><?php echo esc_html($title); ?></title>
-        <meta name="description" content="<?php echo esc_html($descr); ?>" />
-        <link rel="canonical" href="<?php echo esc_url(get_permalink()); ?>">
-        <meta name="keywords" content="<?php echo esc_html($keywords); ?>" />
-        <link rel="icon" href="favicon100.png"
-                sizes="32x32" />
-        <link rel="icon" href="favicon300.png"
-                sizes="192x192" />
-        <link rel="apple-touch-icon" href="favicon300.png" />
-        <link rel="icon" type="image/x-icon" href="favicon.ico">
-        <meta name='robots' content="index, follow, max-snippet:-1, max-video-preview:-1">
-        <?php wp_head(); ?>
-        <?php get_template_part('template-parts/schema/json-id'); ?>
+    <meta charset="<?php bloginfo('charset'); ?>" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <?php get_template_part('components/seo-head'); ?>
+    <?php if (!empty($keywords)): ?>
+        <meta name="keywords" content="<?php echo esc_attr($keywords); ?>" />
+    <?php endif; ?>
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" href="/android-chrome-192x192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="yandex-verification" content="635b0832d5683f81" />
+    <?php if ($post_type === 'models' && is_singular('models') && !empty($og_image_alt)): ?>
+        <meta property="og:image:alt" content="<?php echo esc_attr($og_image_alt); ?>" />
+    <?php endif; ?>
+    <?php wp_head(); ?>
+    <?php get_template_part('json-ld/index'); ?>
+    <style>
+        :root {
+            --ea-accent: #ff2d72;
+            /* розовый как на сайте */
+            --ea-accent-2: #ff4b88;
+            /* чуть светлее для градиента/hover */
+            --ea-bg: #ffffff;
+            /* белый фон карточки */
+            --ea-text: #111827;
+            /* почти чёрный текст (gray-900) */
+            --ea-subtext: #4b5563;
+            /* серый для описаний */
+            --ea-border: rgba(17, 24, 39, .08);
+            --ea-shadow: 0 14px 35px rgba(0, 0, 0, .12);
+            --ea-badge-bg: rgba(255, 45, 114, .08);
+            --ea-badge-brd: rgba(255, 45, 114, .25);
+            --ea-badge-text: #ff2d72;
+        }
 
+        .ea-tg-pop-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            background: rgba(0, 0, 0, .20);
+            /* слегка затемняем только на мобилке (включается скриптом) */
+            z-index: 9998;
+            backdrop-filter: blur(2px);
+        }
+
+        .ea-tg-pop {
+            position: fixed;
+            z-index: 9999;
+            display: none;
+            max-width: 580px;
+            width: calc(100vw - 24px);
+            background: var(--ea-bg);
+            color: var(--ea-text);
+            border: 1px solid var(--ea-border);
+            box-shadow: var(--ea-shadow);
+            border-radius: 16px;
+            padding: 16px;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity .3s ease, transform .3s ease;
+        }
+
+        .ea-tg-pop.ea-show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* мобилка: снизу по центру */
+        @media (max-width: 767px) {
+            .ea-tg-pop {
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+                margin-bottom: 14px;
+            }
+
+            .ea-tg-pop.ea-show {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* ПК: снизу слева */
+        @media (min-width: 768px) {
+            .ea-tg-pop {
+                left: 16px;
+                bottom: 16px;
+                width: 380px;
+            }
+        }
+
+        .ea-tg-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2px;
+        }
+
+        .ea-tg-title {
+            font-weight: 800;
+            font-size: 16px;
+            line-height: 1.2;
+            margin: 0;
+            color: var(--ea-text);
+        }
+
+        .ea-tg-close {
+            margin-left: auto;
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            border: 1px solid var(--ea-border);
+            background: #fff;
+            color: #111827;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: background .2s ease, transform .08s ease, border-color .2s ease;
+        }
+
+        .ea-tg-close:hover {
+            background: #f9fafb;
+            border-color: rgba(17, 24, 39, .15);
+        }
+
+        .ea-tg-close:active {
+            transform: scale(.96);
+        }
+
+        .ea-tg-body {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--ea-subtext);
+        }
+
+        .ea-tg-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .ea-tg-join {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(180deg, var(--ea-accent), var(--ea-accent-2));
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: .2px;
+            text-decoration: none;
+            transition: filter .2s ease, transform .08s ease, box-shadow .2s ease;
+            box-shadow: 0 8px 18px rgba(255, 45, 114, .28);
+        }
+
+        .ea-tg-join:hover {
+            filter: brightness(.98);
+        }
+
+        .ea-tg-join:active {
+            transform: translateY(1px);
+        }
+
+        .ea-tg-join svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .ea-tg-later {
+            height: 44px;
+            padding: 0 14px;
+            border-radius: 12px;
+            border: 1px solid var(--ea-border);
+            background: #fff;
+            color: #111827;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background .2s ease, transform .08s ease, border-color .2s ease;
+            white-space: nowrap;
+        }
+
+        .ea-tg-later:hover {
+            background: #f9fafb;
+            border-color: rgba(17, 24, 39, .15);
+        }
+
+        .ea-tg-later:active {
+            transform: translateY(1px);
+        }
+
+        .ea-tg-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--ea-badge-bg);
+            color: var(--ea-badge-text);
+            font-weight: 800;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--ea-badge-brd);
+        }
+
+        .ea-tg-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+    </style>
 </head>
 
-<body class="bg-white">
-       <header class="sticky top-0 z-20 mx-1 bg-white text-red-600 flex justify-between items-center border border-red-600 p-4 rounded-lg shadow-md backdrop-blur-md"
-        data-x-data="{ open: true, openModal: false, openMenu: false, dropdownOpen: null }">
+<body <?php body_class('bg-white mx-auto !mb-0 !pb-0'); ?>>
+    <?php wp_body_open(); ?>
 
+    <?php
+    if (!defined('ABSPATH')) exit;
 
+    /** Бренд */
+    $site_name = get_bloginfo('name') ?: 'Escort';
+    $logo_url  = get_stylesheet_directory_uri() . '/assets/icons/logo.png';
 
-                        <!-- logo -->
-                        <div class="hover:scale-110 transition duration-300">
-                                <a href="https://escortminsk.com/">
-                                        <img class="w-12 h-12 object-contain"
-                                                src="<?php echo get_template_directory_uri(); ?>/assets/icons/logo.png"
-                                                alt="logo" width="50" height="50">
-                                </a>
-                        </div>
-                        <!-- navigation -->
-                        <nav class="hidden md:flex w-full justify-center items-center">
-                                <ul data-x-data="{ open: false, dropdownOpen: null }"
-                                        class="relative text-[18px] font-normal flex flex-row gap-6 justify-center items-center text-lg list-none m-0">
-                                        <li><a href="/individualki/"
-                                                        class="text-red-600 transition-text duration-200">Индивидуалки</a>
-                                        </li>
-                                        <li><a href="/proverennyye-prostitutki/"
-                                                        class="text-red-600 transition-text duration-200">Проверенные</a>
-                                        </li>
-                                        <li><a href="/prostitutki-na-vyyezd/"
-                                                        class="text-red-600 transition-text duration-200">На
-                                                        выезд</a></li>
-                                        <li><a href="/elitnye-prostitutki/"
-                                                        class="text-red-600 transition-text duration-200">Элитные</a>
-                                        </li>
-                                        <li><a href="/eskortnitsy/"
-                                                        class="text-red-600 transition-text duration-200">Эскортницы</a>
-                                        </li>
-                                        <li><a href="/prsotitutki-s-video/"
-                                                        class="text-red-600 transition-text duration-200">С
-                                                        видео</a></li>
-                                        <li><a href="/prsotitutki-bez-retushi/"
-                                                        class="text-red-600 transition-text duration-200">Без
-                                                        ретуши</a></li>
-                                <li><a href="/blog/" class="block text-red-500 hover:text-red-600"
-                                                data-x-on-click="openMenu = false">Блог</a></li>
-                                </ul>
-                        </nav>
-                        <!-- links -->
-                        <div class="flex flex-row gap-6 justify-center items-center text-4xl">
-                                <p data-x-on-click="openModal = true" class="text-[18px] cursor-pointer m-0">Фильтры</p>
-                                <button data-x-on-click="openModal = true" title="Поиск"
-                                        class="flex hover:scale-110 transition-scale duration-200">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="40" height="40" fill="currentColor" class="text-red-600">
-    <path d="M505 442l-99-99c28-35 45-79 45-127C451 98 353 0 226 0S1 98 1 226s98 226 225 226c48 0 92-17 127-45l99 99c12 12 32 12 44 0s12-32 0-44zM226 384a158 158 0 1 1 0-316 158 158 0 1 1 0 316z"/>
-</svg>
-                                </button>
-                        </div>
+    /** * МЕНЮ 
+     * Структура полностью соответствует изображению.
+     * Ключ массива используется для поиска иконки.
+     */
+$menu = [
+    'escort_almaty' => ['Эскорт', '/eskort-almaty'], // Добавлен слэш для корректной работы из любого раздела
+    'kizdar-almaty' => ['Кыздар нет', '/kizdar-almaty'],
+    
+    // Выпадающий список "Доступность"
+    'accessibility' => [
+        'label' => 'Доступность',
+        'sub_menu' => [
+            'outcall' => ['Выезд', '/prostitutki-na-vyyezd'],
+            'incall'  => ['Прием', '/prostitutki-priyem'],
+        ]
+    ],
 
-                        <button data-x-on-click="openMenu = !openMenu" title="Меню" class="md:hidden text-3xl text-red-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="40" height="40" fill="red" class="text-white">
-    <path d="M16 132h416c9 0 16-7 16-16V84c0-9-7-16-16-16H16c-9 0-16 7-16 16v32c0 9 7 16 16 16zm0 128h416c9 0 16-7 16-16v-32c0-9-7-16-16-16H16c-9 0-16 7-16 16v32c0 9 7 16 16 16zm0 128h416c9 0 16-7 16-16v-32c0-9-7-16-16-16H16c-9 0-16 7-16 16v32c0 9 7 16 16 16z"/>
-</svg>
+    // Выпадающий список "Цена"
+    'price_filter' => [
+        'label' => 'Цена',
+        'sub_menu' => [
+            'elite' => ['Элитные', '/elitnyye-prostitutki'],
+            'cheap' => ['Дешевые', '/deshevyye-prostitutki'],
+        ]
+    ],
 
+    'video'      => ['С Видео', '/s-video'],
+    'new'        => ['Новые', '/novye'],
+    'favorites'  => ['Избранные', '/favorites'],
+    'individual' => ['Индивидуалки', '/individualki-almaty'],
+    'soderzhanki'=> ['Содержанки', '/soderzhanki-almaty']
+];
 
-                        </button>
+    /** * Функция вывода иконок меню
+     */
+    function nav_icon($key, $cls = 'w-[18px] h-[18px] mr-2 shrink-0', $alt = null)
+    {
+        // файл иконки по ключу
+        $icons = [
+        'escort_almaty' => 'like.png',
+        'kizdar-almaty' => 'kizdar-almaty.png',
+        'accessibility' => 'home.png',
+        'price_filter'  => 'dollar-symbol.png',
+        'video'         => 'play-button.png',
+        'new'           => 'new.png',
+        'favorites'     => 'bookmarks.png',
+        'individual'    => 'indi.png',
+        'soderzhanki'   => 'female-and-male-shapes-silhouettes.png',
+        'default'       => 'menu.webp',
+    ];
 
-                <!-- Mоб. версия nav -->
-                <div data-x-show="openMenu" data-x-cloak data-x-transition
-                        class="fixed inset-0 bg-white text-red-600 bg-opacity-80 z-50 flex flex-col items-center justify-center text-2xl">
-                        <button data-x-on-click="openMenu = false" class="absolute top-5 right-5 text-4xl text-red-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" width="40" height="40" fill="red" class="text-white">
-    <path d="M242 256l100-100c12-12 12-32 0-44s-32-12-44 0L192 212 92 112c-12-12-32-12-44 0s-12 32 0 44l100 100-100 100c-12 12-12 32 0 44s32 12 44 0l100-100 100 100c12 12 32 12 44 0s12-32 0-44L242 256z"/>
-</svg>
+    $alts = [
+        'escort_almaty' => 'Эскорт',
+        'kizdar-almaty' => 'Кыздар нет',
+        'accessibility' => 'Доступность',
+        'price_filter'  => 'Цена',
+        'video'         => 'С видео',
+        'new'           => 'Новые',
+        'favorites'     => 'Избранные',
+        'individual'    => 'Индивидуалки',
+        'soderzhanki'   => 'Содержанки',
+        'default'       => 'Меню',
+    ];
+        $file = $icons[$key] ?? $icons['default'];
+        $rel  = 'assets/icons/header-icons/' . $file;
 
-                        </button>
-                        <ul class="space-y-6 text-center list-none">
-                                <li><a href="/individualki/" class="block text-red-500 hover:text-red-600"
-                                                data-x-on-click="openMenu = false">Индивидуалки</a>
-                                </li>
-                                <li><a href="/proverennyye-prostitutki/" class="block text-red-500 hover:text-red-600"
-                                                data-x-on-click="openMenu = false">Проверенные</a></li>
-                                <li><a href="/prostitutki-na-vyyezd/" class="block text-red-500 hover:text-red-600"
-                                                data-x-on-click="openMenu = false">На
-                                                выезд</a></li>
-                                <li><a href="/elitnye-prostitutki/" class="block text-red-500 hover:text-red-600"
-                                                data-x-on-click="openMenu = false">Элитные</a>
-                                </li>
-                                <li><a href="/eskortnitsy/" class="block text-red-500 hover:text-red-600"
-                                                data-x-on-click="openMenu = false">Эскортичны</a>
-                                </li>
-                                <li><a href="/prsotitutki-s-video/" class="block text-red-500 hover:text-red-600"
-                                                data-x-on-click="openMenu = false">С
-                                                видео</a></li>
-                                <li><a href="/prsotitutki-bez-retushi/" class="block text-red-500 hover:text-red-600"
-                                                data-x-on-click="openMenu = false">Без
-                                                ретуши</a></li>
-                                <li><a href="/blog/" class="block text-red-500 hover:text-red-600"
-                                                data-x-on-click="openMenu = false">Блог</a></li>
-                        </ul>
-                </div>
+        // ищем сначала в дочерней теме, потом в родительской
+        $path = trailingslashit(get_stylesheet_directory()) . $rel;
+        $url  = trailingslashit(get_stylesheet_directory_uri()) . $rel;
+        if (!file_exists($path)) {
+            $path = trailingslashit(get_template_directory()) . $rel;
+            $url  = trailingslashit(get_template_directory_uri()) . $rel;
+        }
 
-                <!-- Pop-up для поиска -->
-                <div data-x-show="openModal" data-x-cloak data-x-transition
-                        class="fixed top-0 left-0 w-full h-[100vh] bg-black bg-opacity-50 z-10 flex justify-center items-center">
-                        <div
-                                class="w-full h-full overflow-scroll bg-black text-white border border-red-600 rounded-lg relative p-6">
-                                <div class="flex justify-between items-center border-b border-red-600 pb-4">
-                                        <p class="text-red-600 text-xl font-semibold">Поиск</p>
-                                        <button data-x-on-click="openModal = false" class="text-red-600">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" width="30" height="30" fill="white">
-    <path d="M242 256l100-100c12-12 12-32 0-44s-32-12-44 0L192 212 92 112c-12-12-32-12-44 0s-12 32 0 44l100 100-100 100c-12 12-12 32 0 44s32 12 44 0l100-100 100 100c12 12 32 12 44 0s12-32 0-44L242 256z"/>
-</svg>
+        // финальный alt
+        $alt_text = $alt !== null ? $alt : ($alts[$key] ?? $alts['default']);
 
-                                        </button>
-                                </div>
+        echo '<img src="' . esc_url($url) . '" alt="' . esc_attr($alt_text) . '" loading="lazy" decoding="async" ' .
+            'class="' . esc_attr($cls) . ' object-contain" width="18" height="18">';
+    }
+    ?>
 
-                                <div class="mx-auto px-4 overflow-y-auto md:h-auto">
+    <?php
+    // Печатаем модалку и JS (без кнопок)
+    get_template_part('components/auth-ui', null, [
+        'render_buttons' => false,
+    ]);
+    ?>
 
-                                        <!-- Прокручиваемый контейнер на мобильных -->
-                                        <div class="mt-5 flex gap-6 overflow-x-auto md:overflow-x-hidden overflow-y-auto justify-center items-baseline md:items-center flex-col md:flex-row touch-auto"
-                                                data-x-data="{ openCategory: null }">
+    <header class="sticky inset-x-0 top-0 z-50 bg-[#212529] text-gray-300 border-b border-gray-800">
+        <div class="px-4">
+            <div class="h-16 flex justify-between items-center gap-4">
+                <?php
+                // Проверка для логотипа
+                $is_home = is_front_page();
+                $logo_tag = $is_home ? 'span' : 'a';
+                $logo_href = $is_home ? '' : 'href="' . esc_url(home_url('/')) . '"';
+                ?>
+                <<?php echo $logo_tag; ?> <?php echo $logo_href; ?>
+                    class="flex items-center gap-2 select-none shrink-0 <?php echo $is_home ? 'cursor-default' : ''; ?>"
+                    aria-label="Логотип <?php echo esc_attr($site_name); ?>">
+                    <img src="<?php echo esc_url($logo_url); ?>"
+                        alt="<?php echo esc_attr($site_name . ' — логотип'); ?>" width="50" height="40"
+                        class="h-10 object-contain" loading="eager" decoding="async" fetchpriority="high">
+                </<?php echo $logo_tag; ?>>
 
-                                                <!-- Услуги -->
-                                                <div class="category bg-white p-4 rounded-lg border border-red-600 shadow-lg w-72"
-                                                        data-x-data="{ activeSub: null }">
+                <?php if (!wp_is_mobile()) : ?>
+                    <nav class="hidden md:flex flex-grow justify-center" aria-label="Основное меню">
+                        <ul id="main-nav" class="flex items-center gap-3 text-[15px] whitespace-nowrap">
+                            <?php
+                            // Получаем текущий URL для сравнения
+                            $current_url = home_url(add_query_arg([], $GLOBALS['wp']->request));
+                            $current_url = user_trailingslashit($current_url);
 
-                                                        <!-- Заголовок "Услуги" -->
-                                                        <div class="category-title text-red-500 font-semibold text-lg">
-                                                                <a href="/intim-uslugi/">Услуги</a>
-                                                        </div>
-
-                                                        <ul class="category-list mt-2 space-y-1 list-none">
-
-                                                                <!-- Секс Услуги -->
-                                                                <li class="list-none">
-                                                                        <div class="flex justify-between items-center cursor-pointer "
-                                                                                data-x-on-click="activeSub = activeSub === 'sex' ? null : 'sex'">
-                                                                                <p class="category-p">Секс Услуги</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span class="text-red-500"
-                                                                                                data-x-text="activeSub === 'sex' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'sex'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/klassicheskii-seks/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Классический
-                                                                                                секс</a></li>
-                                                                                <li><a href="/analnii-seks/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Анальный
-                                                                                                секс</a></li>
-                                                                                <li><a href="/lesbiyskiy-seks/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Секс
-                                                                                                лесбийский</a></li>
-                                                                                <li><a href="/dlya-pari/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Услуги
-                                                                                                семейной паре</a></li>
-                                                                                <li><a href="/gruppovoi-seks/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Секс
-                                                                                                групповой</a></li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <!-- Оральные услуги -->
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'oral' ? null : 'oral'">
-                                                                                <p class="category-p">Оральные услуги
-                                                                                </p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'oral' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'oral'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/minet-v-rezinke/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Минет
-                                                                                                в презервативе</a></li>
-                                                                                <li><a href="/minet-bez-rezinki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Минет
-                                                                                                без резинки</a></li>
-                                                                                <li><a href="/glubokiy-minet/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Минет
-                                                                                                глубокий</a></li>
-                                                                                <li><a href="/kunilingus/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Кунилингус</a>
-                                                                                </li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <!-- Окончания -->
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'finish' ? null : 'finish'">
-                                                                                <p class="category-p">Окончания</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'finish' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'finish'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/okonchanie-na-grud/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Окончание
-                                                                                                на грудь</a></li>
-                                                                                <li><a href="/okonchanie-na-litso/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Окончание
-                                                                                                на лицо</a></li>
-                                                                                <li><a href="/okonchanie-v-rot/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Окончание
-                                                                                                в рот</a></li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'strip' ? null : 'strip'">
-                                                                                <p class="category-p">Стриптиз</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'strip' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'strip'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/striptiz-profi/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Стриптиз
-                                                                                                профи</a></li>
-                                                                                <li><a href="/striptiz-ne-profi/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Стриптиз
-                                                                                                не профи</a></li>
-                                                                                <li><a href="/lesbi-otkrovennoe/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Лесби
-                                                                                                откровенное</a></li>
-                                                                                <li><a href="/lesbi-legkoe/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Лесби-шоу
-                                                                                                легкое</a></li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <!-- БДСМ -->
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'bdsm' ? null : 'bdsm'">
-                                                                                <p class="category-p">БДСМ (Садо-Мазо)
-                                                                                </p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'bdsm' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'bdsm'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/bdsm/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">БДСМ</a>
-                                                                                </li>
-                                                                                <li><a href="/bandag/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Бандаж</a>
-                                                                                </li>
-                                                                                <li><a href="/gospoja/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Госпожа</a>
-                                                                                </li>
-                                                                                <li><a href="/rolevye-igri/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Ролевые
-                                                                                                игры</a></li>
-                                                                                <li><a href="/legkaya-dominaciya/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Легкая
-                                                                                                доминация</a></li>
-                                                                                <li><a href="/porka/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Порка</a>
-                                                                                </li>
-                                                                                <li><a href="/rabinya/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Рабыня</a>
-                                                                                </li>
-                                                                                <li><a href="/fetish/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Фетиш</a>
-                                                                                </li>
-                                                                                <li><a href="/trampling/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Трамплинг</a>
-                                                                                </li>
-                                                                                <li><a href="/strapon/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Страпон</a>
-                                                                                </li>
-                                                                                <li><a href="/anilingus/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Анилингус</a>
-                                                                                </li>
-                                                                                <li><a href="/zolotoi-dogd-vidacha/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Золотой
-                                                                                                дождь выдача</a></li>
-                                                                                <li><a href="/zolotoi-dogd-priem/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Золотой
-                                                                                                дождь прием</a></li>
-                                                                                <li><a href="/kopro-vidacha/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Копро
-                                                                                                (выдача)</a></li>
-                                                                                <li><a href="/fisting-analniy/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Фистинг
-                                                                                                анальный</a></li>
-                                                                                <li><a href="/fisting-klassicheskiy/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Фистинг
-                                                                                                классический</a></li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'massage' ? null : 'massage'">
-                                                                                <p class="category-p">Массаж</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'massage' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'massage'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/klassicheskiy-massag/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Массаж
-                                                                                                Классический</a></li>
-                                                                                <li><a href="/professionalniy-massag/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Массаж
-                                                                                                Профессиональный</a>
-                                                                                </li>
-                                                                                <li><a href="/rasslablyaushii-massag/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Массаж
-                                                                                                Расслабляющий</a></li>
-                                                                                <li><a href="/taiskij-massag/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Массаж
-                                                                                                Тайский</a></li>
-                                                                                <li><a href="/urologicheskii-massag/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Массаж
-                                                                                                Урологический</a></li>
-                                                                                <li><a href="/tochechnij-massag/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Массаж
-                                                                                                Точечный</a></li>
-                                                                                <li><a href="/eroticheskij-massag/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Массаж
-                                                                                                Эротический</a></li>
-                                                                                <li><a href="/vetka-sakuri/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Массаж
-                                                                                                Ветка сакуры</a></li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <!-- Эскорт -->
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-clickdata-x-on-click="activeSub = activeSub === 'escort' ? null : 'escort'">
-                                                                                <p class="category-p">Эскорт</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'escort' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'escort'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/eskort-uslugi/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Эскорт-услуги</a>
-                                                                                </li>
-                                                                        </ul>
-                                                                </li>
-
-                                                        </ul>
-
-                                                </div>
-
-
-
-                                                <!-- Внешность -->
-                                                <div class="category bg-white p-4 rounded-lg border border-red-600 shadow-lg w-72"
-                                                        data-x-data="{ activeSub: null }">
-
-                                                        <div class="category-title text-red-500 font-semibold text-lg">
-                                                                <a href="/prostitutki-po-vneshnosti/">Внешность</a>
-                                                        </div>
-
-                                                        <ul class="category-list mt-2 space-y-1 list-none">
-
-                                                                <!-- Национальность -->
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'nationality' ? null : 'nationality'">
-                                                                                <p class="category-p">Национальность</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'nationality' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'nationality'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/prostitutki-yevropeyki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Европейская</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-aziatki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Азиатская</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-chernokozhiye/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Чернокожие</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-kavkazki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Кавказская</a>
-                                                                                </li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <!-- Боди-арт -->
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'body-art' ? null : 'body-art'">
-                                                                                <p class="category-p">Боди-арт</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'body-art' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'body-art'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/prostitutki-s-tatuirovkami/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Татуировки</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-s-pirsingom/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Пирсинг</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-s-silikonom/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Силиконовая
-                                                                                                грудь</a></li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'intim' ? null : 'intim'">
-                                                                                <p class="category-p">Интимная стрижка
-                                                                                </p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'intim' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'intim'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/prostitutki-polnaya/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Полная
-                                                                                                депиляция</a></li>
-                                                                                <li><a href="/prostitutki-akuratnaya/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Аккуратная
-                                                                                                стрижка</a></li>
-                                                                                <li><a href="/prostitutki-naturalnaya/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Натуральная</a>
-                                                                                </li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <!-- Цвет волос -->
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'hair' ? null : 'hair'">
-                                                                                <p class="category-p">Цвет волос</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'hair' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'hair'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/prostitutki-bryunetki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Брюнетки</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-shatenki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Шатенки</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-ryzhiye/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Рыжие</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-rusyye/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Русые</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-blondinki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Блондинки</a>
-                                                                                </li>
-                                                                        </ul>
-                                                                </li>
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'size' ? null : 'size'">
-                                                                                <p class="category-p">Размер груди</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'size' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'size'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/prostitutki-s-malenkoj-grudiu/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">С
-                                                                                                маленькой грудью</a>
-                                                                                </li>
-                                                                                <li><a href="/prostitutki-s-bolshoj-grudiu/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">С
-                                                                                                большой грудью</a></li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <!-- Возраст -->
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'age' ? null : 'age'">
-                                                                                <p class="category-p">Возраст</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'age' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'age'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/vzroslyye-prostitutki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Взрослые</a>
-                                                                                </li>
-                                                                                <li><a href="/zrelyye-prostitutki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Зрелые</a>
-                                                                                </li>
-                                                                                <li><a href="/molodyye-prostitutki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Молодые</a>
-                                                                                </li>
-                                                                        </ul>
-                                                                </li>
-
-                                                                <!-- Телосложение -->
-                                                                <li>
-                                                                        <div class="flex justify-between items-center cursor-pointer"
-                                                                                data-x-on-click="activeSub = activeSub === 'body' ? null : 'body'">
-                                                                                <p class="category-p">Телосложение</p>
-                                                                                <button
-                                                                                        class="text-red-500 text-xl font-bold focus:outline-none">
-                                                                                        <span
-                                                                                                data-x-text="activeSub === 'body' ? '−' : '+'"></span>
-                                                                                </button>
-                                                                        </div>
-                                                                        <ul data-x-show="activeSub === 'body'"
-                                                                                
-                                                                                class="pl-4 mt-1 space-y-1 list-none">
-                                                                                <li><a href="/muskulistyye-prostitutki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Мускулистые</a>
-                                                                                </li>
-                                                                                <li><a href="/pyshnyye-prostitutki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Пышные</a>
-                                                                                </li>
-                                                                                <li><a href="/sportivnyye-prostitutki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Спортивные</a>
-                                                                                </li>
-                                                                                <li><a href="/khudyye-prostitutki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Худые</a>
-                                                                                </li>
-                                                                                <li><a href="/vysokiye-prostitutki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Высокие</a>
-                                                                                </li>
-                                                                                <li><a href="/nizkiye-prostitutki/"
-                                                                                                class="text-red-400 hover:text-red-500 transition text-[18px]">Низкие</a>
-                                                                                </li>
-                                                                        </ul>
-                                                                </li>
-
-                                                        </ul>
-
-                                                </div>
-
-                                                <!-- Районы -->
-                                                <div
-                                                        class="category bg-white h-full p-4 rounded-lg border border-red-600 shadow-lg w-72">
-                                                        <div class="flex justify-between items-center cursor-pointer">
-                                                                <a href="/prostitutki-po-rayonam/"
-                                                                        class="category-title text-red-500 font-semibold text-lg hover:text-red-400 transition-colors duration-200">Районы</a>
-                                                        </div>
-                                                        <ul data-x-show="open" data-x-transition
-                                                                class="category-list list-none">
-                                                                <li><a href="/prostitutki-tsentralnyy-rayon/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Центральный</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-sovetskiy-rayon/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Советский</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-pervomayskiy-rayon/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Первомайский</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-partizanskiy-rayon/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Партизанский</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-zavodskoy-rayon/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Заводской</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-leninskiy-rayon/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Ленинский</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-oktyabrskiy-rayon/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Октябрьский</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-moskovskiy-rayon/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Московский</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-frunzenskiy-rayon/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Фрунзенский</a>
-                                                                </li>
-                                                        </ul>
-                                                </div>
-
-                                                <!-- Список метро -->
-                                                <div
-                                                        class="category bg-white  p-4 rounded-lg border border-red-600 shadow-lg w-72">
-                                                        <div class="flex justify-between items-center cursor-pointer">
-                                                                <a href="/prostitutki-metro/"
-                                                                        class="category-title text-red-500 font-semibold text-lg hover:text-red-400 transition-colors duration-200">Список
-                                                                        метро</a>
-                                                        </div>
-                                                        <ul data-x-show="open" data-x-transition
-                                                                class="category-list list-none">
-                                                                <li><a href="/prostitutki-metro-malinovka/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Малиновка</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-petrovshchina/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Петровщина</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-mikhalovo/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Михалово</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-grushevka/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Грушевка</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-institut-kultury/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Институт
-                                                                                Культуры</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-ploshchad-lenina/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Площадь
-                                                                                Ленина</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-oktyabrskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Октябрьская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-ploshchad-pobedy/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Площадь
-                                                                                Победы</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-ploshchad-yakuba-kolasa/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Площадь
-                                                                                Якуба
-                                                                                Коласа</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-akademiya-nauk/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Академия
-                                                                                Наук</a></li>
-                                                                <li><a href="/prostitutki-metro-park-chelyuskintsev/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Парк
-                                                                                Челюскинцев</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-moskovskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Московская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-vostok/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Восток</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-borisovskiy-trakt/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Борисовский
-                                                                                тракт</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-uruchye/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Уручье</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-mogilevskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Могилевская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-avtozavodskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Автозаводская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-partizanskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Партизанская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-traktornyy-zavod/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Тракторный
-                                                                                завод</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-proletarskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Пролетарская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-pervomayskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Первомайская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-kupalovskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Купаловская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-nemiga/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Немига</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-frunzenskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Фрунзенская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-molodezhnaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Молодежная</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-pushkinskaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Пушкинская</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-sportivnaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Спортивная</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-kuntsevshchina/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Кунцевщина</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-kamennaya-gorka/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Каменная
-                                                                                горка</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-slutskiy-gostinets/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Слуцкий
-                                                                                Гостинец</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-nemorshanskiy-sad/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Неморшанский
-                                                                                Сад</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-aerodromnaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Аэродромная</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-kovalskaya-sloboda/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Ковальская
-                                                                                Слобода</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-vokzalnaya/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Вокзальная</a>
-                                                                </li>
-                                                                <li><a href="/prostitutki-metro-ploshchad-frantishka-bogushevicha/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Площадь
-                                                                                Франтишка
-                                                                                Богушевича</a></li>
-                                                                <li><a href="/prostitutki-metro-yubileynaya-ploshchad/"
-                                                                                class="text-red-400 hover:text-red-500 text-[18px] transition-colors duration-200">Юбилейная
-                                                                                площадь</a>
-                                                                </li>
-                                                        </ul>
-                                                </div>
+                            foreach ($menu as $key => $item) :
+                            ?>
+                                <li class="relative group">
+                                    <?php if (isset($item['sub_menu'])) : ?>
+                                        <div
+                                            class="group inline-flex items-center px-2 py-1 text-gray-300 hover:text-white transition-colors cursor-pointer select-none">
+                                            <?php nav_icon($key); ?>
+                                            <span class="ml-1"><?php echo esc_html($item['label']); ?></span>
                                         </div>
-                                </div>
 
-                        </div>
+                                        <ul
+                                            class="sub-menu absolute left-0 hidden mt-2 bg-[#212529] border border-gray-800 rounded-lg shadow-lg group-hover:block z-50">
+                                            <?php foreach ($item['sub_menu'] as $sub_key => $sub_item) :
+                                                $link = user_trailingslashit(home_url('/' . trim($sub_item[1], '/')));
+                                                $is_active = ($link === $current_url);
+                                            ?>
+                                                <li>
+                                                    <?php if ($is_active) : ?>
+                                                        <span class="block px-4 py-2 text-white bg-gray-800 cursor-default font-medium">
+                                                            <?php echo esc_html($sub_item[0]); ?>
+                                                        </span>
+                                                    <?php else : ?>
+                                                        <a href="<?php echo esc_url($link); ?>"
+                                                            class="block px-4 py-2 text-gray-300 hover:text-white transition-colors">
+                                                            <?php echo esc_html($sub_item[0]); ?>
+                                                        </a>
+                                                    <?php endif; ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php else :
+                                        $link = user_trailingslashit(home_url('/' . trim($item[1], '/')));
+                                        $is_active = ($link === $current_url);
+                                    ?>
+                                        <?php if ($is_active) : ?>
+                                            <span
+                                                class="inline-flex items-center px-2 py-1 text-white font-medium cursor-default bg-gray-800 rounded-md">
+                                                <?php nav_icon($key); ?>
+                                                <span class="ml-1"><?php echo esc_html($item[0]); ?></span>
+                                            </span>
+                                        <?php else : ?>
+                                            <a href="<?php echo esc_url($link); ?>"
+                                                class="inline-flex items-center px-2 py-1 text-gray-300 hover:text-white transition-colors">
+                                                <?php nav_icon($key); ?>
+                                                <span class="ml-1"><?php echo esc_html($item[0]); ?></span>
+                                            </a>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </nav>
+                <?php endif; ?>
+
+                <div class="hidden md:flex items-center gap-3">
+                    <button type="button" data-auth-btn-login
+                        class="inline-flex items-center h-10 px-3 rounded-lg border border-gray-700 text-gray-200 hover:text-white hover:border-gray-500 transition"
+                        aria-label="Войти" title="Войти">
+                        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M13 12H3" />
+                            <path d="M8 7l-5 5 5 5" />
+                            <path d="M21 3h-6v18h6" />
+                        </svg>
+                        Войти
+                    </button>
+
+                    <button type="button" data-auth-btn-add
+                        class="inline-flex items-center h-10 px-4 rounded-full bg-[#ff2d72] text-white hover:opacity-90 transition"
+                        aria-label="Добавить анкету" title="Добавить анкету">
+                        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                        Добавить анкету
+                    </button>
                 </div>
-        </header>
+
+                <div class="md:hidden">
+                    <button id="burger-btn"
+                        class="inline-flex items-center justify-center w-10 h-10 text-gray-300 hover:text-white"
+                        aria-label="Открыть меню" aria-expanded="false">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="white" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="drawer-overlay"
+            class="fixed inset-0 bg-black/60 opacity-0 pointer-events-none transition-opacity md:hidden z-40"></div>
+        <?php if (wp_is_mobile()) : ?>
+            <nav id="mobile-drawer"
+                class="fixed inset-y-0 right-0 h-[100vh] hidden w-screen max-w-xs bg-[#212529] text-gray-200 border-l border-gray-800 translate-x-full transition-transform md:hidden flex flex-col z-50"
+                aria-label="Мобильное меню">
+                <div class="h-16 flex justify-between items-center px-4 border-b border-gray-800 shrink-0">
+                    <button type="button" class="p-2 -mr-2 text-gray-400 hover:text-white" aria-label="Закрыть"
+                        data-close-drawer>
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="px-2 py-2 overflow-y-auto">
+                    <ul class="flex flex-col">
+                        <?php
+                        // Для мобильного меню тоже делаем проверку активной ссылки
+                        $current_url_mobile = home_url(add_query_arg([], $GLOBALS['wp']->request));
+                        $current_url_mobile = user_trailingslashit($current_url_mobile);
+
+                        foreach ($menu as $key => $item) :
+                        ?>
+                            <?php if (isset($item['sub_menu'])) : ?>
+                                <li class="border-b border-gray-800 last:border-b-0">
+                                    <button
+                                        class="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800/50 transition-colors rounded-md w-full">
+                                        <?php nav_icon($key, 'w-5 h-5 mr-3 shrink-0'); ?>
+                                        <span class="flex-1 text-left"><?php echo esc_html($item['label']); ?></span>
+                                        <svg class="w-5 h-5 ml-auto text-gray-300 transition-transform transform group-hover:rotate-180"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-width="2" d="M7 10l5 5 5-5H7z" />
+                                        </svg>
+                                    </button>
+
+                                    <ul class="sub-menu-mobile hidden pl-6">
+                                        <?php foreach ($item['sub_menu'] as $sub_key => $sub_item) :
+                                            $link = user_trailingslashit(home_url('/' . trim($sub_item[1], '/')));
+                                            $is_active = ($link === $current_url_mobile);
+                                        ?>
+                                            <li>
+                                                <?php if ($is_active) : ?>
+                                                    <span
+                                                        class="block px-3 py-2 text-white bg-gray-800/80 rounded-md font-medium cursor-default">
+                                                        <?php echo esc_html($sub_item[0]); ?>
+                                                    </span>
+                                                <?php else : ?>
+                                                    <a href="<?php echo esc_url($link); ?>"
+                                                        class="block px-3 py-2 text-gray-300 hover:text-white transition-colors">
+                                                        <?php echo esc_html($sub_item[0]); ?>
+                                                    </a>
+                                                <?php endif; ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </li>
+                            <?php else :
+                                $link = user_trailingslashit(home_url('/' . trim($item[1], '/')));
+                                $is_active = ($link === $current_url_mobile);
+                            ?>
+                                <li class="border-b border-gray-800 last:border-b-0">
+                                    <?php if ($is_active) : ?>
+                                        <span
+                                            class="flex items-center px-3 py-3 text-white bg-gray-800/80 rounded-md font-medium cursor-default">
+                                            <?php nav_icon($key, 'w-5 h-5 mr-3 shrink-0'); ?>
+                                            <span><?php echo esc_html($item[0]); ?></span>
+                                        </span>
+                                    <?php else : ?>
+                                        <a href="<?php echo esc_url($link); ?>"
+                                            class="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800/50 transition-colors rounded-md">
+                                            <?php nav_icon($key, 'w-5 h-5 mr-3 shrink-0'); ?>
+                                            <span><?php echo esc_html($item[0]); ?></span>
+                                        </a>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <div class="mt-auto p-4 border-t border-gray-800">
+                        <div class="flex flex-col gap-3">
+                            <button type="button" data-auth-btn-login
+                                class="w-full inline-flex justify-center items-center h-11 rounded-lg border border-gray-700 text-gray-200 hover:text-white hover:border-gray-500 transition"
+                                aria-label="Войти" title="Войти">
+                                <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" aria-hidden="true">
+                                    <path d="M13 12H3" />
+                                    <path d="M8 7l-5 5 5 5" />
+                                    <path d="M21 3h-6v18h6" />
+                                </svg>
+                                Войти
+                            </button>
+
+                            <button type="button" data-auth-btn-add
+                                class="w-full inline-flex justify-center items-center h-11 rounded-full bg-[#ff2d72] text-white font-medium hover:opacity-90 transition"
+                                aria-label="Добавить анкету" title="Добавить анкету">
+                                <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" aria-hidden="true">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg>
+                                Добавить анкету
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        <?php endif; ?>
+    </header>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ваш код мобильного дропдауна оставляем как есть
+            (function initMobileDropdown() {
+                const dropdownButtons = document.querySelectorAll('#mobile-drawer button');
+                dropdownButtons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const subMenu = btn.nextElementSibling;
+                        const icon = btn.querySelector('svg');
+                        if (!subMenu) return;
+
+                        const isOpen = !subMenu.classList.contains('hidden');
+
+                        document.querySelectorAll('#mobile-drawer .sub-menu-mobile').forEach(
+                            ul => {
+                                if (ul !== subMenu) {
+                                    ul.classList.add('hidden');
+                                    const otherIcon = ul.previousElementSibling
+                                        ?.querySelector('svg');
+                                    if (otherIcon) otherIcon.classList.remove('rotate-180');
+                                }
+                            });
+
+                        if (isOpen) {
+                            subMenu.classList.add('hidden');
+                            if (icon) icon.classList.remove('rotate-180');
+                        } else {
+                            subMenu.classList.remove('hidden');
+                            if (icon) icon.classList.add('rotate-180');
+                        }
+                    });
+                });
+            })();
+
+            // ====== логика хедера и хлебных крошек ======
+            const header = document.querySelector('header');
+            const breadcrumbs = document.querySelector('.breadcrumbs-wrapper');
+            if (!header || !breadcrumbs) return;
+
+            // базовые стили через JS
+            Object.assign(header.style, {
+                position: 'sticky',
+                top: '0',
+                zIndex: '100',
+                transition: 'transform 0.4s ease, opacity 0.3s ease',
+                willChange: 'transform, opacity'
+            });
+            Object.assign(breadcrumbs.style, {
+                position: 'sticky',
+                zIndex: '50',
+                transition: 'top 0.25s ease'
+            });
+
+            let lastScrollY = window.scrollY;
+            let headerHidden = false;
+
+            function getHeaderHeight() {
+                // учитываем текущую трансформацию
+                if (headerHidden) return 0;
+                const rect = header.getBoundingClientRect();
+                return Math.max(0, rect.height);
+            }
+
+            function applyOffsets() {
+                const h = getHeaderHeight();
+                breadcrumbs.style.top = h + 'px';
+            }
+
+            // первичная установка
+            applyOffsets();
+
+            // пересчёт при ресайзе/ориентации/шрифтах
+            const ro = new ResizeObserver(applyOffsets);
+            ro.observe(header);
+            window.addEventListener('resize', applyOffsets);
+
+            // показать/скрыть хедер по направлению скролла
+            function onScroll() {
+                const y = window.scrollY;
+
+                // вниз — прячем, вверх — показываем
+                if (y > lastScrollY && y > 80 && !headerHidden) {
+                    headerHidden = true;
+                    header.style.transform = 'translateY(-100%)';
+                    header.style.opacity = '0';
+                    applyOffsets(); // крошки встают к верху
+                } else if ((y < lastScrollY || y <= 0) && headerHidden) {
+                    headerHidden = false;
+                    header.style.transform = 'translateY(0)';
+                    header.style.opacity = '1';
+                    applyOffsets(); // крошки под хедер
+                }
+
+                lastScrollY = y;
+            }
+
+            // rAF-троттлинг
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        onScroll();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.querySelector('header');
+            const breadcrumbs = document.querySelector('.breadcrumbs-wrapper');
+            if (!header || !breadcrumbs) return;
+
+            let lastScrollY = window.scrollY;
+            let ticking = false;
+            let hidden = false;
+
+            // базовые стили
+            header.style.transition = 'transform 0.4s ease, opacity 0.3s ease';
+            header.style.willChange = 'transform, opacity';
+            header.style.zIndex = '100'; // хедер всегда выше
+            breadcrumbs.style.transition = 'top 0.4s ease';
+            breadcrumbs.style.zIndex = '50'; // крошки под хедером
+
+            function onScroll() {
+                const currentScroll = window.scrollY;
+
+                // прокрутка вниз — прячем хедер
+                if (currentScroll > lastScrollY && currentScroll > 80 && !hidden) {
+                    header.style.transform = 'translateY(-100%)';
+                    header.style.opacity = '0';
+                    hidden = true;
+                }
+                // прокрутка вверх — показываем хедер
+                else if ((currentScroll < lastScrollY || currentScroll <= 0) && hidden) {
+                    header.style.transform = 'translateY(0)';
+                    header.style.opacity = '1';
+                    hidden = false;
+                }
+
+                lastScrollY = currentScroll;
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(onScroll);
+                    ticking = true;
+                }
+            });
+        });
+    </script>
+
+    <?php get_template_part('components/breadcrumbs'); ?>
+
+    <!-- СКРИПТ ДЛЯ РАБОТЫ БУРГЕР-МЕНЮ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const burgerBtn = document.getElementById('burger-btn');
+            const mobileDrawer = document.getElementById('mobile-drawer');
+            const drawerOverlay = document.getElementById('drawer-overlay');
+            const closeButtons = document.querySelectorAll('[data-close-drawer]');
+            const TRANSITION_MS = 300; // подгоняй под duration в CSS (Tailwind duration-300)
+
+            if (!mobileDrawer) return;
+
+            function openDrawer() {
+                // показать drawer
+                mobileDrawer.classList.remove('hidden'); // сделать видимым
+                // форсим reflow, чтобы анимация translate сработала
+                void mobileDrawer.offsetWidth;
+                mobileDrawer.classList.remove('translate-x-full');
+
+                // показать оверлей (если есть)
+                if (drawerOverlay) {
+                    drawerOverlay.classList.remove('hidden', 'pointer-events-none', 'opacity-0');
+                }
+
+                document.body.style.overflow = 'hidden'; // блокируем скролл
+                if (burgerBtn) burgerBtn.setAttribute('aria-expanded', 'true');
+            }
+
+            function closeDrawer() {
+                // запускаем анимацию закрытия
+                mobileDrawer.classList.add('translate-x-full');
+
+                if (drawerOverlay) {
+                    drawerOverlay.classList.add('opacity-0', 'pointer-events-none');
+                }
+
+                // по окончании анимации скрываем элемент классом hidden
+                setTimeout(() => {
+                    mobileDrawer.classList.add('hidden');
+                    if (drawerOverlay) drawerOverlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    if (burgerBtn) burgerBtn.setAttribute('aria-expanded', 'false');
+                }, TRANSITION_MS);
+            }
+
+            // навешиваем обработчики
+            if (burgerBtn) burgerBtn.addEventListener('click', openDrawer);
+            if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+            closeButtons.forEach(btn => btn.addEventListener('click', closeDrawer));
+
+            // ESC для закрытия
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeDrawer();
+            });
+        });
+    </script>

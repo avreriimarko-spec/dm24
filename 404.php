@@ -1,45 +1,75 @@
-<!-- 
+<!--
 Template Name: 404
 -->
-
 <?php
-header("HTTP/1.1 404 Not Found");
+status_header(404);
+nocache_headers();
+get_header();
+?>
 
- get_header(); ?>
+<main class="px-4 py-16 md:py-24 bg-white text-black relative overflow-hidden">
 
-<main class="w-full md:w-2/3 mx-auto mt-4 text-center py-12 px-6 bg-white rounded-lg shadow-xl border border-red-700">
-    <h1 class="text-[32px] md:text-[50px] font-bold text-red-500 drop-shadow-lg">
-        404: Страница не найдена
-    </h1>
-    <p class="mt-4 text-lg text-red-500">К сожалению, мы не смогли найти страницу, которую вы искали.</p>
-    <p class="mt-2 text-lg text-red-500">
-        Возможно, она была удалена, её адрес изменился, или она никогда не существовала.
-    </p>
+    <!-- декоративные пятна -->
+    <span class="pointer-events-none absolute -top-24 -left-24 w-72 h-72 rounded-full blur-[70px] opacity-25"
+        style="background:#ff2d72;"></span>
+    <span class="pointer-events-none absolute -bottom-28 -right-20 w-80 h-80 rounded-full blur-[90px] opacity-20"
+        style="background:#ff2d72;"></span>
 
-    <h3 class="mt-8 text-xl font-semibold text-red-500">Что вы можете сделать:</h3>
-    <ul class="mt-4 list-disc list-inside text-lg text-red-500 space-y-2">
-        <li>Проверьте URL на наличие опечаток.</li>
-        <li>
-            <a href="/" class="text-red-500 hover:text-red-400 underline transition duration-300">
-                Вернитесь на главную страницу
-            </a> и попробуйте найти нужную информацию оттуда.
-        </li>
+    <div class="max-w-[980px] mx-auto relative z-10">
 
-    </ul>
+        <!-- Заголовок -->
+        <header class="text-center select-none">
+            <div class="inline-flex items-center justify-center">
+                <span class="relative inline-block">
+                    <span class="absolute -inset-4 rounded-[28px] bg-[rgba(255,45,114,.15)] blur-xl"></span>
+                    <span class="relative text-[70px] md:text-[110px] font-extrabold leading-none tracking-tighter
+                       bg-clip-text text-transparent"
+                        style="background-image:linear-gradient(180deg,#ff2d72 0%,#c21058 100%);">
+                        404
+                    </span>
+                </span>
+            </div>
 
-    <p class="mt-6">
-        <a href="/sitemap/"
-            class="inline-block bg-red-600 text-white py-3 px-8 rounded-lg shadow-md hover:bg-red-500 transition duration-300">
-            HTML-Sitemap
-        </a>
-    </p>
+            <h1 class="mt-4 md:mt-5 text-[26px] md:text-[34px] font-extrabold tracking-tight">
+                Страница не найдена
+            </h1>
+            <p class="mt-3 text-neutral-700 max-w-[680px] mx-auto">
+                Похоже, ссылка устарела, была удалена или вы опечатались в адресе.
+            </p>
+        </header>
 
-    <p class="mt-8 text-red-500">
-        Мы приносим извинения за неудобства и благодарим вас за понимание.
-    </p>
+        <!-- Действия -->
+        <section class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <a href="<?php echo esc_url(home_url('/')); ?>"
+                class="text-center px-4 py-3 rounded-xl border border-[#ff2d72] bg-[#ff2d72] text-white
+                hover:bg-white hover:text-[#ff2d72] transition active:scale-[.99]">
+                На главную
+            </a>
+
+            <button type="button"
+                onclick="history.back()"
+                class="text-center px-4 py-3 rounded-xl border border-neutral-300 bg-white text-black
+                     hover:border-[#ff2d72] hover:text-[#ff2d72] transition active:scale-[.99]">
+                Назад
+            </button>
+        </section>
+
+        <!-- 🔥 Дополнительные полезные ссылки -->
+        <section class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <a href="<?php echo esc_url(home_url('/sitemap')); ?>"
+                class="text-center px-4 py-3 rounded-xl border border-neutral-300 bg-white text-black
+                hover:border-[#ff2d72] hover:text-[#ff2d72] transition active:scale-[.99]">
+                Карта сайта
+            </a>
+
+            <a href="<?php echo esc_url(home_url('/vse-uslugi')); ?>"
+                class="text-center px-4 py-3 rounded-xl border border-neutral-300 bg-white text-black
+                hover:border-[#ff2d72] hover:text-[#ff2d72] transition active:scale-[.99]">
+                Все услуги
+            </a>
+        </section>
+
+    </div>
 </main>
-
-
-
 
 <?php get_footer(); ?>
