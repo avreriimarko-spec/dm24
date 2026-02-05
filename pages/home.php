@@ -873,51 +873,54 @@ document.addEventListener("DOMContentLoaded", function () {
         <!-- Модели + заголовок/описание справа -->
         <div class="flex-1 min-w-0">
 
-            <div class="w-full lg:w-auto flex items-center flex-col lg:flex-row justify-between gap-2">
-                <!-- КНОПКА ФИЛЬТРОВ: только мобилка -->
-                <button id="mf-open" type="button"
-                    class="inline-flex items-center gap-2 px-3 py-2 rounded-[10px] border border-neutral-300 bg-white text-black"
-                    aria-label="Открыть фильтры">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <line x1="4" y1="7" x2="16" y2="7" />
-                        <circle cx="19" cy="7" r="2" />
-                        <line x1="8" y1="17" x2="20" y2="17" />
-                        <circle cx="6" cy="17" r="2" />
-                    </svg>
-                    <span class="text-[15px] font-semibold">Фильтры</span>
-                </button>
+            <div id="filter-sorting-area" class="w-full flex flex-col gap-6">
+                <?php
+                    $h2_models = get_query_var('auto_h2') ?: ($GLOBALS['auto_h2'] ?? '');
+                    if (!empty($h2_models)): ?>
+                        <h2 class="text-2xl md:text-3xl font-bold tracking-tight break-words [hyphens:auto]" style="font-family: 'Calibri', sans-serif;">
+                            <?= esc_html($h2_models) ?>
+                        </h2>
+                    <?php else: ?>
+                        <div></div>
+                    <?php endif; ?>
 
-                <!-- СОРТИРОВКА -->
-                <label for="mf-sort" class="sr-only">Сортировка</label>
-                <select id="mf-sort"
-                    class="h-9 min-w-[200px] lg:min-w-[200px] w-[calc(100%-120px)] lg:w-auto px-3 bg-white border border-neutral-300 rounded-[10px]
-                       text-sm leading-none focus:outline-none focus:ring-1 focus:ring-black focus:border-black">
-                    <option value="date_desc" selected>Дата добавления — новые</option>
-                    <option value="date_asc">Дата добавления — старые</option>
-                    <option value="price_asc">Цена — дешёвые</option>
-                    <option value="price_desc">Цена — дорогие</option>
-                </select>
+                <?php echo render_model_filter(); ?>
+                
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 self-end md:self-auto">
+                        <label for="mf-sort-trigger" class="text-sm font-bold uppercase tracking-wide text-black-500" style="font-family: 'Arial', sans-serif;">Сортировка:</label>
+                        
+                        <div class="relative mf-dropdown-container" id="mf-sort-container" style="width: auto;">
+                            <button type="button" id="mf-sort-trigger"
+                                class="mf-dropdown-trigger h-10 px-2 flex items-center justify-between border border-neutral-200 rounded-md bg-white hover:border-neutral-400 transition-colors text-left font-bold"
+                                style="min-width: 260px; font-family: 'Arial', sans-serif;">
+                                <span class="text-[14px] text-black font-medium truncate mf-trigger-label" style="font-family: 'Arial', sans-serif;">Дата добавления — новые</span>
+                                <svg class="w-5 h-5 text-neutral-300 pointer-events-none flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+
+                            <div class="mf-dropdown-content absolute left-0 right-0 top-full mt-1 z-[70] hidden bg-white border border-neutral-200 rounded-md shadow-xl max-h-60 overflow-y-auto p-1 space-y-1">
+                                <div class="mf-sort-item mf-dropdown-item is-active flex items-center px-2 py-2 rounded-md cursor-pointer transition-all duration-200 hover:bg-neutral-50 group" data-value="date_desc">
+                                    <span class="text-[11px] font-bold text-neutral-700 group-hover:text-neutral-900 transition-colors" style="font-family: 'Arial', sans-serif;">Дата добавления — новые</span>
+                                </div>
+                                <div class="mf-sort-item mf-dropdown-item flex items-center px-2 py-2 rounded-md cursor-pointer transition-all duration-200 hover:bg-neutral-50 group" data-value="date_asc">
+                                    <span class="text-[11px] font-bold text-neutral-700 group-hover:text-neutral-900 transition-colors" style="font-family: 'Arial', sans-serif;">Дата добавления — старые</span>
+                                </div>
+                                <div class="mf-sort-item mf-dropdown-item flex items-center px-2 py-2 rounded-md cursor-pointer transition-all duration-200 hover:bg-neutral-50 group" data-value="price_asc">
+                                    <span class="text-[11px] font-bold text-neutral-700 group-hover:text-neutral-900 transition-colors" style="font-family: 'Arial', sans-serif;">Цена — дешёвые</span>
+                                </div>
+                                <div class="mf-sort-item mf-dropdown-item flex items-center px-2 py-2 rounded-md cursor-pointer transition-all duration-200 hover:bg-neutral-50 group" data-value="price_desc">
+                                    <span class="text-[11px] font-bold text-neutral-700 group-hover:text-neutral-900 transition-colors" style="font-family: 'Arial', sans-serif;">Цена — дорогие</span>
+                                </div>
+                            </div>
+                            <input type="hidden" id="mf-sort" name="sort" value="date_desc">
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <?php
-            // Берём H2, который посчитал компонент auto-h1.php
-            $h2_models = get_query_var('auto_h2');
-
-            if (empty($h2_models) && !empty($GLOBALS['auto_h2'])) {
-                $h2_models = $GLOBALS['auto_h2'];
-            }
-            ?>
-
-            <?php if (!empty($h2_models)): ?>
-                <h2 class="text-2xl md:text-3xl font-bold tracking-tight mt-6
-               break-words [hyphens:auto]">
-                    <?= esc_html($h2_models) ?>
-                </h2>
-            <?php endif; ?>
-
-            <?php echo render_model_filter(); ?>
-
-            <div id="ajax-models" class="mt-6">
+            <div id="ajax-models" class="mt-8">
                 <?php echo render_model_grid_with_filters(); ?>
             </div>
         </div>
