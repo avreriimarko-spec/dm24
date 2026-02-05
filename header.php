@@ -252,7 +252,6 @@ $GLOBALS['seo_descr'] = $descr;
      */
 $menu = [
     'escort_almaty' => ['Эскорт', '/eskort-almaty'], // Добавлен слэш для корректной работы из любого раздела
-    // 'kizdar-almaty' => ['Кыздар нет', '/kizdar-almaty'],
     
     // Выпадающий список "Доступность"
     'accessibility' => [
@@ -272,11 +271,8 @@ $menu = [
         ]
     ],
 
-    // 'video'      => ['С Видео', '/s-video'],   
-    // 'new'        => ['Новые', '/novye'],
-    // 'favorites'  => ['Избранные', '/favorites'],
+    'favorites'  => ['Избранные', '/favorites'],
     'individual' => ['Индивидуалки', '/individualki-almaty'],
-    // 'soderzhanki'=> ['Содержанки', '/soderzhanki-almaty']
 ];
 
     /** * Функция вывода иконок меню
@@ -286,27 +282,19 @@ $menu = [
         // файл иконки по ключу
         $icons = [
         'escort_almaty' => 'like.png',
-        // 'kizdar-almaty' => 'kizdar-almaty.png',
         'accessibility' => 'home.png',
         'price_filter'  => 'dollar-symbol.png',
-        // 'video'         => 'play-button.png',
-        // 'new'           => 'new.png',
-        // 'favorites'     => 'bookmarks.png',
+        'favorites'     => 'bookmarks.png',
         'individual'    => 'indi.png',
-        // 'soderzhanki'   => 'female-and-male-shapes-silhouettes.png',
         'default'       => 'menu.webp',
     ];
 
     $alts = [
         'escort_almaty' => 'Эскорт',
-        // 'kizdar-almaty' => 'Кыздар нет',
         'accessibility' => 'Доступность',
         'price_filter'  => 'Цена',
-        // 'video'         => 'С видео',
-        // 'new'           => 'Новые',
-        // 'favorites'     => 'Избранные',
+        'favorites'     => 'Избранные',
         'individual'    => 'Индивидуалки',
-        // 'soderzhanki'   => 'Содержанки',
         'default'       => 'Меню',
     ];
         $file = $icons[$key] ?? $icons['default'];

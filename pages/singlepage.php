@@ -8,6 +8,7 @@ get_header();
 $id   = get_the_ID();
 $name = function_exists('get_field') ? (get_field('name', $id) ?: get_the_title($id)) : get_the_title($id);
 $ACCENT = '#e1315a';
+$date_published = get_the_date('d.m.Y', $id);
 
 /* ================== ACF ================== */
 $gallery    = (array)(function_exists('get_field') ? (get_field('photo',  $id) ?: []) : []);
@@ -504,6 +505,7 @@ $lb_items = array_merge(
                 <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             <span>Проверено: ' . esc_html($verify_fmt) . '</span>
+            <span>Опубликовано: ' . esc_html($date_published) . '</span>
           </div>';
                     }
 

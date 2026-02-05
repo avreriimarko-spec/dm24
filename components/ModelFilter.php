@@ -138,11 +138,11 @@ function render_model_filter(): string
             background-color: #3d5b77ff;
         }
         #mf-apply {
-            background-color: #aa2073ff;
+            background-color: #ff2d72;
             color: white;
         }
         #mf-apply:hover {
-            background-color: #6f1a4dff;
+            background-color: #ff4d88;
         }
 
         /* Utilities */
