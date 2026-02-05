@@ -7,7 +7,7 @@
   cursor: pointer;
   color: #141414;
   padding: 10px;
-  font-family: 'Calibri', sans-serif;
+  font-family: 'Libertinus', sans-serif;
 }
 
 .anketa-card__link {
@@ -184,7 +184,8 @@
 
 /* #endregion */
 
-.anketa-card__district, .anketa-card__metro {
+.anketa-card__district,
+.anketa-card__metro {
   font-size: 14px;
   font-weight: bold;
 }

@@ -90,7 +90,7 @@ function render_model_filter(): string
                 } ?>
             </div>
 
-            <div class="w-full md:w-auto shrink-0 flex flex-nowrap items-center mt-4 md:mt-0" style="gap: 7px;">
+            <div class="w-full md:w-auto shrink-0 flex flex-nowrap items-center" style="gap: 7px;">
                 <button type="button" id="mf-reset" 
                     class="flex-1 md:flex-none h-10 px-2 rounded-md font-bold transition uppercase text-xs tracking-wide whitespace-nowrap text-center">
                     Сбросить
@@ -104,18 +104,6 @@ function render_model_filter(): string
     </div>
 
     <style>
-        #mf-static-container {
-            font-family: 'Arial', sans-serif;
-        }
-        
-        #models-filter button,
-        #models-filter span,
-        #models-filter input,
-        .mf-dropdown-trigger,
-        .mf-dropdown-content {
-            font-family: 'Arial', sans-serif;
-        }
-        
         /* Dropdown Container Width */
         .mf-dropdown-container {
             width: 100%;
