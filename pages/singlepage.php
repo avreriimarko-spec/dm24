@@ -714,11 +714,6 @@ $lb_items = array_merge(
 
             <?php endif; ?>
 
-            <!-- Метро и районы -->
-            
-
-
-
             <!-- ===== Отзывы ===== -->
             <section class="mt-10" aria-label="Отзывы о модели">
                 <?php
