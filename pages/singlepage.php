@@ -38,6 +38,95 @@ $hair      = wp_get_post_terms($id, 'cvet-volos_tax',   ['fields' => 'names']) ?
 $nation    = wp_get_post_terms($id, 'nationalnost_tax', ['fields' => 'names']) ?: [];
 $metro     = wp_get_post_terms($id, 'metro_tax',        ['fields' => 'names']) ?: [];
 
+/* ================== услуги модели ================== */
+$services_raw = function_exists('get_field') ? get_field('services', $id) : null;
+if (empty($services_raw)) {
+    $services_raw = get_post_meta($id, 'services', true);
+}
+
+$services_available_ids = [];
+$services_available_slugs = [];
+$services_available_names = [];
+$services_lower = static function ($value) {
+    $value = trim((string)$value);
+    if ($value === '') return '';
+    return function_exists('mb_strtolower') ? mb_strtolower($value) : strtolower($value);
+};
+$services_add_term = static function ($term) use (&$services_available_ids, &$services_available_slugs, &$services_available_names, $services_lower) {
+    if (!$term || is_wp_error($term)) return;
+    $services_available_ids[(int)$term->term_id] = true;
+    if (!empty($term->slug)) $services_available_slugs[$services_lower($term->slug)] = true;
+    if (!empty($term->name)) $services_available_names[$services_lower($term->name)] = true;
+};
+$services_add_name = static function ($name) use (&$services_available_names, $services_lower, $services_add_term) {
+    $name = trim((string)$name);
+    if ($name === '') return;
+    if (is_numeric($name)) {
+        $term = get_term((int)$name, 'uslugi_tax');
+        if ($term && !is_wp_error($term)) {
+            $services_add_term($term);
+            return;
+        }
+    }
+    $services_available_names[$services_lower($name)] = true;
+};
+
+if (!empty($services_raw)) {
+    if (is_string($services_raw)) {
+        $parts = preg_split('~[\r\n,;]+~u', $services_raw, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        foreach ($parts as $part) $services_add_name($part);
+    } elseif (is_array($services_raw)) {
+        foreach ($services_raw as $item) {
+            if (is_object($item) && isset($item->term_id)) {
+                $services_add_term($item);
+            } elseif (is_array($item)) {
+                if (!empty($item['term_id']) || !empty($item['id'])) {
+                    $term_id = (int)($item['term_id'] ?? $item['id']);
+                    $services_add_term(get_term($term_id, 'uslugi_tax'));
+                } elseif (!empty($item['slug'])) {
+                    $services_available_slugs[$services_lower($item['slug'])] = true;
+                } elseif (!empty($item['name'])) {
+                    $services_add_name($item['name']);
+                }
+            } elseif (is_numeric($item)) {
+                $services_add_term(get_term((int)$item, 'uslugi_tax'));
+            } elseif (is_string($item)) {
+                $services_add_name($item);
+            }
+        }
+    }
+}
+
+if (empty($services_available_ids) && empty($services_available_slugs) && empty($services_available_names)) {
+    $service_terms = get_the_terms($id, 'uslugi_tax');
+    if ($service_terms && !is_wp_error($service_terms)) {
+        foreach ($service_terms as $term) $services_add_term($term);
+    }
+}
+
+$services_terms_all = [];
+if (taxonomy_exists('uslugi_tax')) {
+    $terms = get_terms([
+        'taxonomy'   => 'uslugi_tax',
+        'hide_empty' => false,
+        'orderby'    => 'term_order',
+        'order'      => 'ASC',
+    ]);
+
+    if (!is_wp_error($terms) && !empty($terms)) {
+        $has_children = [];
+        foreach ($terms as $term) {
+            if ((int)$term->parent !== 0) {
+                $has_children[(int)$term->parent] = true;
+            }
+        }
+        $leaf_terms = array_values(array_filter($terms, static function ($term) use ($has_children) {
+            return empty($has_children[(int)$term->term_id]);
+        }));
+        $services_terms_all = !empty($leaf_terms) ? $leaf_terms : $terms;
+    }
+}
+
 
 $age    = trim((string)(function_exists('get_field') ? get_field('age',    $id) : ''));
 $height = trim((string)(function_exists('get_field') ? get_field('height', $id) : ''));
@@ -812,6 +901,75 @@ $lb_items = array_merge(
                     </a>
                 <?php } ?>
             </div>
+
+            <?php if (!empty($services_terms_all)) : ?>
+                <!-- Услуги -->
+                <section class="mt-8 w-full" aria-label="Услуги модели">
+                    <style>
+                        .services-grid {
+                            display: grid;
+                            gap: 10px 24px;
+                            grid-template-columns: repeat(1, minmax(0, 1fr));
+                            list-style: none;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        @media (min-width: 768px) {
+                            .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+                        }
+                        @media (min-width: 1024px) {
+                            .services-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+                        }
+                        .service-item {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            font-size: 16px;
+                            color: #404040;
+                        }
+                        .service-item .service-icon svg {
+                            width: 16px;
+                            height: 16px;
+                        }
+                        .service-item.is-missing { color: #9ca3af; }
+                        .service-item.is-missing .service-name {
+                            text-decoration: line-through;
+                            text-decoration-thickness: 1px;
+                            text-decoration-color: #d1d5db;
+                        }
+                    </style>
+
+                    <h2 class="text-2xl font-semibold text-neutral-900 mb-4">Услуги</h2>
+                    <ul class="services-grid">
+                        <?php foreach ($services_terms_all as $term) :
+                            $service_name = $term->name ?? '';
+                            $service_slug = $term->slug ?? '';
+                            $service_id = (int)($term->term_id ?? 0);
+                            $service_key = $service_name !== '' ? $services_lower($service_name) : '';
+                            $is_available = (
+                                ($service_id && isset($services_available_ids[$service_id])) ||
+                                ($service_slug && isset($services_available_slugs[$services_lower($service_slug)])) ||
+                                ($service_key && isset($services_available_names[$service_key]))
+                            );
+                        ?>
+                            <li class="service-item <?php echo $is_available ? 'is-available' : 'is-missing'; ?>">
+                                <span class="service-icon" aria-hidden="true">
+                                    <?php if ($is_available) : ?>
+                                        <svg viewBox="0 0 20 20" fill="none">
+                                            <path d="M4 10.5l4 4 8-9" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    <?php else : ?>
+                                        <svg viewBox="0 0 20 20" fill="none">
+                                            <path d="M5 5l10 10M15 5L5 15" stroke="#ff2d72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    <?php endif; ?>
+                                </span>
+                                <span class="service-name"><?php echo esc_html($service_name); ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </section>
+            <?php endif; ?>
 
             <!-- ===== Отзывы ===== -->
             <section class="mt-10" aria-label="Отзывы о модели">
