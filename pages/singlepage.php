@@ -976,7 +976,7 @@ $lb_items = array_merge(
 
         <style>
             @media (min-width: 1024px) {
-                .reviews-right { grid-column: 6 / -1; }
+                .reviews-full { grid-column: span 12; }
             }
 
             .model-reviews__header {
@@ -984,6 +984,39 @@ $lb_items = array_merge(
                 align-items: center;
                 justify-content: space-between;
                 gap: 16px;
+            }
+
+            .model-reviews__layout {
+                display: grid;
+                gap: 24px;
+                align-items: start;
+                max-width: 100%;
+            }
+
+            @media (min-width: 1024px) {
+                .model-reviews__layout {
+                    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                }
+            }
+
+            .model-reviews__map {
+                border-radius: 16px;
+                overflow: hidden;
+                background: #f5f5f5;
+                min-height: 340px;
+                aspect-ratio: 4 / 3;
+                border: 1px solid #e6e6e6;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            .model-reviews__map iframe {
+                width: 100%;
+                height: 100%;
+                max-width: 100%;
+                border: 0;
+                display: block;
             }
 
             .model-reviews__title {
@@ -999,10 +1032,10 @@ $lb_items = array_merge(
                 gap: 10px;
                 background: #4b4b4b;
                 color: #fff;
-                padding: 10px 18px;
-                border-radius: 10px;
+                padding: 15px 40px;
                 font-weight: 600;
-                font-size: 14px;
+                font-size: 16px;
+                border-radius: 5px;
                 line-height: 1;
                 transition: background .2s ease;
             }
@@ -1166,65 +1199,102 @@ $lb_items = array_merge(
                     width: 100%;
                     justify-content: center;
                 }
+
+                .model-reviews__layout {
+                    overflow-x: hidden;
+                }
             }
         </style>
 
-        <section class="lg:col-span-7 lg:col-start-6 reviews-right" aria-label="Дополнительная информация">
+        <section class="lg:col-span-7 lg:col-start-6 reviews-full" aria-label="Дополнительная информация">
             <!-- ===== Отзывы ===== -->
             <?php $reviews_available = function_exists('mr_render_reviews_block'); ?>
             <section class="mt-10 model-reviews js-model-reviews" aria-label="Отзывы о модели">
-                <div class="model-reviews__header">
-                    <h2 class="model-reviews__title">Отзывы</h2>
-                    <?php if ($reviews_available): ?>
-                        <button type="button" class="model-reviews__btn js-model-reviews-open">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M12 20h9" />
-                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-                            </svg>
-                            Оставить отзыв...
-                        </button>
-                    <?php endif; ?>
-                </div>
-                <div class="model-reviews__hearts" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                </div>
-                <div class="model-reviews__content">
-                    <?php
-                    if ($reviews_available) {
-                        // можно переопределить заголовок через фильтр 'mr/reviews_heading'
-                        mr_render_reviews_block($id /*, ['class' => ''] */);
-                    } else {
-                        echo '<p class="text-neutral-600">Блок отзывов недоступен.</p>';
-                    }
-                    ?>
-                </div>
-
-                <?php if ($reviews_available): ?>
-                    <div class="model-reviews__modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="model-reviews-title">
-                        <div class="model-reviews__backdrop js-model-reviews-close" tabindex="-1"></div>
-                        <div class="model-reviews__dialog" role="document">
-                            <div class="model-reviews__modal-head">
-                                <h3 id="model-reviews-title">Ваш отзыв</h3>
-                                <button type="button" class="model-reviews__close js-model-reviews-close" aria-label="Закрыть">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="M6 6L18 18M18 6L6 18" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <ol class="model-reviews__rules">
-                                <li>Напишите отзыв от 4 до 500 символов, избегайте спец. символы.</li>
-                                <li>Пройдите капчу.</li>
-                                <li>Поставьте оценку с помощью сердец (ниже поля для ввода текста).</li>
-                                <li>Для одного объявления можно оставить 1 отзыв в сутки.</li>
-                            </ol>
-                            <div class="model-reviews__modal-body"></div>
-                        </div>
+                <div class="model-reviews__layout">
+                    <div class="model-reviews__map">
+                        <?php
+                        $district_map = function_exists('get_field') ? trim((string) get_field('district', $id)) : '';
+                        if (!$district_map && !empty($districts)) {
+                            $district_map = (string) $districts[0];
+                        }
+                        $map_query = trim((string) $district_map);
+                        if ($map_query !== '') {
+                            $has_district_word = (stripos($map_query, 'район') !== false) || (stripos($map_query, 'р-н') !== false);
+                            if (!$has_district_word) {
+                                $map_query = 'район ' . $map_query;
+                            }
+                            if (stripos($map_query, 'моск') === false) {
+                                $map_query .= ', Москва';
+                            }
+                        }
+                        if ($map_query !== ''):
+                            $map_src = 'https://yandex.ru/map-widget/v1/?mode=search&text=' . rawurlencode($map_query) . '&z=12';
+                        ?>
+                            <iframe
+                                src="<?php echo esc_url($map_src); ?>"
+                                title="<?php echo esc_attr('Карта: ' . $map_query); ?>"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <?php else: ?>
+                            <div class="p-4 text-sm text-neutral-600">Локация не указана.</div>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
+
+                    <div class="model-reviews__main">
+                        <div class="model-reviews__header">
+                            <h2 class="model-reviews__title">Отзывы</h2>
+                            <?php if ($reviews_available): ?>
+                                <button type="button" class="model-reviews__btn js-model-reviews-open">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M12 20h9" />
+                                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                    </svg>
+                                    Оставить отзыв...
+                                </button>
+                            <?php endif; ?>
+                        </div>
+                        <div class="model-reviews__hearts" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                        </div>
+                        <div class="model-reviews__content">
+                            <?php
+                            if ($reviews_available) {
+                                // можно переопределить заголовок через фильтр 'mr/reviews_heading'
+                                mr_render_reviews_block($id /*, ['class' => ''] */);
+                            } else {
+                                echo '<p class="text-neutral-600">Блок отзывов недоступен.</p>';
+                            }
+                            ?>
+                        </div>
+
+                        <?php if ($reviews_available): ?>
+                            <div class="model-reviews__modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="model-reviews-title">
+                                <div class="model-reviews__backdrop js-model-reviews-close" tabindex="-1"></div>
+                                <div class="model-reviews__dialog" role="document">
+                                    <div class="model-reviews__modal-head">
+                                        <h3 id="model-reviews-title">Ваш отзыв</h3>
+                                        <button type="button" class="model-reviews__close js-model-reviews-close" aria-label="Закрыть">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M6 6L18 18M18 6L6 18" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <ol class="model-reviews__rules">
+                                        <li>Напишите отзыв от 4 до 500 символов, избегайте спец. символы.</li>
+                                        <li>Пройдите капчу.</li>
+                                        <li>Поставьте оценку с помощью сердец (ниже поля для ввода текста).</li>
+                                        <li>Для одного объявления можно оставить 1 отзыв в сутки.</li>
+                                    </ol>
+                                    <div class="model-reviews__modal-body"></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </section>
 
             <!-- ===== Похожие анкеты ===== -->
