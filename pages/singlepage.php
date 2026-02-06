@@ -333,7 +333,8 @@ $lb_items = array_merge(
             <?php if ($images_count > 1) { ?>
                 <div class="relative px-10 mt-4">
                     <button type="button" 
-                        class="js-thumb-prev absolute left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center bg-white shadow-md rounded-full text-neutral-800 border border-neutral-200 hover:bg-neutral-50 disabled:opacity-30 transition-all" 
+                        style="background: #fdb6c4; padding: 6px; left: -10px;"                        
+                        class="js-thumb-prev absolute top-1/2 -translate-y-1/2 z-30 w-6 h-6 flex items-center justify-center shadow-md rounded-full" 
                         aria-label="Назад">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
                     </button>
@@ -342,7 +343,7 @@ $lb_items = array_merge(
                         <div class="swiper-wrapper">
                             <?php foreach ($images as $idx => $m) { ?>
                                 <div class="swiper-slide">
-                                    <div class="w-full aspect-[3/4] rounded-md overflow-hidden border-2 transition-all duration-200 js-thumb-item <?php echo ($idx === 0) ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-transparent opacity-60'; ?>" 
+                                    <div class="w-full aspect-[3/4] rounded-md overflow-hidden transition-all duration-200 js-thumb-item <?php echo ($idx === 0) ? '' : 'opacity-60'; ?>" 
                                         data-index="<?php echo $idx; ?>">
                                         <img src="<?php echo esc_url($m['thumb'] ?? $m['src']); ?>" 
                                             class="w-full h-full object-cover pointer-events-none" 
@@ -353,8 +354,9 @@ $lb_items = array_merge(
                         </div>
                     </div>
 
-                    <button type="button" 
-                        class="js-thumb-next absolute right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center bg-white shadow-md rounded-full text-neutral-800 border border-neutral-200 hover:bg-neutral-50 disabled:opacity-30 transition-all" 
+                    <button type="button"
+                        style="background: #fdb6c4; padding: 6px; right: -10px;"        
+                        class="js-thumb-next absolute top-1/2 -translate-y-1/2 z-30 w-6 h-6 flex items-center justify-center shadow-md rounded-full" 
                         aria-label="Вперед">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
                     </button>
@@ -380,11 +382,11 @@ $lb_items = array_merge(
 
                         thumbItems.forEach((thumb, i) => {
                             if (i === index) {
-                                thumb.classList.remove('border-transparent', 'opacity-60');
-                                thumb.classList.add('border-blue-500', 'ring-2', 'ring-blue-500/20', 'opacity-100');
+                                thumb.classList.remove('opacity-60');
+                                thumb.classList.add('opacity-100');
                             } else {
                                 thumb.classList.add('border-transparent', 'opacity-60');
-                                thumb.classList.remove('border-blue-500', 'ring-2', 'ring-blue-500/20', 'opacity-100');
+                                thumb.classList.remove('opacity-100');
                             }
                         });
 
