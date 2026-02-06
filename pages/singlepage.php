@@ -295,7 +295,7 @@ $lb_items = array_merge(
 );
 
 ?>
-<main class="mx-auto w-full lg:w-[1200px] px-4 bg-white text-black">
+<main class="mx-auto w-full lg:w-[1200px] px-4 bg-white text-neutral-700">
 
     <article class="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 py-6">
         <!-- ========== ЛЕВО (5/12): компактнее ========== -->
@@ -445,8 +445,8 @@ $lb_items = array_merge(
                 <div class="min-w-0">
                     <!-- район -->
                     <?php if ($districts) { ?>
-                        <div class="text-black-600 text-lg">
-                            <svg class="inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 22" width="24" height="24" fill="#000000" style="opacity:1;"><path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/><path d="M8 8a2 2 0 1 1 0-4a2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6a3 3 0 0 0 0 6"/></svg>
+                        <div class="text-neutral-700 text-lg">
+                            <svg class="inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 22" width="24" height="24" fill="#404040" style="opacity:1;"><path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/><path d="M8 8a2 2 0 1 1 0-4a2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6a3 3 0 0 0 0 6"/></svg>
                             <span>Район:</span> <?php echo esc_html(implode(', ', $districts)); ?>
                         </div>
                     <?php } ?>
@@ -486,7 +486,7 @@ $lb_items = array_merge(
                         : wp_strip_all_tags((string)$verify_raw);
 
                     echo '
-                    <div class="w-full mt-5 text-sm text-black flex items-center justify-between pr-4" style="padding-right: 10px;">
+                    <div class="w-full mt-5 text-sm text-neutral-700 flex items-center justify-between pr-4" style="padding-right: 10px;">
                         <div class="flex items-center gap-1.5">
                             <svg class="text-[#22c55e]" viewBox="0 0 20 24" width="26" height="22" fill="none" aria-hidden="true">
                                 <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -520,7 +520,7 @@ $lb_items = array_merge(
 
                                 echo '
                                     <div class="flex items-center justify-center flex-col p-2 w-full" style="background-color: #f2f2f2ff;">
-                                        <span style="color: #4c4c4c; font-size: 14px;">' . esc_html($label) . '</span>
+                                        <span style="color: #404040; font-size: 14px;">' . esc_html($label) . '</span>
                                         <a href="' . esc_url($term_link) . '" class="text-[#ff2d72] text-base" style="width: max-content;">'
                                         . esc_html($m) .
                                         '</a>
@@ -544,11 +544,11 @@ $lb_items = array_merge(
                              class="relative overflow-hidden transition-[max-height] duration-300 ease-in-out prose prose-neutral max-w-none text-xl text-center" 
                              style="<?= $is_bot ? 'max-height:none' : 'max-height:10rem' ?>">
                             
-                            <div style="color: #4c4c4c; display: flex; justify-content: space-between; align-items: end;">
+                            <div style="color: #404040; display: flex; justify-content: space-between; align-items: end;">
                                 <div style="max-width: 507px; margin-bottom: 1rem">
                                     <?php echo wpautop(wp_kses_post($about)); ?>
                                 </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="min-width: 60px; height: 46px; fill: #4c4c4c">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="min-width: 60px; height: 46px; fill: #404040">
                                     <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
                                 </svg> 
                             </div>
@@ -686,8 +686,8 @@ $lb_items = array_merge(
                         align-items: center;
                         justify-content: center;
                         gap: 8px;
-                        padding: 12px 0;
-                        color: #1a1a1a;
+                        padding: 10px 0;
+                        color: #404040; /* text-neutral-700 */
                         font-weight: 500;
                         font-size: 18px;
                     }
@@ -695,12 +695,12 @@ $lb_items = array_merge(
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        padding: 16px 4px;
+                        padding: 10px 4px;
                         border-radius: 4px;
                         font-size: 18px;
-                        color: #1a1a1a;
+                        color: #404040; /* text-neutral-700 */
                     }
-                    .price-grid__cell--gray { background-color: #f5f5f7; }
+                    .price-grid__cell--gray { background-color: #f2f2f2ff; }
                     .price-grid__cell--pink { background-color: #fdf2f4; }
                     .price-grid__cell--value { font-weight: 500; }
                 </style>
@@ -752,7 +752,31 @@ $lb_items = array_merge(
             </div>
 
             <!-- Контакты под ценой -->
-            <div class="mt-5 mb-5 flex items-center gap-3">
+            <?php ?>
+                <button type="button" 
+                        class="inline-flex items-center gap-2 px-4 py-3 text-white font-medium js-show-phone w-full justify-center"
+                        style="background-color: #fdf2f4;"
+                        data-phone="<?php echo esc_attr($phone); ?>">
+                    <span class="text-neutral-700 uppercase text-2xl">Посмотреть телефон</span>
+                </button>
+
+                <script>
+                    (function() {
+                        const btn = document.querySelector('.js-show-phone');
+                        if (!btn) return;
+                        btn.addEventListener('click', function() {
+                            const phone = this.dataset.phone || '-';
+                            const span = this.querySelector('span');
+                            
+                            if (span) span.textContent = phone;
+                            setTimeout(() => {
+                                this.outerHTML = `<a href="tel:${phone.replace(/\D/g, '')}" class="${this.className}" style="${this.style.cssText}">${this.innerHTML}</a>`;
+                            }, 50);
+                        }, { once: true });
+                    })();
+                </script>
+            <?php ?>
+            <div class="mt-5 mb-5 flex flex-wrap items-center gap-3">
                 <?php if (!empty($tg_href)) { ?>
                     <a href="<?php echo esc_url($tg_href); ?>" rel="nofollow noopener"
                         class="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#229ED9] text-white font-medium hover:bg-[#1e88c7] transition-colors">
