@@ -290,194 +290,136 @@ $lb_items = array_merge(
         <section class="lg:col-span-5 lg:sticky lg:top-6 lg:self-start" aria-label="Фото и контакты модели">
             <h1 id="model-title" class="text-2xl sm:text-3xl font-bold leading-tight mb-8">
                 <?php
-                $auto_h1_component = get_theme_file_path('components/h1-auto.php');
-                if (file_exists($auto_h1_component)) {
-                    require $auto_h1_component;
-                }
-                $h1 = get_query_var('auto_h1');
-
-                if (empty($h1) && !empty($GLOBALS['auto_h1'])) {
-                    $h1 = $GLOBALS['auto_h1'];
-                }
-
-                // запасной вариант, если по какой-то причине компонент не отработал
-                if (empty($h1)) {
-                    $h1 = 'Проститутка ' . $name . ', Алматы';
-                }
-
-                echo esc_html($h1);
+                    $auto_h1_component = get_theme_file_path('components/h1-auto.php');
+                    if (file_exists($auto_h1_component)) { require $auto_h1_component; }
+                    $h1 = get_query_var('auto_h1');
+                    if (empty($h1) && !empty($GLOBALS['auto_h1'])) { $h1 = $GLOBALS['auto_h1']; }
+                    if (empty($h1)) { $h1 = 'Проститутка ' . $name . ', Алматы'; }
+                    echo esc_html($h1);
                 ?>
-            </h1>    
+            </h1>
 
-            <!-- Слайдер фото -->
-            <div class="relative rounded-lg overflow-hidden border border-neutral-200">
+            <div class="relative rounded-lg overflow-hidden border border-neutral-200 bg-neutral-100 aspect-[3/4] mb-3">
                 <?php
-                // Приводим к булеву типу (true/false)
-                $on = (bool)$online;
-
-                // Выводим только если переменная существует и $on равно true
-                if ($online !== '' && $on) { ?>
-                    <span class="absolute top-3 left-3 z-40 px-2 py-1 rounded-full text-xs font-semibold bg-emerald-500/90 text-white backdrop-blur-sm shadow-md select-none">
-                        Онлайн
-                    </span>
+                    $on = (bool)$online;
+                    if ($online !== '' && $on) { ?>
+                        <span class="absolute top-3 left-3 z-40 px-2 py-1 rounded-full text-xs font-semibold bg-emerald-500/90 text-white backdrop-blur-sm shadow-md select-none">Онлайн</span>
                 <?php } ?>
 
-                <div class="w-full aspect-[3/4] bg-neutral-100" style="aspect-ratio:3/4;">
+                <div class="w-full h-full relative" id="main-photo-container">
                     <?php if ($images_count) { ?>
-                        <div class="swiper js-left-slider h-full">
-                            <div class="swiper-wrapper">
-                                <?php foreach ($images as $idx => $m) { ?>
-                                    <div class="swiper-slide relative">
-                                        <img
-                                            src="<?php echo esc_url($m['ml'] ?? $m['src']); ?>"
-                                            alt="<?php echo esc_attr($alt); ?>"
-                                            class="w-full h-full object-cover js-open-lightbox cursor-pointer"
-                                            data-idx="<?php echo esc_attr($idx); ?>"
-                                            loading="<?php echo $idx === 0 ? 'eager' : 'lazy'; ?>"
-                                            fetchpriority="<?php echo $idx === 0 ? 'high' : 'auto'; ?>"
-                                            decoding="async">
-                                    </div>
-                                <?php } ?>
+                        <?php foreach ($images as $idx => $m) { 
+                            $opacityClass = ($idx === 0) ? 'opacity-100 z-10' : 'opacity-0 z-0'; 
+                        ?>
+                            <div class="absolute inset-0 w-full h-full transition-opacity duration-300 ease-in-out js-main-photo <?php echo $opacityClass; ?>" 
+                                data-index="<?php echo $idx; ?>">
+                                <img
+                                    src="<?php echo esc_url($m['ml'] ?? $m['src']); ?>"
+                                    alt="<?php echo esc_attr($alt); ?>"
+                                    class="w-full h-full object-cover cursor-pointer js-open-lightbox"
+                                    data-idx="<?php echo esc_attr($idx); ?>"
+                                    loading="<?php echo $idx === 0 ? 'eager' : 'lazy'; ?>"
+                                >
                             </div>
-
-                            <?php if ($images_count > 1) { ?>
-                                <!-- Навигация для ПК -->
-                                <div class="hidden md:block">
-                                    <div class="swiper-button-prev !text-[<?php echo esc_attr($ACCENT); ?>] !w-8 !h-8 !mt-0 !top-1/2 !left-2 after:!text-sm after:!font-bold bg-white/80 backdrop-blur-sm !rounded-full hover:bg-white/90 transition-colors"></div>
-                                    <div class="swiper-button-next !text-[<?php echo esc_attr($ACCENT); ?>] !w-8 !h-8 !mt-0 !top-1/2 !right-2 after:!text-sm after:!font-bold bg-white/80 backdrop-blur-sm !rounded-full hover:bg-white/90 transition-colors"></div>
-                                    <div class="swiper-pagination !bottom-4"></div>
-                                </div>
-                            <?php } ?>
-                        </div>
-
-                        <!-- 📱 Мобильный UI поверх фото -->
-                        <div class="md:hidden absolute bottom-3 left-0 right-0 z-20 flex items-center justify-between px-4">
-                            <!-- Счётчик -->
-                            <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md select-none">
-                                <span class="js-photo-index">1</span>
-                                <span>/</span>
-                                <span><?php echo (int)$images_count; ?></span>
-                            </div>
-
-                            <!-- Иконка "на весь экран" -->
-                            <button
-                                type="button"
-                                class="flex items-center justify-center w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm text-white hover:bg-black/70 active:scale-95 transition-all shadow-md js-open-lightbox"
-                                aria-label="Открыть на весь экран">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="w-5 h-5">
-                                    <path d="M4 4h6M4 4v6M20 4h-6M20 4v6M4 20h6M4 20v-6M20 20h-6M20 20v-6" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', () => {
-                                const interval = setInterval(() => {
-                                    const swiperEl = document.querySelector('.js-left-slider');
-                                    if (!swiperEl || !swiperEl.swiper) return;
-
-                                    const swiper = swiperEl.swiper;
-                                    const indexEl = document.querySelector('.js-photo-index');
-
-                                    if (swiper && indexEl) {
-                                        indexEl.textContent = swiper.realIndex + 1;
-                                        swiper.on('slideChange', () => {
-                                            indexEl.textContent = swiper.realIndex + 1;
-                                        });
-                                        clearInterval(interval);
-                                    }
-                                }, 300);
-                            });
-                        </script>
-
-                    <?php } else { ?>
-                        <div class="w-full h-full flex items-center justify-center text-neutral-500">Нет фото</div>
+                        <?php } ?>
                     <?php } ?>
+                </div>
+                
+                <div class="md:hidden absolute bottom-3 left-4 z-30 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full">
+                    <span class="js-photo-index">1</span>/<span><?php echo (int)$images_count; ?></span>
                 </div>
             </div>
 
-            <!-- Мини-превью -->
-            <?php if (! wp_is_mobile()): ?>
-                <?php if ($images_count > 1) { ?>
-                    <div class="mt-3 overflow-x-auto">
-                        <div class="flex gap-2 pb-2">
+            <?php if ($images_count > 1) { ?>
+                <div class="relative px-10 mt-4">
+                    <button type="button" 
+                        class="js-thumb-prev absolute left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center bg-white shadow-md rounded-full text-neutral-800 border border-neutral-200 hover:bg-neutral-50 disabled:opacity-30 transition-all" 
+                        aria-label="Назад">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                    </button>
+
+                    <div class="swiper js-thumbs-slider">
+                        <div class="swiper-wrapper">
                             <?php foreach ($images as $idx => $m) { ?>
-                                <button type="button"
-                                    class="shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 border-transparent js-thumb-btn transition-all duration-200 hover:border-[<?php echo esc_attr($ACCENT); ?>]"
-                                    data-slide="<?php echo esc_attr($idx); ?>">
-                                    <img src="<?php echo esc_url($m['thumb'] ?? $m['src']); ?>" 
-                                    alt="<?php echo esc_attr($alt); ?>" 
-                                    class="w-full h-full object-cover" 
-                                    loading="lazy">
-                                </button>
+                                <div class="swiper-slide">
+                                    <div class="w-full aspect-[3/4] rounded-md overflow-hidden border-2 transition-all duration-200 js-thumb-item <?php echo ($idx === 0) ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-transparent opacity-60'; ?>" 
+                                        data-index="<?php echo $idx; ?>">
+                                        <img src="<?php echo esc_url($m['thumb'] ?? $m['src']); ?>" 
+                                            class="w-full h-full object-cover pointer-events-none" 
+                                            alt="thumb">
+                                    </div>
+                                </div>
                             <?php } ?>
                         </div>
                     </div>
-                <?php } ?>
 
-                <!-- ЦЕНЫ (В СТОЛБИК) + район -->
-                <section class="mt-4 space-y-2">
-                    <?php if ($price_in_1h) { ?>
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-1 rounded bg-neutral-900 text-white text-xs font-medium">Апартаменты</span>
-                            <span class="font-semibold text-lg"><?php echo esc_html(number_format($price_in_1h, 0, ',', ' ')); ?> ₸</span>
-                        </div>
-                    <?php } ?>
-                    <?php if ($price_out_1h) { ?>
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-1 rounded bg-[#ff2d72] text-white text-xs font-medium">Выезд</span>
-                            <span class="font-semibold text-lg"><?php echo esc_html(number_format($price_out_1h, 0, ',', ' ')); ?> ₸</span>
-                        </div>
-                    <?php } ?>
+                    <button type="button" 
+                        class="js-thumb-next absolute right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center bg-white shadow-md rounded-full text-neutral-800 border border-neutral-200 hover:bg-neutral-50 disabled:opacity-30 transition-all" 
+                        aria-label="Вперед">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                </div>
+            <?php } ?>
 
-                    <?php if (!empty($districts)) { ?>
-                        <div class="flex items-center gap-2 text-sm text-neutral-700 pt-1">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
-                            </svg>
-                            <span><?php echo esc_html(implode(', ', $districts)); ?></span>
-                        </div>
-                    <?php } ?>
-                </section>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const mainPhotos = document.querySelectorAll('.js-main-photo');
+                    const thumbItems = document.querySelectorAll('.js-thumb-item');
+                    const counterEl = document.querySelector('.js-photo-index');
 
-<div class="mt-5 flex items-center gap-3">
-    <?php 
-    // === [ЗАЩИТА] Подготовка переменных ===
-    // Кодируем ссылки только если они существуют
-    // (Предполагаем, что в $tg_href и $wa_href уже лежат готовые ссылки с https://)
-    $enc_tg = !empty($tg_href) ? base64_encode($tg_href) : '';
-    $enc_wa = !empty($wa_href) ? base64_encode($wa_href) : '';
-    ?>
+                    function setActivePhoto(index) {
+                        mainPhotos.forEach((photo, i) => {
+                            if (i === index) {
+                                photo.classList.replace('opacity-0', 'opacity-100');
+                                photo.classList.replace('z-0', 'z-10');
+                            } else {
+                                photo.classList.replace('opacity-100', 'opacity-0');
+                                photo.classList.replace('z-10', 'z-0');
+                            }
+                        });
 
-    <?php if (!empty($tg_href)) { ?>
-        <a href="javascript:void(0);" 
-           data-enc="<?php echo esc_attr($enc_tg); ?>" 
-           rel="nofollow noopener"
-           class="protected-contact inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#229ED9] text-white font-medium hover:bg-[#1e88c7] transition-colors">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9.9 13.4l-.4 5.6c.6 0 .8-.3 1.1-.6l2.7-2.6 5.6 4.1c1 .6 1.8.3 2.1-.9l3.8-17.7c.3-1.2-.4-1.7-1.4-1.4L1.5 9.6c-1.2.3-1.2 1-.2 1.3l5.6 1.7 12.9-8.1c.6-.4 1.2-.2.7.2" />
-            </svg>
-            Telegram
-        </a>
-    <?php } ?>
+                        thumbItems.forEach((thumb, i) => {
+                            if (i === index) {
+                                thumb.classList.remove('border-transparent', 'opacity-60');
+                                thumb.classList.add('border-blue-500', 'ring-2', 'ring-blue-500/20', 'opacity-100');
+                            } else {
+                                thumb.classList.add('border-transparent', 'opacity-60');
+                                thumb.classList.remove('border-blue-500', 'ring-2', 'ring-blue-500/20', 'opacity-100');
+                            }
+                        });
 
-    <?php if (!empty($wa_href)) { ?>
-        <a href="javascript:void(0);" 
-           data-enc="<?php echo esc_attr($enc_wa); ?>" 
-           rel="nofollow noopener"
-           class="protected-contact inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#25D366] text-white font-medium hover:bg-[#22c55e] transition-colors">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20 3.9A10 10 0 003.7 17.2L3 21l3.9-1A10 10 0 1020 3.9zM8.5 7.8c.2-.5.3-.5.6-.5h.5c.2 0 .4 0 .5.4s.7 2.2.8 2.3c.1.2.1.4 0 .5-.1.1-.2.3-.4.5-.2.2-.3.4-.1.7.2.3.9 1.6 2.1 2.5 1.4 1 1.7.9 2 .8s.9-.3 1-.5c.1-.2.5-.6.7-.5.2 0 1.9.9 2.2 1 .3.1.5.2.5.4 0 .2.1 1.1-.5 1.7-.5.6-1.3.8-2.2.8-1 .1-1.9-.3-3-.9a11.5 11.5 0 01-3.4-3.1 7.8 7.8 0 01-1.4-2.9c-.2-1 .1-1.9.2-2.2z" />
-            </svg>
-            WhatsApp
-        </a>
-    <?php } ?>
-</div>
+                        if (counterEl) counterEl.textContent = index + 1;
+                    }
 
-            <?php endif; ?>
+                    const thumbsSwiper = new Swiper('.js-thumbs-slider', {
+                        // ЯВНО УКАЗЫВАЕМ КОЛИЧЕСТВО:
+                        slidesPerView: 4, // 4 миниатюры в ряд на мобильном
+                        spaceBetween: 8,
+                        breakpoints: {
+                            640: { slidesPerView: 5 }, // 5 на планшетах
+                            1024: { slidesPerView: 6 } // 6 на десктопе
+                        },
+                        navigation: {
+                            nextEl: '.js-thumb-next',
+                            prevEl: '.js-thumb-prev',
+                        },
+                        watchSlidesProgress: true,
+                        slideToClickedSlide: true,
+                        on: {
+                            // При клике на слайд
+                            click: function(s) {
+                                if (typeof s.clickedIndex !== 'undefined') {
+                                    setActivePhoto(s.clickedIndex);
+                                }
+                            },
+                            // При перетаскивании/кнопках
+                            slideChange: function() {
+                                setActivePhoto(this.activeIndex);
+                            }
+                        }
+                    });
+                });
+            </script>
         </section>
 
 
