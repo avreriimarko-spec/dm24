@@ -902,75 +902,85 @@ $lb_items = array_merge(
                 <?php } ?>
             </div>
 
-            <?php if (!empty($services_terms_all)) : ?>
-                <!-- Услуги -->
-                <section class="mt-8 w-full" aria-label="Услуги модели">
-                    <style>
-                        .services-grid {
-                            display: grid;
-                            gap: 10px 24px;
-                            grid-template-columns: repeat(1, minmax(0, 1fr));
-                            list-style: none;
-                            margin: 0;
-                            padding: 0;
-                        }
-                        @media (min-width: 768px) {
-                            .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-                        }
-                        @media (min-width: 1024px) {
-                            .services-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-                        }
-                        .service-item {
-                            display: flex;
-                            align-items: center;
-                            gap: 10px;
-                            font-size: 16px;
-                            color: #404040;
-                        }
-                        .service-item .service-icon svg {
-                            width: 16px;
-                            height: 16px;
-                        }
-                        .service-item.is-missing { color: #9ca3af; }
-                        .service-item.is-missing .service-name {
-                            text-decoration: line-through;
-                            text-decoration-thickness: 1px;
-                            text-decoration-color: #d1d5db;
-                        }
-                    </style>
+        </section>
 
-                    <h2 class="text-2xl font-semibold text-neutral-900 mb-4">Услуги</h2>
-                    <ul class="services-grid">
-                        <?php foreach ($services_terms_all as $term) :
-                            $service_name = $term->name ?? '';
-                            $service_slug = $term->slug ?? '';
-                            $service_id = (int)($term->term_id ?? 0);
-                            $service_key = $service_name !== '' ? $services_lower($service_name) : '';
-                            $is_available = (
-                                ($service_id && isset($services_available_ids[$service_id])) ||
-                                ($service_slug && isset($services_available_slugs[$services_lower($service_slug)])) ||
-                                ($service_key && isset($services_available_names[$service_key]))
-                            );
-                        ?>
-                            <li class="service-item <?php echo $is_available ? 'is-available' : 'is-missing'; ?>">
-                                <span class="service-icon" aria-hidden="true">
-                                    <?php if ($is_available) : ?>
-                                        <svg viewBox="0 0 20 20" fill="none">
-                                            <path d="M4 10.5l4 4 8-9" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    <?php else : ?>
-                                        <svg viewBox="0 0 20 20" fill="none">
-                                            <path d="M5 5l10 10M15 5L5 15" stroke="#ff2d72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    <?php endif; ?>
-                                </span>
-                                <span class="service-name"><?php echo esc_html($service_name); ?></span>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </section>
-            <?php endif; ?>
+        <?php if (!empty($services_terms_all)) : ?>
+            <!-- Услуги -->
+            <section class="mt-8 w-full lg:col-span-12 services-full" aria-label="Услуги модели">
+                <style>
+                    .services-full { grid-column: 1 / -1; }
+                    .services-grid {
+                        display: grid;
+                        gap: 10px 24px;
+                        grid-template-columns: repeat(1, minmax(0, 1fr));
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    @media (min-width: 768px) {
+                        .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+                    }
+                    @media (min-width: 1024px) {
+                        .services-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+                    }
+                    .service-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        font-size: 16px;
+                        color: #404040;
+                    }
+                    .service-item .service-icon svg {
+                        width: 16px;
+                        height: 16px;
+                    }
+                    .service-item.is-missing { color: #9ca3af; }
+                    .service-item.is-missing .service-name {
+                        text-decoration: line-through;
+                        text-decoration-thickness: 1px;
+                        text-decoration-color: #d1d5db;
+                    }
+                </style>
 
+                <h2 class="text-2xl font-semibold text-neutral-900 mb-4">Услуги</h2>
+                <ul class="services-grid">
+                    <?php foreach ($services_terms_all as $term) :
+                        $service_name = $term->name ?? '';
+                        $service_slug = $term->slug ?? '';
+                        $service_id = (int)($term->term_id ?? 0);
+                        $service_key = $service_name !== '' ? $services_lower($service_name) : '';
+                        $is_available = (
+                            ($service_id && isset($services_available_ids[$service_id])) ||
+                            ($service_slug && isset($services_available_slugs[$services_lower($service_slug)])) ||
+                            ($service_key && isset($services_available_names[$service_key]))
+                        );
+                    ?>
+                        <li class="service-item <?php echo $is_available ? 'is-available' : 'is-missing'; ?>">
+                            <span class="service-icon" aria-hidden="true">
+                                <?php if ($is_available) : ?>
+                                    <svg viewBox="0 0 20 20" fill="none">
+                                        <path d="M4 10.5l4 4 8-9" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                <?php else : ?>
+                                    <svg viewBox="0 0 20 20" fill="none">
+                                        <path d="M5 5l10 10M15 5L5 15" stroke="#ff2d72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                <?php endif; ?>
+                            </span>
+                            <span class="service-name"><?php echo esc_html($service_name); ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </section>
+        <?php endif; ?>
+
+        <style>
+            @media (min-width: 1024px) {
+                .reviews-right { grid-column: 6 / -1; }
+            }
+        </style>
+
+        <section class="lg:col-span-7 lg:col-start-6 reviews-right" aria-label="Дополнительная информация">
             <!-- ===== Отзывы ===== -->
             <section class="mt-10" aria-label="Отзывы о модели">
                 <?php
