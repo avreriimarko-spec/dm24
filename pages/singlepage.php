@@ -544,8 +544,24 @@ $lb_items = array_merge(
                              class="relative overflow-hidden transition-[max-height] duration-300 ease-in-out prose prose-neutral max-w-none text-xl text-center" 
                              style="<?= $is_bot ? 'max-height:none' : 'max-height:10rem' ?>">
                             
-                            <div style="color: #404040; display: flex; justify-content: space-between; align-items: end;">
-                                <div style="max-width: 507px; margin-bottom: 1rem">
+                            <style>
+                                .desc-responsive-flex {
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    gap: 16px;
+                                    color: #404040;
+                                }
+                                @media (min-width: 768px) {
+                                    .desc-responsive-flex {
+                                        flex-direction: row;
+                                        align-items: flex-end;
+                                    }
+                                }
+                            </style>
+                            <div class="desc-responsive-flex">
+                                <div style="max-width: 600px; margin-bottom: 1rem">
                                     <?php echo wpautop(wp_kses_post($about)); ?>
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="min-width: 60px; height: 46px; fill: #404040">
