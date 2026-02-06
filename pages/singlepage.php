@@ -286,8 +286,8 @@ $lb_items = array_merge(
 <main class="mx-auto w-full lg:w-[1200px] px-4 bg-white text-black">
 
     <article class="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 py-6">
-        <!-- ========== ЛЕВО (5/12): sticky, компактнее ========== -->
-        <section class="lg:col-span-5 lg:sticky lg:top-6 lg:self-start" aria-label="Фото и контакты модели">
+        <!-- ========== ЛЕВО (5/12): компактнее ========== -->
+        <section class="lg:col-span-5 lg:top-6 lg:self-start" aria-label="Фото и контакты модели">
             <h1 id="model-title" class="text-2xl sm:text-3xl font-bold leading-tight mb-8">
                 <?php
                     $auto_h1_component = get_theme_file_path('components/h1-auto.php');
