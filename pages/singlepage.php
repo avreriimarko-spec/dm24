@@ -599,6 +599,66 @@ $lb_items = array_merge(
                     <?php } ?>
                 </div>
             </section>
+
+            <!-- Параметры -->
+            <section aria-label="Параметры модели">
+                <style>
+                    /* Зебра для параметров: по умолчанию (мобилки) 1 колонка */
+                    .params-grid div:nth-child(even) { background-color: #f2f2f2ff; }
+                    .params-grid div:nth-child(odd) { background-color: #fdf2f4; }
+
+                    @media (min-width: 640px) {
+                        /* Для 2 колонок (sm:grid-cols-2): 
+                           строка 1: 1 - odd, 2 - even -> оба серые? Нет, в дизайне строки чередуются.
+                           Чтобы строки чередовались:
+                           1, 2 - серые (odd, even)
+                           3, 4 - розовые (odd, even)
+                           5, 6 - серые ...
+                        */
+                        .params-grid div:nth-child(4n-3),
+                        .params-grid div:nth-child(4n-2) { background-color: #f2f2f2ff; }
+                        
+                        .params-grid div:nth-child(4n-1),
+                        .params-grid div:nth-child(4n) { background-color: #fdf2f4; }
+                    }
+                </style>
+                <dl class="params-grid grid grid-cols-1 sm:grid-cols-2" style="gap: 5px 20px;">
+                    <?php
+                    // Функция для вывода параметра с правильной семантикой (dt/dd)
+                    $row = function ($label, $val, $taxonomy = null) {
+                        if ($val === '' || $val === null) return;
+
+                        if ($taxonomy) {
+                            $terms = wp_get_post_terms(get_the_ID(), $taxonomy);
+                            if (!empty($terms) && !is_wp_error($terms)) {
+                                $term = $terms[0];
+
+                                // Ссылка по slug без префикса и вложений
+                                $term_link = untrailingslashit(home_url($term->slug));
+
+                                if (!empty($term_link) && !is_wp_error($term_link)) {
+                                    $val = '<a href="' . esc_url($term_link) . '" class="text-[#ff2d72] hover:underline font-normal">' . esc_html($val) . '</a>';
+                                }
+                            }
+                        }
+
+                        echo '<div class="flex items-center justify-between" style="padding: 5px 10px;">';
+                        echo '<dt class="text-neutral-700 font-normal">' . esc_html($label) . '</dt>';
+                        echo '<dd class="font-normal text-right">' . (strpos($val, '<a') === false ? esc_html($val) : $val) . '</dd>';
+                        echo '</div>';
+                    };
+
+                    // Вывод параметров
+                    $row('Возраст',           $age ? $age : '', 'vozrast_tax');
+                    $row('Рост',              $height ? $height : '', 'rost_tax');
+                    $row('Вес',               $weight ? $weight : '', 'ves_tax');
+                    $row('Грудь',             $bust, 'grud_tax');
+                    $row('Цвет волос',        $hair ? implode(', ', $hair) : '', 'cvet-volos_tax');
+                    $row('Национальность',    $nation ? implode(', ', $nation) : '', 'nationalnost_tax');
+                    $row('Цена',              $price_in_1h ? number_format($price_in_1h, 0, ',', ' ') . ' ₸' : '', 'price_tax');
+                    ?>
+                </dl>
+            </section>
             
 
             <!-- Табы -->
@@ -640,14 +700,6 @@ $lb_items = array_merge(
 
 
 
-                    <?php /* TAB: Параметры */ ?>
-                    <button type="button" role="tab" aria-selected="false" data-tab="params"
-                        class="js-tab inline-flex items-center gap-2 px-1 py-3 -mb-px border-b-2 border-transparent text-gray-600 hover:text-[<?php echo esc_attr($ACCENT); ?>] hover:border-[<?php echo esc_attr($ACCENT); ?>] font-medium text-sm transition-colors">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 6h18M3 12h18M3 18h18"></path>
-                        </svg>
-                        Параметры
-                    </button>
 
                     <?php /* TAB: Районы */ ?>
                     <button type="button" role="tab" aria-selected="false" data-tab="districts"
@@ -750,51 +802,6 @@ $lb_items = array_merge(
                     <div class="flex items-center justify-center h-64 text-gray-500">Селфи нет</div>
                 <?php } ?>
             </section>
-
-            <!-- Параметры -->
-            <section class="js-section js-section-params hidden" aria-label="Параметры модели">
-                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <?php
-                    // Функция для вывода параметра с правильной семантикой (dt/dd)
-                    $row = function ($label, $val, $taxonomy = null) {
-                        if ($val === '' || $val === null) return;
-
-                        if ($taxonomy) {
-                            $terms = wp_get_post_terms(get_the_ID(), $taxonomy);
-                            if (!empty($terms) && !is_wp_error($terms)) {
-                                $term = $terms[0];
-
-                                // Ссылка по slug без префикса и вложений
-                                $term_link = untrailingslashit(home_url($term->slug));
-
-                                if (!empty($term_link) && !is_wp_error($term_link)) {
-                                    $val = '<a href="' . esc_url($term_link) . '" class="text-blue-500 hover:underline">' . esc_html($val) . '</a>';
-                                }
-                            }
-                        }
-
-                        echo '<div class="flex items-center justify-between rounded-md border border-neutral-200 bg-white px-3 py-2">';
-                        echo '<dt class="text-neutral-600">' . esc_html($label) . '</dt>';
-                        echo '<dd class="font-medium">' . $val . '</dd>';
-                        echo '</div>';
-                    };
-
-                    // Вывод параметров
-                    $row('Возраст',           $age ? $age . ' лет' : '', 'vozrast_tax');
-                    $row('Рост',              $height ? $height . ' см' : '', 'rost_tax');
-                    $row('Вес',               $weight ? $weight . ' кг' : '', 'ves_tax');
-                    $row('Грудь',             $bust, 'grud_tax');
-                    $row('Цвет волос',        $hair ? implode(', ', $hair) : '', 'cvet-volos_tax');
-                    $row('Национальность',    $nation ? implode(', ', $nation) : '', 'nationalnost_tax');
-                    $row('Цена',              $price_in_1h ? number_format($price_in_1h, 0, ',', ' ') . ' ₸' : '', 'price_tax');
-                    ?>
-                </dl>
-            </section>
-
-
-
-
-
 
 
             <!-- Районы -->
@@ -1029,7 +1036,6 @@ $lb_items = array_merge(
                 photos: document.querySelector('.js-section-photos'),
                 videos: document.querySelector('.js-section-videos'),
                 selfies: document.querySelector('.js-section-selfies'),
-                params: document.querySelector('.js-section-params'),
                 reviews: document.querySelector('.js-section-reviews'),
                 districts: document.querySelector('.js-section-districts'),
                 services: document.querySelector('.js-section-services')
@@ -1063,13 +1069,13 @@ $lb_items = array_merge(
                 });
             });
             if (tabs.length) {
-                var order = ['photos', 'videos', 'selfies', 'params', 'services', 'reviews', 'districts'];
+                var order = ['photos', 'videos', 'selfies', 'services', 'reviews', 'districts'];
                 var firstAvailable = order.find(function(key) {
                     var el = sections[key];
                     // для контентных вкладок (about/params/reviews/metro/districts) показываем всегда,
                     // для фото/видео/селфи – только если есть контент (не скрыты)
                     if (!el) return false;
-                    var always = ['params', 'reviews', 'districts'];
+                    var always = ['reviews', 'districts'];
                     return always.includes(key) || !el.classList.contains('hidden');
                 }) || 'about';
                 var def = tabs.find(b => b.getAttribute('data-tab') === firstAvailable) || tabs[0];
