@@ -44,8 +44,20 @@ $height = trim((string)(function_exists('get_field') ? get_field('height', $id) 
 $weight = trim((string)(function_exists('get_field') ? get_field('weight', $id) : ''));
 $bust   = trim((string)(function_exists('get_field') ? get_field('bust',   $id) : ''));
 
-$price_in_1h  = (float)(function_exists('get_field') ? get_field('price',         $id) : 0);
-$price_out_1h = (float)(function_exists('get_field') ? get_field('price_outcall', $id) : 0);
+// Вспомогательная функция для получения числового значения из ACF с фолбэком
+$get_p = function($field, $fallback = 0) use ($id) {
+    $v = function_exists('get_field') ? get_field($field, $id) : null;
+    if (!$v || (float)$v <= 0) return (float)$fallback;
+    return (float)$v;
+};
+
+$price_in_1h     = $get_p('price');
+$price_in_2h     = $get_p('price_2_hours', $price_in_1h ? $price_in_1h * 2 : 0);
+$price_in_night  = $get_p('price_night');
+
+$price_out_1h    = $get_p('price_outcall');
+$price_out_2h    = $get_p('price_outcall_2_hours', $price_out_1h ? $price_out_1h * 2 : 0);
+$price_out_night = $get_p('price_outcall_night');
 
 $about     = function_exists('get_field') ? get_field('description', $id) : '';
 
@@ -659,60 +671,107 @@ $lb_items = array_merge(
                     ?>
                 </dl>
             </section>
-            
 
+            <!-- Price Table (Fixed Grid) -->
+            <div class="mt-8 mb-8">
+                <style>
+                    .price-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 4px;
+                        font-family: 'Libertinus', sans-serif;
+                    }
+                    .price-grid__header {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                        padding: 12px 0;
+                        color: #1a1a1a;
+                        font-weight: 500;
+                        font-size: 18px;
+                    }
+                    .price-grid__cell {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 16px 4px;
+                        border-radius: 4px;
+                        font-size: 18px;
+                        color: #1a1a1a;
+                    }
+                    .price-grid__cell--gray { background-color: #f5f5f7; }
+                    .price-grid__cell--pink { background-color: #fdf2f4; }
+                    .price-grid__cell--value { font-weight: 500; }
+                </style>
 
+                <?php
+                $format_table = fn($v) => $v > 0 ? number_format($v, 0, ',', ' ') . ' ₸' : '-';
+                ?>
+                <div class="price-grid">
+                    <!-- Headings -->
+                    <div class="price-grid__header">
+                        <svg class="w-5 h-5 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Время</span>
+                    </div>
+                    <div class="price-grid__header">
+                        <svg class="w-5 h-5 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <span>Апартаменты</span>
+                    </div>
+                    <div class="price-grid__header">
+                        <svg class="w-5 h-5 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="2" y="10" width="20" height="8" rx="2"></rect>
+                            <path d="M7 10V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5"></path>
+                            <circle cx="7" cy="18" r="2"></circle>
+                            <circle cx="17" cy="18" r="2"></circle>
+                        </svg>
+                        <span>Выезд</span>
+                    </div>
 
+                    <!-- Row 1: 1 час -->
+                    <div class="price-grid__cell price-grid__cell--gray">1 Час</div>
+                    <div class="price-grid__cell price-grid__cell--gray price-grid__cell--value"><?= esc_html($format_table($price_in_1h)) ?></div>
+                    <div class="price-grid__cell price-grid__cell--gray price-grid__cell--value"><?= esc_html($format_table($price_out_1h)) ?></div>
 
-            <?php if (wp_is_mobile()): ?>
-                <!-- ЦЕНЫ (В СТОЛБИК) + район -->
-                <section class="mt-4 space-y-2">
-                    <?php if ($price_in_1h) { ?>
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-1 rounded bg-neutral-900 text-white text-xs font-medium">Апартаменты</span>
-                            <span class="font-semibold text-lg"><?php echo esc_html(number_format($price_in_1h, 0, ',', ' ')); ?> ₸</span>
-                        </div>
-                    <?php } ?>
-                    <?php if ($price_out_1h) { ?>
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-1 rounded bg-[#ff2d72] text-white text-xs font-medium">Выезд</span>
-                            <span class="font-semibold text-lg"><?php echo esc_html(number_format($price_out_1h, 0, ',', ' ')); ?> ₸</span>
-                        </div>
-                    <?php } ?>
+                    <!-- Row 2: 2 часа -->
+                    <div class="price-grid__cell price-grid__cell--pink">2 Часа</div>
+                    <div class="price-grid__cell price-grid__cell--pink price-grid__cell--value"><?= esc_html($format_table($price_in_2h)) ?></div>
+                    <div class="price-grid__cell price-grid__cell--pink price-grid__cell--value"><?= esc_html($format_table($price_out_2h)) ?></div>
 
-                    <?php if (!empty($districts)) { ?>
-                        <div class="flex items-center gap-2 text-sm text-neutral-700 pt-1">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
-                            </svg>
-                            <span><?php echo esc_html(implode(', ', $districts)); ?></span>
-                        </div>
-                    <?php } ?>
-                </section>
-
-                <!-- Контакты под ценой -->
-                <div class="mt-5 mb-5 flex items-center gap-3">
-                    <?php if (!empty($tg_href)) { ?>
-                        <a href="<?php echo esc_url($tg_href); ?>" rel="nofollow noopener"
-                            class="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#229ED9] text-white font-medium hover:bg-[#1e88c7] transition-colors">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M9.9 13.4l-.4 5.6c.6 0 .8-.3 1.1-.6l2.7-2.6 5.6 4.1c1 .6 1.8.3 2.1-.9l3.8-17.7c.3-1.2-.4-1.7-1.4-1.4L1.5 9.6c-1.2.3-1.2 1-.2 1.3l5.6 1.7 12.9-8.1c.6-.4 1.2-.2.7.2" />
-                            </svg>
-                            Telegram
-                        </a>
-                    <?php } ?>
-                    <?php if (!empty($wa_href)) { ?>
-                        <a href="<?php echo esc_url($wa_href); ?>" rel="nofollow noopener"
-                            class="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#25D366] text-white font-medium hover:bg-[#22c55e] transition-colors">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20 3.9A10 10 0 003.7 17.2L3 21l3.9-1A10 10 0 1020 3.9zM8.5 7.8c.2-.5.3-.5.6-.5h.5c.2 0 .4 0 .5.4s.7 2.2.8 2.3c.1.2.1.4 0 .5-.1.1-.2.3-.4.5-.2.2-.3.4-.1.7.2.3.9 1.6 2.1 2.5 1.4 1 1.7.9 2 .8s.9-.3 1-.5c.1-.2.5-.6.7-.5.2 0 1.9.9 2.2 1 .3.1.5.2.5.4 0 .2.1 1.1-.5 1.7-.5.6-1.3.8-2.2.8-1 .1-1.9-.3-3-.9a11.5 11.5 0 01-3.4-3.1 7.8 7.8 0 01-1.4-2.9c-.2-1 .1-1.9.2-2.2z" />
-                            </svg>
-                            WhatsApp
-                        </a>
-                    <?php } ?>
+                    <!-- Row 3: Ночь -->
+                    <div class="price-grid__cell price-grid__cell--gray">Ночь</div>
+                    <div class="price-grid__cell price-grid__cell--gray price-grid__cell--value"><?= esc_html($format_table($price_in_night)) ?></div>
+                    <div class="price-grid__cell price-grid__cell--gray price-grid__cell--value"><?= esc_html($format_table($price_out_night)) ?></div>
                 </div>
+            </div>
 
-            <?php endif; ?>
+            <!-- Контакты под ценой -->
+            <div class="mt-5 mb-5 flex items-center gap-3">
+                <?php if (!empty($tg_href)) { ?>
+                    <a href="<?php echo esc_url($tg_href); ?>" rel="nofollow noopener"
+                        class="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#229ED9] text-white font-medium hover:bg-[#1e88c7] transition-colors">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9.9 13.4l-.4 5.6c.6 0 .8-.3 1.1-.6l2.7-2.6 5.6 4.1c1 .6 1.8.3 2.1-.9l3.8-17.7c.3-1.2-.4-1.7-1.4-1.4L1.5 9.6c-1.2.3-1.2 1-.2 1.3l5.6 1.7 12.9-8.1c.6-.4 1.2-.2.7.2" />
+                        </svg>
+                        Telegram
+                    </a>
+                <?php } ?>
+                <?php if (!empty($wa_href)) { ?>
+                    <a href="<?php echo esc_url($wa_href); ?>" rel="nofollow noopener"
+                        class="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#25D366] text-white font-medium hover:bg-[#22c55e] transition-colors">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 3.9A10 10 0 003.7 17.2L3 21l3.9-1A10 10 0 1020 3.9zM8.5 7.8c.2-.5.3-.5.6-.5h.5c.2 0 .4 0 .5.4s.7 2.2.8 2.3c.1.2.1.4 0 .5-.1.1-.2.3-.4.5-.2.2-.3.4-.1.7.2.3.9 1.6 2.1 2.5 1.4 1 1.7.9 2 .8s.9-.3 1-.5c.1-.2.5-.6.7-.5.2 0 1.9.9 2.2 1 .3.1.5.2.5.4 0 .2.1 1.1-.5 1.7-.5.6-1.3.8-2.2.8-1 .1-1.9-.3-3-.9a11.5 11.5 0 01-3.4-3.1 7.8 7.8 0 01-1.4-2.9c-.2-1 .1-1.9.2-2.2z" />
+                        </svg>
+                        WhatsApp
+                    </a>
+                <?php } ?>
+            </div>
 
             <!-- ===== Отзывы ===== -->
             <section class="mt-10" aria-label="Отзывы о модели">
