@@ -288,6 +288,27 @@ $lb_items = array_merge(
     <article class="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 py-6">
         <!-- ========== ЛЕВО (5/12): sticky, компактнее ========== -->
         <section class="lg:col-span-5 lg:sticky lg:top-6 lg:self-start" aria-label="Фото и контакты модели">
+            <h1 id="model-title" class="text-2xl sm:text-3xl font-bold leading-tight mb-8">
+                <?php
+                $auto_h1_component = get_theme_file_path('components/h1-auto.php');
+                if (file_exists($auto_h1_component)) {
+                    require $auto_h1_component;
+                }
+                $h1 = get_query_var('auto_h1');
+
+                if (empty($h1) && !empty($GLOBALS['auto_h1'])) {
+                    $h1 = $GLOBALS['auto_h1'];
+                }
+
+                // запасной вариант, если по какой-то причине компонент не отработал
+                if (empty($h1)) {
+                    $h1 = 'Проститутка ' . $name . ', Алматы';
+                }
+
+                echo esc_html($h1);
+                ?>
+            </h1>    
+
             <!-- Слайдер фото -->
             <div class="relative rounded-lg overflow-hidden border border-neutral-200">
                 <?php
@@ -466,54 +487,11 @@ $lb_items = array_merge(
             <header class="mt-1 flex items-start justify-between gap-4">
 
                 <div class="min-w-0">
-                    <h1 id="model-title" class="text-2xl sm:text-3xl font-bold leading-tight">
-                        <?php
-                        $auto_h1_component = get_theme_file_path('components/h1-auto.php');
-                        if (file_exists($auto_h1_component)) {
-                            require $auto_h1_component;
-                        }
-                        $h1 = get_query_var('auto_h1');
-
-                        if (empty($h1) && !empty($GLOBALS['auto_h1'])) {
-                            $h1 = $GLOBALS['auto_h1'];
-                        }
-
-                        // запасной вариант, если по какой-то причине компонент не отработал
-                        if (empty($h1)) {
-                            $h1 = 'Проститутка ' . $name . ', Алматы';
-                        }
-
-                        echo esc_html($h1);
-                        ?>
-                    </h1>
-
-
-                    <?php
-                    // дата проверки из ACF или post_meta
-                    $verify_raw = function_exists('get_field')
-                        ? get_field('data_verify', get_the_ID())
-                        : get_post_meta(get_the_ID(), 'data_verify', true);
-
-                    if (!empty($verify_raw)) {
-                        $verify_ts = is_numeric($verify_raw) ? (int)$verify_raw : strtotime((string)$verify_raw);
-                        $verify_fmt = $verify_ts
-                            ? date_i18n(get_option('date_format') ?: 'd.m.Y', $verify_ts)
-                            : wp_strip_all_tags((string)$verify_raw);
-
-                        echo '<div class="mt-1 text-sm text-black flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-[#22c55e]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span>Проверено: ' . esc_html($verify_fmt) . '</span>
-            <span>Опубликовано: ' . esc_html($date_published) . '</span>
-          </div>';
-                    }
-
-                    ?>
-
+                    <!-- район -->
                     <?php if ($districts) { ?>
-                        <div class="text-neutral-600 mt-1">
-                            <?php echo esc_html(implode(', ', $districts)); ?>
+                        <div class="text-black-600 text-lg">
+                            <svg class="inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 22" width="24" height="24" fill="#000000" style="opacity:1;"><path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/><path d="M8 8a2 2 0 1 1 0-4a2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6a3 3 0 0 0 0 6"/></svg>
+                            <span>Район:</span> <?php echo esc_html(implode(', ', $districts)); ?>
                         </div>
                     <?php } ?>
                 </div>
@@ -538,6 +516,146 @@ $lb_items = array_merge(
                     <span class="hidden lg:inline ml-2">В избранное</span>
                 </button>
             </header>
+
+            <?php
+                // дата проверки из ACF или post_meta
+                $verify_raw = function_exists('get_field')
+                    ? get_field('data_verify', get_the_ID())
+                    : get_post_meta(get_the_ID(), 'data_verify', true);
+
+                if (!empty($verify_raw)) {
+                    $verify_ts = is_numeric($verify_raw) ? (int)$verify_raw : strtotime((string)$verify_raw);
+                    $verify_fmt = $verify_ts
+                        ? date_i18n(get_option('date_format') ?: 'd.m.Y', $verify_ts)
+                        : wp_strip_all_tags((string)$verify_raw);
+
+                    echo '
+                    <div class="w-full mt-5 text-sm text-black flex items-center justify-between pr-4" style="padding-right: 10px;">
+                        <div class="flex items-center gap-1.5">
+                            <svg class="text-[#22c55e]" viewBox="0 0 20 24" width="26" height="22" fill="none" aria-hidden="true">
+                                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="text-xl">Проверено: ' . esc_html($verify_fmt) . '</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 20" width="26" height="26" fill="#352222ff" style="opacity:1;">
+                                <path  d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/>
+                            </svg> 
+                            <span class="text-xl">' . esc_html($date_published) . '</span>
+                        </div>
+                    </div>';
+                }
+
+            ?>
+
+            <?php if (!empty($metro)): ?>
+                <div class="flex items-center gap-2 mt-6">
+                    <?php
+                        $is_first = true;
+                        $metro_limited = array_slice($metro, 0, 4);
+
+                        foreach ($metro_limited as $m) {
+                            $term = get_term_by('name', $m, 'metro_tax');
+
+                            if ($term) {
+                                $term_link = home_url($term->slug);
+                                $label = $is_first ? 'Метро:' : 'Доп. метро:';
+                                $is_first = false;
+
+                                echo '
+                                    <div class="flex items-center justify-center flex-col p-2 w-full" style="background-color: #f2f2f2ff;">
+                                        <span style="color: #4c4c4c; font-size: 14px;">' . esc_html($label) . '</span>
+                                        <a href="' . esc_url($term_link) . '" class="text-[#ff2d72] text-base" style="width: max-content;">'
+                                        . esc_html($m) .
+                                        '</a>
+                                    </div>
+                                ';
+                            }
+                        }
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Описание -->
+            <section class="mt-8 mb-8" aria-label="Описание модели">
+                <div class="w-full" style="background-color: #f2f2f2ff; padding: 30px 20px 20px">
+                    <?php if (!empty($about)) { 
+                        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+                        $is_bot = (bool) preg_match('/bot|crawl|spider|slurp|mediapartners-google|bingpreview|duckduckbot|baiduspider|yandex|ahrefs|semrush|screaming\s?frog|facebookexternalhit|telegrambot/i', $ua);
+                        $uid = uniqid('desc_');
+                    ?>
+                        <div id="<?= $uid ?>_box" 
+                             class="relative overflow-hidden transition-[max-height] duration-300 ease-in-out prose prose-neutral max-w-none text-xl text-center" 
+                             style="<?= $is_bot ? 'max-height:none' : 'max-height:10rem' ?>">
+                            
+                            <div style="color: #4c4c4c; display: flex; justify-content: space-between; align-items: end;">
+                                <div style="max-width: 507px; margin-bottom: 1rem">
+                                    <?php echo wpautop(wp_kses_post($about)); ?>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="min-width: 60px; height: 46px; fill: #4c4c4c">
+                                    <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                                </svg> 
+                            </div>
+
+                            <div id="<?= $uid ?>_fade" class="pointer-events-none absolute left-0 right-0 bottom-0 h-16" style="<?= $is_bot ? 'display:none' : 'background:linear-gradient(to bottom, rgba(242,242,242,0), #f2f2f2 80%)' ?>"></div>
+                        </div>
+
+                        <button id="<?= $uid ?>_btn"
+                                class="mt-4 mx-auto flex items-center gap-2 text-[#ff2d72] font-semibold hover:opacity-90 transition"
+                                aria-expanded="<?= $is_bot ? 'true' : 'false' ?>"
+                                <?= $is_bot ? 'hidden' : '' ?>>
+                            <svg class="w-4 h-4 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M6 9l6 6 6-6" stroke-width="2" />
+                            </svg>
+                            <span data-label><?= $is_bot ? 'Свернуть' : 'Показать ещё' ?></span>
+                        </button>
+
+                        <script>
+                            (function() {
+                                var box = document.getElementById('<?= $uid ?>_box');
+                                var fade = document.getElementById('<?= $uid ?>_fade');
+                                var btn = document.getElementById('<?= $uid ?>_btn');
+                                if (!box || !btn) return;
+
+                                var collapsedMax = 10 * 16; // 10rem
+
+                                if (box.scrollHeight <= collapsedMax + 10) {
+                                    box.style.maxHeight = 'none';
+                                    if (fade) fade.style.display = 'none';
+                                    btn.style.display = 'none';
+                                    return;
+                                }
+
+                                btn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    var opened = btn.getAttribute('aria-expanded') === 'true';
+                                    var arrow = btn.querySelector('svg');
+
+                                    if (opened) {
+                                        box.style.maxHeight = collapsedMax + 'px';
+                                        if (fade) fade.style.display = '';
+                                        btn.setAttribute('aria-expanded', 'false');
+                                        btn.querySelector('[data-label]').textContent = 'Показать ещё';
+                                        arrow.style.transform = 'rotate(0deg)';
+                                    } else {
+                                        box.style.maxHeight = box.scrollHeight + 'px';
+                                        setTimeout(function() {
+                                            box.style.maxHeight = 'none';
+                                        }, 350);
+                                        if (fade) fade.style.display = 'none';
+                                        btn.setAttribute('aria-expanded', 'true');
+                                        btn.querySelector('[data-label]').textContent = 'Свернуть';
+                                        arrow.style.transform = 'rotate(180deg)';
+                                    }
+                                });
+                            })();
+                        </script>
+                    <?php } else { ?>
+                        <p class="text-neutral-600">Описание пока не добавлено.</p>
+                    <?php } ?>
+                </div>
+            </section>
+            
 
             <!-- Табы -->
             <nav class="border-b mb-6" style="border-color: <?php echo esc_attr($ACCENT); ?>;" aria-label="Разделы анкеты">
@@ -576,15 +694,7 @@ $lb_items = array_merge(
                         </button>
                     <?php } ?>
 
-                    <?php /* TAB: Описание */ ?>
-                    <button type="button" role="tab" aria-selected="false" data-tab="about"
-                        class="js-tab inline-flex items-center gap-2 px-1 py-3 -mb-px border-b-2 border-transparent text-gray-600 hover:text-[<?php echo esc_attr($ACCENT); ?>] hover:border-[<?php echo esc_attr($ACCENT); ?>] font-medium text-sm transition-colors">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 20s-8-4.5-8-10a8 8 0 1116 0c0 5.5-8 10-8 10z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        Описание
-                    </button>
+
 
                     <?php /* TAB: Параметры */ ?>
                     <button type="button" role="tab" aria-selected="false" data-tab="params"
@@ -593,15 +703,6 @@ $lb_items = array_merge(
                             <path d="M3 6h18M3 12h18M3 18h18"></path>
                         </svg>
                         Параметры
-                    </button>
-
-                    <?php /* TAB: Метро */ ?>
-                    <button type="button" role="tab" aria-selected="false" data-tab="metro"
-                        class="js-tab inline-flex items-center gap-2 px-1 py-3 -mb-px border-b-2 border-transparent text-gray-600 hover:text-[<?php echo esc_attr($ACCENT); ?>] hover:border-[<?php echo esc_attr($ACCENT); ?>] font-medium text-sm transition-colors">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 18h18M6 18l6-12 6 12"></path>
-                        </svg>
-                        Метро
                     </button>
 
                     <?php /* TAB: Районы */ ?>
@@ -706,17 +807,6 @@ $lb_items = array_merge(
                 <?php } ?>
             </section>
 
-            <!-- Описание -->
-            <section class="js-section js-section-about hidden" aria-label="Описание модели">
-                <?php if (!empty($about)) { ?>
-                    <div class="prose prose-neutral max-w-none">
-                        <?php echo wpautop(wp_kses_post($about)); ?>
-                    </div>
-                <?php } else { ?>
-                    <p class="text-neutral-600">Описание пока не добавлено.</p>
-                <?php } ?>
-            </section>
-
             <!-- Параметры -->
             <section class="js-section js-section-params hidden" aria-label="Параметры модели">
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -759,27 +849,7 @@ $lb_items = array_merge(
 
 
 
-            <!-- Метро -->
-            <section class="js-section js-section-metro hidden" aria-label="Метро">
-                <?php if (!empty($metro)) { ?>
-                    <div class="prose prose-neutral max-w-none">
-                        <p><strong>Метро:</strong></p>
-                        <div class="flex flex-wrap gap-2">
-                            <?php foreach ($metro as $m) {
-                                // Получаем терм для метро
-                                $term = get_term_by('name', $m, 'metro_tax');
-                                if ($term) {
-                                    // Строим ссылку с нужным сегментом (например, metro/{slug})
-                                    $term_link = home_url($term->slug);
-                                    echo '<a href="' . esc_url($term_link) . '" class="px-2 py-1 rounded-full bg-neutral-100 text-neutral-800 text-sm border border-neutral-200 hover:bg-neutral-200 transition-colors">' . esc_html($m) . '</a>';
-                                }
-                            } ?>
-                        </div>
-                    </div>
-                <?php } else { ?>
-                    <p class="text-neutral-600">Метро не указано.</p>
-                <?php } ?>
-            </section>
+
 
 
 
@@ -1015,10 +1085,8 @@ $lb_items = array_merge(
                 photos: document.querySelector('.js-section-photos'),
                 videos: document.querySelector('.js-section-videos'),
                 selfies: document.querySelector('.js-section-selfies'),
-                about: document.querySelector('.js-section-about'),
                 params: document.querySelector('.js-section-params'),
                 reviews: document.querySelector('.js-section-reviews'),
-                metro: document.querySelector('.js-section-metro'),
                 districts: document.querySelector('.js-section-districts'),
                 services: document.querySelector('.js-section-services')
             };
@@ -1051,13 +1119,13 @@ $lb_items = array_merge(
                 });
             });
             if (tabs.length) {
-                var order = ['photos', 'videos', 'selfies', 'about', 'params', 'services', 'reviews', 'metro', 'districts'];
+                var order = ['photos', 'videos', 'selfies', 'params', 'services', 'reviews', 'districts'];
                 var firstAvailable = order.find(function(key) {
                     var el = sections[key];
                     // для контентных вкладок (about/params/reviews/metro/districts) показываем всегда,
                     // для фото/видео/селфи – только если есть контент (не скрыты)
                     if (!el) return false;
-                    var always = ['about', 'params', 'reviews', 'metro', 'districts'];
+                    var always = ['params', 'reviews', 'districts'];
                     return always.includes(key) || !el.classList.contains('hidden');
                 }) || 'about';
                 var def = tabs.find(b => b.getAttribute('data-tab') === firstAvailable) || tabs[0];
