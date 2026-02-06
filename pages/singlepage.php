@@ -984,6 +984,7 @@ $lb_items = array_merge(
                 align-items: center;
                 justify-content: space-between;
                 gap: 16px;
+                color: #404040;
             }
 
             .model-reviews__layout {
@@ -1022,7 +1023,7 @@ $lb_items = array_merge(
             .model-reviews__title {
                 font-size: clamp(24px, 3.2vw, 34px);
                 font-weight: 700;
-                color: #0f0f0f;
+                color: #404040;
                 margin: 0;
             }
 
@@ -1034,7 +1035,7 @@ $lb_items = array_merge(
                 color: #fff;
                 padding: 15px 40px;
                 font-weight: 600;
-                font-size: 16px;
+                font-size: 18px;
                 border-radius: 5px;
                 line-height: 1;
                 transition: background .2s ease;
@@ -1066,6 +1067,10 @@ $lb_items = array_merge(
                 stroke-linejoin: round;
             }
 
+            .model-reviews__hearts svg.is-active {
+                fill: currentColor;
+            }
+
             .model-reviews #reviews {
                 margin-top: 14px;
             }
@@ -1075,12 +1080,12 @@ $lb_items = array_merge(
             }
 
             .model-reviews__empty {
-                background: transparent !important;
-                border: 0 !important;
-                padding: 0 !important;
+                background: transparent;
+                border: 0;
+                padding: 0;
                 font-size: clamp(22px, 3vw, 30px);
                 font-weight: 600;
-                color: #0f0f0f;
+                color: #404040;
             }
 
             .model-reviews__modal {
@@ -1125,7 +1130,7 @@ $lb_items = array_merge(
             .model-reviews__modal-head h3 {
                 font-size: 22px;
                 font-weight: 700;
-                color: #1a1a1a;
+                color: #404040;
                 margin: 0;
             }
 
@@ -1154,11 +1159,24 @@ $lb_items = array_merge(
                 line-height: 1.5;
             }
 
+            .model-reviews,
+            .model-reviews__content,
+            .model-reviews__content #reviews article {
+                color: #404040;
+            }
+
+            .model-reviews__content #reviews h3,
+            .model-reviews__content #reviews time,
+            .model-reviews__content #reviews .text-neutral-700,
+            .model-reviews__content #reviews .text-black {
+                color: #404040 !important;
+            }
+
             .model-reviews__form-card {
-                border: 0 !important;
-                padding: 0 !important;
-                background: transparent !important;
-                box-shadow: none !important;
+                border: 0;
+                padding: 0;
+                background: transparent;
+                box-shadow: none;
             }
 
             .model-reviews__form-card h3 {
@@ -1189,6 +1207,43 @@ $lb_items = array_merge(
                 color: #f3b4cc;
             }
 
+            .model-reviews__form-card label.star.text-yellow-500 svg {
+                fill: currentColor;
+            }
+
+            .model-reviews__form-card label.star.text-neutral-300 svg {
+                fill: none;
+            }
+
+            .model-reviews__content #reviews .grid > div:last-child {
+                max-height: 320px;
+                overflow-y: auto;
+                padding-right: 8px;
+            }
+
+            .model-reviews__content #reviews article {
+                border: 0;
+                border-radius: 8px;
+                box-shadow: none;
+                background: #f2f2f2ff;
+                padding: 14px 16px;
+                margin-bottom: 12px;
+            }
+
+            .model-reviews__content #reviews article:last-child {
+                margin-bottom: 0;
+            }
+
+            .model-reviews__content #reviews [aria-label^="Рейтинг"] {
+                color: #ff5b9a;
+                gap: 6px;
+            }
+
+            .model-reviews__content #reviews [aria-label^="Рейтинг"] svg {
+                width: 20px;
+                height: 20px;
+            }
+
             @media (max-width: 640px) {
                 .model-reviews__header {
                     flex-direction: column;
@@ -1203,12 +1258,41 @@ $lb_items = array_merge(
                 .model-reviews__layout {
                     overflow-x: hidden;
                 }
+
+                .model-reviews__content #reviews .grid > div:last-child {
+                    max-height: 320px;
+                }
             }
         </style>
 
         <section class="lg:col-span-7 lg:col-start-6 reviews-full" aria-label="Дополнительная информация">
             <!-- ===== Отзывы ===== -->
-            <?php $reviews_available = function_exists('mr_render_reviews_block'); ?>
+            <?php
+            $reviews_available = function_exists('mr_render_reviews_block');
+            $avg_rating_round = 0;
+            if ($reviews_available) {
+                global $wpdb;
+                $avg_rating_raw = $wpdb->get_var($wpdb->prepare(
+                    "SELECT AVG(CAST(ratingmeta.meta_value AS DECIMAL(10,2)))
+                     FROM {$wpdb->postmeta} ratingmeta
+                     INNER JOIN {$wpdb->postmeta} modelmeta ON ratingmeta.post_id = modelmeta.post_id
+                     INNER JOIN {$wpdb->posts} p ON p.ID = ratingmeta.post_id
+                     WHERE ratingmeta.meta_key = %s
+                       AND modelmeta.meta_key = %s
+                       AND modelmeta.meta_value = %d
+                       AND p.post_type = %s
+                       AND p.post_status = %s",
+                    '_mr_rating',
+                    '_mr_model_id',
+                    (int) $id,
+                    'model_review',
+                    'publish'
+                ));
+                if ($avg_rating_raw !== null) {
+                    $avg_rating_round = (int) round((float) $avg_rating_raw);
+                }
+            }
+            ?>
             <section class="mt-10 model-reviews js-model-reviews" aria-label="Отзывы о модели">
                 <div class="model-reviews__layout">
                     <div class="model-reviews__map">
@@ -1254,11 +1338,11 @@ $lb_items = array_merge(
                             <?php endif; ?>
                         </div>
                         <div class="model-reviews__hearts" aria-hidden="true">
-                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                            <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <svg class="<?php echo $i <= $avg_rating_round ? 'is-active' : ''; ?>" viewBox="0 0 24 24">
+                                    <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                </svg>
+                            <?php endfor; ?>
                         </div>
                         <div class="model-reviews__content">
                             <?php
@@ -1454,7 +1538,11 @@ $lb_items = array_merge(
 
                 if (formCard && modalBody) {
                     formCard.classList.add('model-reviews__form-card');
+                    var formCol = formCard.parentElement;
                     modalBody.appendChild(formCard);
+                    if (formCol && formCol.children.length === 0) {
+                        formCol.remove();
+                    }
                 }
 
                 var emptyCard = reviewsSection.querySelector('#reviews article');
@@ -1469,6 +1557,18 @@ $lb_items = array_merge(
                         '</svg>';
                     formCard.querySelectorAll('label.star').forEach(function(label) {
                         label.innerHTML = heartSvg;
+                    });
+                }
+
+                var ratingBox = reviewsSection.querySelectorAll('#reviews [aria-label^="Рейтинг"] svg');
+                if (ratingBox.length) {
+                    ratingBox.forEach(function(icon) {
+                        var isFilled = icon.classList.contains('text-yellow-500');
+                        var fillAttr = isFilled ? 'currentColor' : 'none';
+                        var heartSmall = '<svg viewBox="0 0 24 24" fill="' + fillAttr + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                            '<path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>' +
+                            '</svg>';
+                        icon.outerHTML = heartSmall;
                     });
                 }
 
