@@ -978,19 +978,253 @@ $lb_items = array_merge(
             @media (min-width: 1024px) {
                 .reviews-right { grid-column: 6 / -1; }
             }
+
+            .model-reviews__header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+            }
+
+            .model-reviews__title {
+                font-size: clamp(24px, 3.2vw, 34px);
+                font-weight: 700;
+                color: #0f0f0f;
+                margin: 0;
+            }
+
+            .model-reviews__btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                background: #4b4b4b;
+                color: #fff;
+                padding: 10px 18px;
+                border-radius: 10px;
+                font-weight: 600;
+                font-size: 14px;
+                line-height: 1;
+                transition: background .2s ease;
+            }
+
+            .model-reviews__btn:hover {
+                background: #3f3f3f;
+            }
+
+            .model-reviews__btn svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .model-reviews__hearts {
+                margin-top: 8px;
+                display: flex;
+                gap: 6px;
+                color: #ff2d72;
+            }
+
+            .model-reviews__hearts svg {
+                width: 26px;
+                height: 26px;
+                stroke: currentColor;
+                fill: none;
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+
+            .model-reviews #reviews {
+                margin-top: 14px;
+            }
+
+            .model-reviews #reviews > h2 {
+                display: none;
+            }
+
+            .model-reviews__empty {
+                background: transparent !important;
+                border: 0 !important;
+                padding: 0 !important;
+                font-size: clamp(22px, 3vw, 30px);
+                font-weight: 600;
+                color: #0f0f0f;
+            }
+
+            .model-reviews__modal {
+                position: fixed;
+                inset: 0;
+                z-index: 50;
+                display: none;
+            }
+
+            .model-reviews__modal.is-open {
+                display: block;
+            }
+
+            .model-reviews__backdrop {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.35);
+            }
+
+            .model-reviews__dialog {
+                position: relative;
+                max-width: 640px;
+                margin: 6vh auto;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+                padding: 22px 22px 26px;
+                max-height: 88vh;
+                overflow: auto;
+            }
+
+            .model-reviews__modal-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 12px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #e5e5e5;
+            }
+
+            .model-reviews__modal-head h3 {
+                font-size: 22px;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin: 0;
+            }
+
+            .model-reviews__close {
+                width: 34px;
+                height: 34px;
+                border-radius: 999px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: #333;
+                background: transparent;
+                border: 1px solid #e5e5e5;
+            }
+
+            .model-reviews__close svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .model-reviews__rules {
+                margin: 0 0 16px 0;
+                padding-left: 20px;
+                color: #6b6b6b;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+
+            .model-reviews__form-card {
+                border: 0 !important;
+                padding: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+
+            .model-reviews__form-card h3 {
+                display: none;
+            }
+
+            .model-reviews__form-card .mr-send {
+                width: 100%;
+                justify-content: center;
+                border-radius: 8px;
+                padding: 12px 16px;
+                font-weight: 700;
+            }
+
+            .model-reviews__form-card label.star svg {
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+
+            .model-reviews__form-card label.star.text-yellow-500 {
+                color: #ff2d72;
+            }
+
+            .model-reviews__form-card label.star.text-neutral-300 {
+                color: #f3b4cc;
+            }
+
+            @media (max-width: 640px) {
+                .model-reviews__header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .model-reviews__btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
         </style>
 
         <section class="lg:col-span-7 lg:col-start-6 reviews-right" aria-label="Дополнительная информация">
             <!-- ===== Отзывы ===== -->
-            <section class="mt-10" aria-label="Отзывы о модели">
-                <?php
-                if (function_exists('mr_render_reviews_block')) {
-                    // можно переопределить заголовок через фильтр 'mr/reviews_heading'
-                    mr_render_reviews_block($id /*, ['class' => ''] */);
-                } else {
-                    echo '<p class="text-neutral-600">Блок отзывов недоступен.</p>';
-                }
-                ?>
+            <?php $reviews_available = function_exists('mr_render_reviews_block'); ?>
+            <section class="mt-10 model-reviews js-model-reviews" aria-label="Отзывы о модели">
+                <div class="model-reviews__header">
+                    <h2 class="model-reviews__title">Отзывы</h2>
+                    <?php if ($reviews_available): ?>
+                        <button type="button" class="model-reviews__btn js-model-reviews-open">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 20h9" />
+                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                            </svg>
+                            Оставить отзыв...
+                        </button>
+                    <?php endif; ?>
+                </div>
+                <div class="model-reviews__hearts" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                </div>
+                <div class="model-reviews__content">
+                    <?php
+                    if ($reviews_available) {
+                        // можно переопределить заголовок через фильтр 'mr/reviews_heading'
+                        mr_render_reviews_block($id /*, ['class' => ''] */);
+                    } else {
+                        echo '<p class="text-neutral-600">Блок отзывов недоступен.</p>';
+                    }
+                    ?>
+                </div>
+
+                <?php if ($reviews_available): ?>
+                    <div class="model-reviews__modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="model-reviews-title">
+                        <div class="model-reviews__backdrop js-model-reviews-close" tabindex="-1"></div>
+                        <div class="model-reviews__dialog" role="document">
+                            <div class="model-reviews__modal-head">
+                                <h3 id="model-reviews-title">Ваш отзыв</h3>
+                                <button type="button" class="model-reviews__close js-model-reviews-close" aria-label="Закрыть">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M6 6L18 18M18 6L6 18" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <ol class="model-reviews__rules">
+                                <li>Напишите отзыв от 4 до 500 символов, избегайте спец. символы.</li>
+                                <li>Пройдите капчу.</li>
+                                <li>Поставьте оценку с помощью сердец (ниже поля для ввода текста).</li>
+                                <li>Для одного объявления можно оставить 1 отзыв в сутки.</li>
+                            </ol>
+                            <div class="model-reviews__modal-body"></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </section>
 
             <!-- ===== Похожие анкеты ===== -->
@@ -1136,6 +1370,68 @@ $lb_items = array_merge(
                         }
                     });
                 }
+            }
+
+            /* Reviews modal */
+            var reviewsSection = document.querySelector('.js-model-reviews');
+            if (reviewsSection) {
+                var openBtn = reviewsSection.querySelector('.js-model-reviews-open');
+                var modal = reviewsSection.querySelector('.model-reviews__modal');
+                var modalBody = reviewsSection.querySelector('.model-reviews__modal-body');
+                var closeBtns = reviewsSection.querySelectorAll('.js-model-reviews-close');
+                var form = reviewsSection.querySelector('.js-mr-form');
+                var formCard = form ? form.closest('.bg-white') : null;
+
+                if (formCard && modalBody) {
+                    formCard.classList.add('model-reviews__form-card');
+                    modalBody.appendChild(formCard);
+                }
+
+                var emptyCard = reviewsSection.querySelector('#reviews article');
+                if (emptyCard && emptyCard.textContent && emptyCard.textContent.indexOf('Пока нет отзывов') !== -1) {
+                    emptyCard.textContent = 'Отзывов пока нет';
+                    emptyCard.classList.add('model-reviews__empty');
+                }
+
+                if (formCard) {
+                    var heartSvg = '<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                        '<path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>' +
+                        '</svg>';
+                    formCard.querySelectorAll('label.star').forEach(function(label) {
+                        label.innerHTML = heartSvg;
+                    });
+                }
+
+                function openModal() {
+                    if (!modal) return;
+                    modal.classList.add('is-open');
+                    modal.setAttribute('aria-hidden', 'false');
+                    document.documentElement.classList.add('overflow-hidden');
+                    var firstField = modal.querySelector('input, textarea, select, button');
+                    if (firstField) firstField.focus();
+                }
+
+                function closeModal() {
+                    if (!modal) return;
+                    modal.classList.remove('is-open');
+                    modal.setAttribute('aria-hidden', 'true');
+                    document.documentElement.classList.remove('overflow-hidden');
+                    if (openBtn) openBtn.focus();
+                }
+
+                if (openBtn && modal) {
+                    openBtn.addEventListener('click', openModal);
+                }
+
+                closeBtns.forEach(function(btn) {
+                    btn.addEventListener('click', closeModal);
+                });
+
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && modal && modal.classList.contains('is-open')) {
+                        closeModal();
+                    }
+                });
             }
 
             /* Лайтбокс */
