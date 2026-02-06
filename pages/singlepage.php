@@ -621,6 +621,66 @@ $lb_items = array_merge(
                 </div>
             <?php endif; ?>
 
+            <!-- Параметры -->
+            <section aria-label="Параметры модели" class="mt-8">
+                <style>
+                    /* Зебра для параметров: по умолчанию (мобилки) 1 колонка */
+                    .params-grid div:nth-child(even) { background-color: #f2f2f2ff; }
+                    .params-grid div:nth-child(odd) { background-color: #fdf2f4; }
+
+                    @media (min-width: 640px) {
+                        /* Для 2 колонок (sm:grid-cols-2): 
+                           строка 1: 1 - odd, 2 - even -> оба серые? Нет, в дизайне строки чередуются.
+                           Чтобы строки чередовались:
+                           1, 2 - серые (odd, even)
+                           3, 4 - розовые (odd, even)
+                           5, 6 - серые ...
+                        */
+                        .params-grid div:nth-child(4n-3),
+                        .params-grid div:nth-child(4n-2) { background-color: #f2f2f2ff; }
+                        
+                        .params-grid div:nth-child(4n-1),
+                        .params-grid div:nth-child(4n) { background-color: #fdf2f4; }
+                    }
+                </style>
+                <dl class="params-grid grid grid-cols-1 sm:grid-cols-2" style="gap: 5px 20px;">
+                    <?php
+                    // Функция для вывода параметра с правильной семантикой (dt/dd)
+                    $row = function ($label, $val, $taxonomy = null) {
+                        if ($val === '' || $val === null) return;
+
+                        if ($taxonomy) {
+                            $terms = wp_get_post_terms(get_the_ID(), $taxonomy);
+                            if (!empty($terms) && !is_wp_error($terms)) {
+                                $term = $terms[0];
+
+                                // Ссылка по slug без префикса и вложений
+                                $term_link = untrailingslashit(home_url($term->slug));
+
+                                if (!empty($term_link) && !is_wp_error($term_link)) {
+                                    $val = '<a href="' . esc_url($term_link) . '" class="text-[#ff2d72] hover:underline font-normal">' . esc_html($val) . '</a>';
+                                }
+                            }
+                        }
+
+                        echo '<div class="flex items-center justify-between" style="padding: 5px 10px;">';
+                        echo '<dt class="text-neutral-700 font-normal">' . esc_html($label) . '</dt>';
+                        echo '<dd class="font-normal text-right">' . (strpos($val, '<a') === false ? esc_html($val) : $val) . '</dd>';
+                        echo '</div>';
+                    };
+
+                    // Вывод параметров
+                    $row('Возраст',           $age ? $age : '', 'vozrast_tax');
+                    $row('Рост',              $height ? $height : '', 'rost_tax');
+                    $row('Вес',               $weight ? $weight : '', 'ves_tax');
+                    $row('Грудь',             $bust, 'grud_tax');
+                    $row('Цвет волос',        $hair ? implode(', ', $hair) : '', 'cvet-volos_tax');
+                    $row('Национальность',    $nation ? implode(', ', $nation) : '', 'nationalnost_tax');
+                    $row('Цена',              $price_in_1h ? number_format($price_in_1h, 0, ',', ' ') . ' ₸' : '', 'price_tax');
+                    ?>
+                </dl>
+            </section>
+
             <!-- Описание -->
             <section class="mt-8 mb-8" aria-label="Описание модели">
                 <div class="w-full" style="background-color: #f2f2f2ff; padding: 30px 20px 20px">
@@ -715,66 +775,6 @@ $lb_items = array_merge(
                         <p class="text-neutral-600">Описание пока не добавлено.</p>
                     <?php } ?>
                 </div>
-            </section>
-
-            <!-- Параметры -->
-            <section aria-label="Параметры модели">
-                <style>
-                    /* Зебра для параметров: по умолчанию (мобилки) 1 колонка */
-                    .params-grid div:nth-child(even) { background-color: #f2f2f2ff; }
-                    .params-grid div:nth-child(odd) { background-color: #fdf2f4; }
-
-                    @media (min-width: 640px) {
-                        /* Для 2 колонок (sm:grid-cols-2): 
-                           строка 1: 1 - odd, 2 - even -> оба серые? Нет, в дизайне строки чередуются.
-                           Чтобы строки чередовались:
-                           1, 2 - серые (odd, even)
-                           3, 4 - розовые (odd, even)
-                           5, 6 - серые ...
-                        */
-                        .params-grid div:nth-child(4n-3),
-                        .params-grid div:nth-child(4n-2) { background-color: #f2f2f2ff; }
-                        
-                        .params-grid div:nth-child(4n-1),
-                        .params-grid div:nth-child(4n) { background-color: #fdf2f4; }
-                    }
-                </style>
-                <dl class="params-grid grid grid-cols-1 sm:grid-cols-2" style="gap: 5px 20px;">
-                    <?php
-                    // Функция для вывода параметра с правильной семантикой (dt/dd)
-                    $row = function ($label, $val, $taxonomy = null) {
-                        if ($val === '' || $val === null) return;
-
-                        if ($taxonomy) {
-                            $terms = wp_get_post_terms(get_the_ID(), $taxonomy);
-                            if (!empty($terms) && !is_wp_error($terms)) {
-                                $term = $terms[0];
-
-                                // Ссылка по slug без префикса и вложений
-                                $term_link = untrailingslashit(home_url($term->slug));
-
-                                if (!empty($term_link) && !is_wp_error($term_link)) {
-                                    $val = '<a href="' . esc_url($term_link) . '" class="text-[#ff2d72] hover:underline font-normal">' . esc_html($val) . '</a>';
-                                }
-                            }
-                        }
-
-                        echo '<div class="flex items-center justify-between" style="padding: 5px 10px;">';
-                        echo '<dt class="text-neutral-700 font-normal">' . esc_html($label) . '</dt>';
-                        echo '<dd class="font-normal text-right">' . (strpos($val, '<a') === false ? esc_html($val) : $val) . '</dd>';
-                        echo '</div>';
-                    };
-
-                    // Вывод параметров
-                    $row('Возраст',           $age ? $age : '', 'vozrast_tax');
-                    $row('Рост',              $height ? $height : '', 'rost_tax');
-                    $row('Вес',               $weight ? $weight : '', 'ves_tax');
-                    $row('Грудь',             $bust, 'grud_tax');
-                    $row('Цвет волос',        $hair ? implode(', ', $hair) : '', 'cvet-volos_tax');
-                    $row('Национальность',    $nation ? implode(', ', $nation) : '', 'nationalnost_tax');
-                    $row('Цена',              $price_in_1h ? number_format($price_in_1h, 0, ',', ' ') . ' ₸' : '', 'price_tax');
-                    ?>
-                </dl>
             </section>
 
             <!-- Price Table (Fixed Grid) -->
