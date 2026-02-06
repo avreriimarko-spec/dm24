@@ -757,7 +757,7 @@ $lb_items = array_merge(
                         class="inline-flex items-center gap-2 px-4 py-3 text-white font-medium js-show-phone w-full justify-center"
                         style="background-color: #fdf2f4;"
                         data-phone="<?php echo esc_attr($phone); ?>">
-                    <span class="text-neutral-700 uppercase text-2xl">Посмотреть телефон</span>
+                    <span class="text-neutral-700 capitalize text-2xl">Посмотреть телефон</span>
                 </button>
 
                 <script>
@@ -776,21 +776,21 @@ $lb_items = array_merge(
                     })();
                 </script>
             <?php ?>
-            <div class="mt-5 mb-5 flex flex-wrap items-center gap-3">
+            <div class="grid grid-cols-2 gap-1 mt-1 mb-8 text-white">
                 <?php if (!empty($tg_href)) { ?>
                     <a href="<?php echo esc_url($tg_href); ?>" rel="nofollow noopener"
-                        class="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#229ED9] text-white font-medium hover:bg-[#1e88c7] transition-colors">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M9.9 13.4l-.4 5.6c.6 0 .8-.3 1.1-.6l2.7-2.6 5.6 4.1c1 .6 1.8.3 2.1-.9l3.8-17.7c.3-1.2-.4-1.7-1.4-1.4L1.5 9.6c-1.2.3-1.2 1-.2 1.3l5.6 1.7 12.9-8.1c.6-.4 1.2-.2.7.2" />
+                        class="flex items-center justify-center gap-2 py-3 bg-[#229ED9] hover:bg-[#1e88c7] font-medium text-2xl transition-all">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .33z"/>
                         </svg>
                         Telegram
                     </a>
                 <?php } ?>
                 <?php if (!empty($wa_href)) { ?>
                     <a href="<?php echo esc_url($wa_href); ?>" rel="nofollow noopener"
-                        class="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#25D366] text-white font-medium hover:bg-[#22c55e] transition-colors">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20 3.9A10 10 0 003.7 17.2L3 21l3.9-1A10 10 0 1020 3.9zM8.5 7.8c.2-.5.3-.5.6-.5h.5c.2 0 .4 0 .5.4s.7 2.2.8 2.3c.1.2.1.4 0 .5-.1.1-.2.3-.4.5-.2.2-.3.4-.1.7.2.3.9 1.6 2.1 2.5 1.4 1 1.7.9 2 .8s.9-.3 1-.5c.1-.2.5-.6.7-.5.2 0 1.9.9 2.2 1 .3.1.5.2.5.4 0 .2.1 1.1-.5 1.7-.5.6-1.3.8-2.2.8-1 .1-1.9-.3-3-.9a11.5 11.5 0 01-3.4-3.1 7.8 7.8 0 01-1.4-2.9c-.2-1 .1-1.9.2-2.2z" />
+                        class="flex items-center justify-center gap-2 py-3 bg-[#25D366] hover:bg-[#22c55e] font-medium text-2xl transition-all">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                           <path d="M12.011 20.212c-1.467 0-2.895-.395-4.14-1.14l-2.968.777.791-2.894A8.102 8.102 0 0 1 4.522 12c0-4.505 3.663-8.169 8.169-8.169 4.505 0 8.169 3.664 8.169 8.169 0 4.505-3.664 8.169-8.169 8.169m0-17.405c-5.093 0-9.236 4.144-9.236 9.236 0 1.628.423 3.218 1.226 4.621L3 21.144l4.654-1.221a9.236 9.236 0 1 0 4.357-17.116"/>
                         </svg>
                         WhatsApp
                     </a>
