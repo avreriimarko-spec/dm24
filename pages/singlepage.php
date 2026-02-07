@@ -33,7 +33,8 @@ if (is_string($videos_raw)) {
 $videos = array_values(array_unique(array_filter($videos)));
 
 /* ================== термы/поля ================== */
-$districts = wp_get_post_terms($id, 'rayonu_tax',       ['fields' => 'names']) ?: [];
+$districts = get_the_terms($id, 'rayonu_tax');
+if (is_wp_error($districts)) $districts = [];
 $hair      = wp_get_post_terms($id, 'cvet-volos_tax',   ['fields' => 'names']) ?: [];
 $nation    = wp_get_post_terms($id, 'nationalnost_tax', ['fields' => 'names']) ?: [];
 $metro     = wp_get_post_terms($id, 'metro_tax',        ['fields' => 'names']) ?: [];
@@ -541,10 +542,19 @@ $lb_items = array_merge(
 
                 <div class="min-w-0">
                     <!-- район -->
-                    <?php if ($districts) { ?>
+                    <?php if (!empty($districts)) { ?>
                         <div class="text-neutral-700 text-lg">
                             <svg class="inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 22" width="24" height="24" fill="#404040" style="opacity:1;"><path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/><path d="M8 8a2 2 0 1 1 0-4a2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6a3 3 0 0 0 0 6"/></svg>
-                            <span>Район:</span> <?php echo esc_html(implode(', ', $districts)); ?>
+                            <span>Район:</span>
+                            <?php
+                                $district_links = [];
+                                foreach ($districts as $d) {
+                                    $link = get_term_link($d);
+                                    if (is_wp_error($link)) continue;
+                                    $district_links[] = '<a class="hover:underline" href="' . esc_url($link) . '">' . esc_html($d->name) . '</a>';
+                                }
+                                echo implode(', ', $district_links);
+                            ?>
                         </div>
                     <?php } ?>
                 </div>
@@ -975,7 +985,12 @@ $lb_items = array_merge(
                                     </svg>
                                 <?php endif; ?>
                             </span>
-                            <span class="service-name"><?php echo esc_html($service_name); ?></span>
+                            <?php $service_link = get_term_link($term); ?>
+                            <?php if (!is_wp_error($service_link)) : ?>
+                                <a class="service-name hover:underline" href="<?php echo esc_url($service_link); ?>"><?php echo esc_html($service_name); ?></a>
+                            <?php else : ?>
+                                <span class="service-name"><?php echo esc_html($service_name); ?></span>
+                            <?php endif; ?>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -1450,7 +1465,7 @@ $lb_items = array_merge(
                         <?php
                         $district_map = function_exists('get_field') ? trim((string) get_field('district', $id)) : '';
                         if (!$district_map && !empty($districts)) {
-                            $district_map = (string) $districts[0];
+                            $district_map = (string) ($districts[0]->name ?? '');
                         }
                         $map_query = trim((string) $district_map);
                         if ($map_query !== '') {
