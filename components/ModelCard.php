@@ -28,14 +28,6 @@ if (isset($model['is_new'])) {
     $counter++;
 }
 
-/* -------------------- ОПТИМИЗАЦИЯ: ОТЗЫВЫ -------------------- */
-if (isset($model['reviews_count'])) {
-    $comments_count = (int)$model['reviews_count'];
-} else {
-    // Оптимизация: берем стандартное кол-во комментариев WP (кэшируется), вместо WP_Query
-    $comments_count = get_comments_number($post_id);
-}
-
 /** ПАРАМЕТРЫ */
 $age    = $model['age'] ?? '';
 $height = $model['height'] ?? '';
@@ -44,6 +36,12 @@ $bust   = $model['bust'] ?? '';
 
 $district = $model['district'] ?? '';
 $metro = $model['metro'] ?? '';
+if (empty($metro)) {
+    $metro_terms = get_the_terms($post_id, 'metro_tax');
+    if ($metro_terms && !is_wp_error($metro_terms)) {
+        $metro = wp_list_pluck($metro_terms, 'name');
+    }
+}
 
 /** Услуги */
 $services = $model['services'] ?? [];
@@ -108,7 +106,6 @@ if (!$img_src) {
 
 /** ИКОНКИ И МЕТА */
 $is_verified    = has_term('', 'drygie_tax', $post_id);
-$has_video      = !empty($model['video']);
 $is_recommended = !empty($model['recommended']) ? $model['recommended'] : get_post_meta($post_id, 'recommended', true);
 
 if (empty($name) || empty($img_src)) return;
@@ -128,7 +125,6 @@ $format_price = static function (int $val) use ($currency): string {
 $has_outcall_prices = ($price_outcall_1h || $price_outcall_2h || $price_outcall_night);
 $has_incall_prices  = ($price_incall_1h || $price_incall_2h || $price_incall_night);
 $has_stats = ($age || $height || $weight || $bust);
-$has_icons = ($is_verified || $has_video || $comments_count > 0);
 
 $resolve_contacts = static function (bool $is_cheap) {
     static $cache = [
@@ -185,9 +181,6 @@ $wa_number = $contacts['wa'] ?? '';
         <div class="anketa-card__header">
             <div class="anketa-card__title"><?= esc_html($name) ?></div>
 
-            <?php if ($is_new): ?>
-                <div class="anketa-card__badge">Новая</div>
-            <?php endif; ?>
         </div>
 
         <div class="anketa-card__main">
@@ -207,20 +200,6 @@ $wa_number = $contacts['wa'] ?? '';
                         height="<?= esc_attr($img_h) ?>"
                         class="anketa-card__img" />
                 </div>
-    
-                <?php if ($has_icons): ?>
-                    <div class="anketa-card__icons">
-                        <?php if ($has_video): ?>
-                            <img src="<?= esc_url($icon_dir) ?>play-button.png" alt="Видео">
-                        <?php endif; ?>
-                        <?php if ($comments_count > 0): ?>
-                            <span class="anketa-card__comments">
-                                <img src="<?= esc_url($icon_dir) ?>ratings.png" alt="Отзывы">
-                                <span><?= (int) $comments_count ?></span>
-                            </span>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
             </div>
     
             <div class="anketa-card__content">
@@ -272,6 +251,17 @@ $wa_number = $contacts['wa'] ?? '';
                                 <?php endif; ?>    
                             </div>
                         <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php
+                    $metro_list = is_array($metro) ? array_values(array_filter($metro)) : (trim((string)$metro) !== '' ? [trim((string)$metro)] : []);
+                    $metro_primary = $metro_list[0] ?? '';
+                ?>
+                <?php if ($metro_primary): ?>
+                    <div class="anketa-card__metro" style="display: inline-flex; gap: 6px; color: #352222; font-size: 12px; line-height: 1;">
+                        <span style="opacity: .7;">Метро</span>
+                        <span style="color: #e865a0; font-weight: 600;"><?= esc_html($metro_primary) ?></span>
                     </div>
                 <?php endif; ?>
 
