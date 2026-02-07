@@ -2,6 +2,10 @@
 Theme name: Kyzdarki
 */
 
+* {
+  border-radius: 0 !important;
+}
+
 body {
   background-color: #02293d;
   color: white;

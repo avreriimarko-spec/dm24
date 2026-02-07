@@ -97,21 +97,21 @@ if (is_singular('blog')) {
 
 <div class="breadcrumbs-wrapper">
     <nav class="<?php echo esc_attr($opt['class']); ?>" aria-label="Breadcrumb">
-        <div class="bg-[#31363d]">
-            <ol class="max-w-[1280px] 2xl:max-w-[1400px] mx-auto px-4 py-1
-               flex items-center justify-center flex-wrap gap-x-1.5 gap-y-1.5 text-[13px] md:text-[14px]">
+        <div class="bg-black border-b border-gray-800">
+            <ol class="max-w-[1280px] 2xl:max-w-[1400px] mx-auto px-4 py-2
+               flex items-center justify-center flex-wrap gap-x-2 gap-y-1.5 text-[13px] md:text-[14px] tracking-wide">
                 <?php foreach ($crumbs as $i => $c): ?>
                     <?php if ($i > 0): ?>
-                        <li aria-hidden="true" class="px-1 text-[#e865a0] select-none">›</li>
+                        <li aria-hidden="true" class="px-1 text-[#e865a0] select-none">/</li>
                     <?php endif; ?>
                     <li class="leading-none">
                         <?php if (!empty($c['url'])): ?>
                             <a href="<?php echo esc_url($c['url']); ?>"
-                                class="text-white hover:text-[#e865a0] transition-colors">
+                                class="text-gray-300 hover:text-[#e865a0] underline underline-offset-4 decoration-transparent hover:decoration-[#e865a0] transition-colors">
                                 <?php echo esc_html($c['label']); ?>
                             </a>
                         <?php else: ?>
-                            <span class="text-white" aria-current="page">
+                            <span class="text-[#e865a0] font-semibold underline underline-offset-4 decoration-[#e865a0]" aria-current="page">
                                 <?php echo esc_html($c['label']); ?>
                             </span>
                         <?php endif; ?>

@@ -9,27 +9,27 @@ $args = wp_parse_args($args ?? [], [
 <?php if (!defined('AUTH_UI_PRINTED')) {
     define('AUTH_UI_PRINTED', true); ?>
     <div id="authui-root" class="fixed inset-0 z-[100] hidden">
-        <div id="authui-overlay" class="absolute inset-0 bg-black/60 opacity-0 transition-opacity"></div>
+        <div id="authui-overlay" class="absolute inset-0 bg-black/75 opacity-0 transition-opacity"></div>
 
         <!-- LOGIN -->
         <div id="authui-login" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div id="authui-login-box" class="w-[92%] max-w-md rounded-2xl bg-[#212529] text-gray-100 shadow-xl border border-gray-800 transform scale-95 opacity-0 transition-all">
+            <div id="authui-login-box" class="w-[92%] max-w-md bg-black text-gray-100 shadow-2xl border border-gray-800 transform scale-95 opacity-0 transition-all">
                 <div class="p-5 border-b border-gray-800 flex items-center justify-between">
-                    <div class="font-semibold text-lg">Войти</div>
-                    <button type="button" class="p-2 text-gray-400 hover:text-white text-2xl leading-none" data-authui-close>&times;</button>
+                    <div class="font-semibold text-lg uppercase tracking-wide">Войти</div>
+                    <button type="button" class="p-2 text-gray-400 hover:text-[#e865a0] text-2xl leading-none" data-authui-close>&times;</button>
                 </div>
                 <form class="p-5 space-y-3" id="authui-login-form" novalidate>
                     <label class="block">
-                        <span class="text-sm text-gray-400">Email</span>
-                        <input type="email" name="email" autocomplete="email" required class="mt-1 w-full h-11 rounded-lg bg-[#2a2f36]  border border-gray-700 px-3 outline-none focus:border-gray-500 text-white" placeholder="demo@example.com">
+                        <span class="text-xs uppercase tracking-wide text-gray-400">Email</span>
+                        <input type="email" name="email" autocomplete="email" required class="mt-1 w-full h-11 bg-black border border-gray-800 px-3 outline-none focus:border-[#e865a0] text-white" placeholder="demo@example.com">
                     </label>
                     <label class="block">
-                        <span class="text-sm text-gray-400">Пароль</span>
-                        <input type="password" name="password" autocomplete="current-password" required class="mt-1 w-full h-11 rounded-lg bg-[#2a2f36] border border-gray-700 px-3 outline-none focus:border-gray-500 text-white" placeholder="••••••••">
+                        <span class="text-xs uppercase tracking-wide text-gray-400">Пароль</span>
+                        <input type="password" name="password" autocomplete="current-password" required class="mt-1 w-full h-11 bg-black border border-gray-800 px-3 outline-none focus:border-[#e865a0] text-white" placeholder="••••••••">
                     </label>
                     <div class="flex items-center justify-between pt-2">
-                        <button type="submit" class="h-11 px-4 rounded-full bg-[#e865a0] text-white font-medium hover:opacity-90 transition">Войти</button>
-                        <p class="text-sm text-gray-400 hover:text-white transition" data-authui-switch="add">Зарегистрироваться</p>
+                        <button type="submit" class="h-11 px-4 bg-[#e865a0] text-white font-semibold uppercase tracking-wide hover:opacity-90 transition">Войти</button>
+                        <p class="text-sm text-gray-400 hover:text-[#e865a0] uppercase tracking-wide transition" data-authui-switch="add">Зарегистрироваться</p>
                     </div>
                 </form>
             </div>
@@ -37,37 +37,37 @@ $args = wp_parse_args($args ?? [], [
 
         <!-- REGISTER (бывш. ADD) -->
         <div id="authui-add" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div id="authui-add-box" class="w-[92%] max-w-lg rounded-2xl bg-[#212529] text-gray-100 shadow-xl border border-gray-800 transform scale-95 opacity-0 transition-all">
+            <div id="authui-add-box" class="w-[92%] max-w-lg bg-black text-gray-100 shadow-2xl border border-gray-800 transform scale-95 opacity-0 transition-all">
                 <div class="p-5 border-b border-gray-800 flex items-center justify-between">
-                    <div class="font-semibold text-lg">Регистрация</div>
-                    <button type="button" class="p-2 text-gray-400 hover:text-white text-2xl leading-none" data-authui-close>&times;</button>
+                    <div class="font-semibold text-lg uppercase tracking-wide">Регистрация</div>
+                    <button type="button" class="p-2 text-gray-400 hover:text-[#e865a0] text-2xl leading-none" data-authui-close>&times;</button>
                 </div>
                 <form class="p-5 space-y-3" id="authui-add-form" novalidate>
                     <label class="block">
-                        <span class="text-sm text-gray-400">Email</span>
-                        <input type="email" name="reg_email" autocomplete="username" required class="mt-1 w-full h-11 rounded-lg bg-[#2a2f36] border border-gray-700 px-3 outline-none focus:border-gray-500 text-white" placeholder="you@example.com">
+                        <span class="text-xs uppercase tracking-wide text-gray-400">Email</span>
+                        <input type="email" name="reg_email" autocomplete="username" required class="mt-1 w-full h-11 bg-black border border-gray-800 px-3 outline-none focus:border-[#e865a0] text-white" placeholder="you@example.com">
                     </label>
                     <label class="block">
-                        <span class="text-sm text-gray-400">Логин</span>
-                        <input type="text" name="reg_login" required minlength="3" class="mt-1 w-full h-11 rounded-lg bg-[#2a2f36] border border-gray-700 px-3 outline-none focus:border-gray-500 text-white" placeholder="username">
+                        <span class="text-xs uppercase tracking-wide text-gray-400">Логин</span>
+                        <input type="text" name="reg_login" required minlength="3" class="mt-1 w-full h-11 bg-black border border-gray-800 px-3 outline-none focus:border-[#e865a0] text-white" placeholder="username">
                     </label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <label class="block">
-                            <span class="text-sm text-gray-400">Пароль</span>
-                            <input type="password" name="reg_pass" autocomplete="current-password" required minlength="6" class="mt-1 w-full h-11 rounded-lg bg-[#2a2f36] border border-gray-700 px-3 outline-none focus:border-gray-500 text-white" placeholder="••••••••">
+                            <span class="text-xs uppercase tracking-wide text-gray-400">Пароль</span>
+                            <input type="password" name="reg_pass" autocomplete="current-password" required minlength="6" class="mt-1 w-full h-11 bg-black border border-gray-800 px-3 outline-none focus:border-[#e865a0] text-white" placeholder="••••••••">
                         </label>
                         <label class="block">
-                            <span class="text-sm text-gray-400">Повтор пароля</span>
-                            <input type="password" name="reg_pass2" autocomplete="current-password" required minlength="6" class="mt-1 w-full h-11 rounded-lg bg-[#2a2f36] border border-gray-700 px-3 outline-none focus:border-gray-500 text-white" placeholder="••••••••">
+                            <span class="text-xs uppercase tracking-wide text-gray-400">Повтор пароля</span>
+                            <input type="password" name="reg_pass2" autocomplete="current-password" required minlength="6" class="mt-1 w-full h-11 bg-black border border-gray-800 px-3 outline-none focus:border-[#e865a0] text-white" placeholder="••••••••">
                         </label>
                     </div>
                     <div class="flex items-center gap-2 text-sm text-gray-300">
-                        <input type="checkbox" name="terms" required class="rounded border-gray-600 bg-[#2a2f36]" id="reg-terms-checkbox">
-                        <label for="reg-terms-checkbox">Я принимаю правила сайта</label>
+                        <input type="checkbox" name="terms" required class="border-gray-700 bg-black" id="reg-terms-checkbox">
+                        <label for="reg-terms-checkbox" class="uppercase tracking-wide text-[12px]">Я принимаю правила сайта</label>
                     </div>
                     <div class="flex items-center justify-between pt-2">
-                        <button type="submit" class="h-11 px-4 rounded-full bg-[#e865a0] text-white font-medium hover:opacity-90 transition">Зарегистрироваться</button>
-                        <p class="text-sm text-gray-400 hover:text-white transition" data-authui-switch="login">У меня уже есть аккаунт</p>
+                        <button type="submit" class="h-11 px-4 bg-[#e865a0] text-white font-semibold uppercase tracking-wide hover:opacity-90 transition">Зарегистрироваться</button>
+                        <p class="text-sm text-gray-400 hover:text-[#e865a0] uppercase tracking-wide transition" data-authui-switch="login">У меня уже есть аккаунт</p>
                     </div>
                 </form>
             </div>

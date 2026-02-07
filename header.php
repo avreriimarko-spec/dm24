@@ -284,7 +284,7 @@ $menu = [
     ]);
     ?>
 
-    <header class="sticky inset-x-0 top-0 z-50 bg-[#212529] text-gray-300 border-b border-gray-800">
+    <header class="sticky inset-x-0 top-0 z-50 bg-black text-gray-300 border-b border-gray-800">
         <div class="px-4">
             <div class="h-16 flex justify-between items-center gap-4">
                 <?php
@@ -303,7 +303,7 @@ $menu = [
 
                 <?php if (!wp_is_mobile()) : ?>
                     <nav class="hidden md:flex flex-grow justify-center" aria-label="Основное меню">
-                        <ul id="main-nav" class="flex items-center gap-3 text-[15px] whitespace-nowrap">
+                        <ul id="main-nav" class="flex items-center gap-3 whitespace-nowrap">
                             <?php
                             // Получаем текущий URL для сравнения
                             $current_url = home_url(add_query_arg([], $GLOBALS['wp']->request));
@@ -314,24 +314,24 @@ $menu = [
                                 <li class="relative group">
                                     <?php if (isset($item['sub_menu'])) : ?>
                                         <div
-                                            class="group inline-flex items-center px-2 py-1 text-gray-300 hover:text-white transition-colors cursor-pointer select-none">
+                                            class="group inline-flex items-center px-2 py-1 text-gray-300 hover:text-[#e865a0] transition-colors cursor-pointer select-none uppercase underline underline-offset-4 text-[16px] font-semibold">
                                             <span class="ml-1"><?php echo esc_html($item['label']); ?></span>
                                         </div>
 
                                         <ul
-                                            class="sub-menu absolute left-0 hidden mt-2 bg-[#212529] border border-gray-800 rounded-lg shadow-lg group-hover:block z-50">
+                                            class="sub-menu absolute left-0 hidden mt-2 min-w-[220px] bg-black shadow-xl ring-black/30 group-hover:block z-50 py-2">
                                             <?php foreach ($item['sub_menu'] as $sub_key => $sub_item) :
                                                 $link = user_trailingslashit(home_url('/' . trim($sub_item[1], '/')));
                                                 $is_active = ($link === $current_url);
                                             ?>
                                                 <li>
                                                     <?php if ($is_active) : ?>
-                                                        <span class="block px-4 py-2 text-white bg-gray-800 cursor-default font-medium">
+                                                        <span class="block px-4 py-2 text-white bg-gray-800/70 cursor-default font-semibold uppercase tracking-wide">
                                                             <?php echo esc_html($sub_item[0]); ?>
                                                         </span>
                                                     <?php else : ?>
                                                         <a href="<?php echo esc_url($link); ?>"
-                                                            class="block px-4 py-2 text-gray-300 hover:text-white transition-colors">
+                                                            class="block px-4 py-2 text-gray-300 hover:text-[#e865a0] hover:bg-gray-800/50 transition-colors uppercase tracking-wide">
                                                             <?php echo esc_html($sub_item[0]); ?>
                                                         </a>
                                                     <?php endif; ?>
@@ -344,12 +344,12 @@ $menu = [
                                     ?>
                                         <?php if ($is_active) : ?>
                                             <span
-                                                class="inline-flex items-center px-2 py-1 text-white font-medium cursor-default bg-gray-800 rounded-md">
+                                                class="inline-flex items-center px-2 py-1 text-[#e865a0] font-bold cursor-default uppercase underline underline-offset-4 text-[16px]">
                                                 <span class="ml-1"><?php echo esc_html($item[0]); ?></span>
                                             </span>
                                         <?php else : ?>
                                             <a href="<?php echo esc_url($link); ?>"
-                                                class="inline-flex items-center px-2 py-1 text-gray-300 hover:text-white transition-colors">
+                                                class="inline-flex items-center px-2 py-1 text-gray-300 hover:text-[#e865a0] transition-colors uppercase underline underline-offset-4 text-[16px] font-semibold">
                                                 <span class="ml-1"><?php echo esc_html($item[0]); ?></span>
                                             </a>
                                         <?php endif; ?>
@@ -362,7 +362,7 @@ $menu = [
 
                 <div class="hidden md:flex items-center gap-3">
                     <button type="button" data-auth-btn-login
-                        class="inline-flex items-center h-10 px-3 rounded-lg border border-gray-700 text-gray-200 hover:text-white hover:border-gray-500 transition"
+                        class="inline-flex items-center h-10 px-3 border border-gray-700 text-gray-200 hover:text-white hover:border-gray-500 transition"
                         aria-label="Войти" title="Войти">
                         <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M13 12H3" />
@@ -373,7 +373,7 @@ $menu = [
                     </button>
 
                     <button type="button" data-auth-btn-add
-                        class="inline-flex items-center h-10 px-4 rounded-full bg-[#e865a0] text-white hover:opacity-90 transition"
+                        class="inline-flex items-center h-10 px-4 bg-[#e865a0] text-white hover:opacity-90 transition"
                         aria-label="Добавить анкету" title="Добавить анкету">
                         <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M20 6L9 17l-5-5" />
@@ -398,7 +398,7 @@ $menu = [
             class="fixed inset-0 bg-black/60 opacity-0 pointer-events-none transition-opacity md:hidden z-40"></div>
         <?php if (wp_is_mobile()) : ?>
             <nav id="mobile-drawer"
-                class="fixed inset-y-0 right-0 h-[100vh] hidden w-screen max-w-xs bg-[#212529] text-gray-200 border-l border-gray-800 translate-x-full transition-transform md:hidden flex flex-col z-50"
+                class="fixed inset-y-0 right-0 h-[100vh] hidden w-screen max-w-xs bg-black text-gray-200 border-l border-gray-800 translate-x-full transition-transform md:hidden flex flex-col z-50"
                 aria-label="Мобильное меню">
                 <div class="h-16 flex justify-between items-center px-4 border-b border-gray-800 shrink-0">
                     <button type="button" class="p-2 -mr-2 text-gray-400 hover:text-white" aria-label="Закрыть"
@@ -421,7 +421,7 @@ $menu = [
                             <?php if (isset($item['sub_menu'])) : ?>
                                 <li class="border-b border-gray-800 last:border-b-0">
                                     <button
-                                        class="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800/50 transition-colors rounded-md w-full">
+                                        class="flex items-center px-3 py-3 text-gray-300 hover:text-[#e865a0] hover:bg-gray-800/50 transition-colors rounded-md w-full uppercase underline underline-offset-4 text-[16px] font-semibold">
                                         <span class="flex-1 text-left"><?php echo esc_html($item['label']); ?></span>
                                         <svg class="w-5 h-5 ml-auto text-gray-300 transition-transform transform group-hover:rotate-180"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -437,12 +437,12 @@ $menu = [
                                             <li>
                                                 <?php if ($is_active) : ?>
                                                     <span
-                                                        class="block px-3 py-2 text-white bg-gray-800/80 rounded-md font-medium cursor-default">
+                                                        class="block px-3 py-2 text-[#e865a0] bg-gray-800/80 rounded-md font-semibold cursor-default uppercase underline underline-offset-4 text-[15px]">
                                                         <?php echo esc_html($sub_item[0]); ?>
                                                     </span>
                                                 <?php else : ?>
                                                     <a href="<?php echo esc_url($link); ?>"
-                                                        class="block px-3 py-2 text-gray-300 hover:text-white transition-colors">
+                                                        class="block px-3 py-2 text-gray-300 hover:text-[#e865a0] transition-colors uppercase underline underline-offset-4 text-[15px] font-semibold">
                                                         <?php echo esc_html($sub_item[0]); ?>
                                                     </a>
                                                 <?php endif; ?>
@@ -462,7 +462,7 @@ $menu = [
                                         </span>
                                     <?php else : ?>
                                         <a href="<?php echo esc_url($link); ?>"
-                                            class="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800/50 transition-colors rounded-md">
+                                            class="flex items-center px-3 py-3 text-gray-300 hover:text-[#e865a0] hover:bg-gray-800/50 transition-colors rounded-md uppercase underline underline-offset-4 text-[16px] font-semibold">
                                             <span><?php echo esc_html($item[0]); ?></span>
                                         </a>
                                     <?php endif; ?>
