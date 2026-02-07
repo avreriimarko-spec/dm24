@@ -275,45 +275,6 @@ $menu = [
     'individual' => ['Индивидуалки', '/individualki-almaty'],
 ];
 
-    /** * Функция вывода иконок меню
-     */
-    function nav_icon($key, $cls = 'w-[18px] h-[18px] mr-2 shrink-0', $alt = null)
-    {
-        // файл иконки по ключу
-        $icons = [
-        'escort_almaty' => 'like.png',
-        'accessibility' => 'home.png',
-        'price_filter'  => 'dollar-symbol.png',
-        'favorites'     => 'bookmarks.png',
-        'individual'    => 'indi.png',
-        'default'       => 'menu.webp',
-    ];
-
-    $alts = [
-        'escort_almaty' => 'Эскорт',
-        'accessibility' => 'Доступность',
-        'price_filter'  => 'Цена',
-        'favorites'     => 'Избранные',
-        'individual'    => 'Индивидуалки',
-        'default'       => 'Меню',
-    ];
-        $file = $icons[$key] ?? $icons['default'];
-        $rel  = 'assets/icons/header-icons/' . $file;
-
-        // ищем сначала в дочерней теме, потом в родительской
-        $path = trailingslashit(get_stylesheet_directory()) . $rel;
-        $url  = trailingslashit(get_stylesheet_directory_uri()) . $rel;
-        if (!file_exists($path)) {
-            $path = trailingslashit(get_template_directory()) . $rel;
-            $url  = trailingslashit(get_template_directory_uri()) . $rel;
-        }
-
-        // финальный alt
-        $alt_text = $alt !== null ? $alt : ($alts[$key] ?? $alts['default']);
-
-        echo '<img src="' . esc_url($url) . '" alt="' . esc_attr($alt_text) . '" loading="lazy" decoding="async" ' .
-            'class="' . esc_attr($cls) . ' object-contain" width="18" height="18">';
-    }
     ?>
 
     <?php
@@ -354,7 +315,6 @@ $menu = [
                                     <?php if (isset($item['sub_menu'])) : ?>
                                         <div
                                             class="group inline-flex items-center px-2 py-1 text-gray-300 hover:text-white transition-colors cursor-pointer select-none">
-                                            <?php nav_icon($key); ?>
                                             <span class="ml-1"><?php echo esc_html($item['label']); ?></span>
                                         </div>
 
@@ -385,13 +345,11 @@ $menu = [
                                         <?php if ($is_active) : ?>
                                             <span
                                                 class="inline-flex items-center px-2 py-1 text-white font-medium cursor-default bg-gray-800 rounded-md">
-                                                <?php nav_icon($key); ?>
                                                 <span class="ml-1"><?php echo esc_html($item[0]); ?></span>
                                             </span>
                                         <?php else : ?>
                                             <a href="<?php echo esc_url($link); ?>"
                                                 class="inline-flex items-center px-2 py-1 text-gray-300 hover:text-white transition-colors">
-                                                <?php nav_icon($key); ?>
                                                 <span class="ml-1"><?php echo esc_html($item[0]); ?></span>
                                             </a>
                                         <?php endif; ?>
@@ -464,7 +422,6 @@ $menu = [
                                 <li class="border-b border-gray-800 last:border-b-0">
                                     <button
                                         class="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800/50 transition-colors rounded-md w-full">
-                                        <?php nav_icon($key, 'w-5 h-5 mr-3 shrink-0'); ?>
                                         <span class="flex-1 text-left"><?php echo esc_html($item['label']); ?></span>
                                         <svg class="w-5 h-5 ml-auto text-gray-300 transition-transform transform group-hover:rotate-180"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -501,13 +458,11 @@ $menu = [
                                     <?php if ($is_active) : ?>
                                         <span
                                             class="flex items-center px-3 py-3 text-white bg-gray-800/80 rounded-md font-medium cursor-default">
-                                            <?php nav_icon($key, 'w-5 h-5 mr-3 shrink-0'); ?>
                                             <span><?php echo esc_html($item[0]); ?></span>
                                         </span>
                                     <?php else : ?>
                                         <a href="<?php echo esc_url($link); ?>"
                                             class="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800/50 transition-colors rounded-md">
-                                            <?php nav_icon($key, 'w-5 h-5 mr-3 shrink-0'); ?>
                                             <span><?php echo esc_html($item[0]); ?></span>
                                         </a>
                                     <?php endif; ?>
