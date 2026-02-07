@@ -1346,6 +1346,20 @@ $lb_items = array_merge(
                 color: #6b6b6b;
             }
 
+            .model-reviews__content #reviews .mr-headline .mr-date-icon {
+                display: inline-flex;
+                align-items: center;
+                vertical-align: middle;
+                margin: 0 4px 0 2px;
+                color: #6b6b6b;
+            }
+
+            .model-reviews__content #reviews .mr-headline .mr-date-icon svg {
+                display: block;
+                width: 14px;
+                height: 14px;
+            }
+
             .model-reviews__content #reviews article .mr-rating {
                 margin-top: 6px;
                 display: flex;
@@ -1677,8 +1691,13 @@ $lb_items = array_merge(
                             dateSpan.className = 'mr-date';
                             dateSpan.textContent = (timeEl.textContent || '').trim();
 
+                            var calendarSpan = document.createElement('span');
+                            calendarSpan.className = 'mr-date-icon';
+                            calendarSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 20" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/></svg>';
+
                             headline.appendChild(nameSpan);
                             headline.appendChild(document.createTextNode(' / '));
+                            headline.appendChild(calendarSpan);
                             headline.appendChild(dateSpan);
 
                             nameEl.replaceWith(headline);
