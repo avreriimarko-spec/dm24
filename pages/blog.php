@@ -89,7 +89,7 @@ if ($is_ajax) {
                     $date_human = date_i18n('j F Y', get_the_time('U'));
                     $date_iso   = get_the_date('c');
                 ?>
-                    <article class="group rounded-2xl border border-[rgba(255,45,114,.18)] bg-white shadow-[0_2px_18px_rgba(0,0,0,.04)] hover:shadow-[0_6px_24px_rgba(0,0,0,.06)] transition overflow-hidden">
+                    <article class="group rounded-2xl border border-[rgba(232,101,160,.18)] bg-white shadow-[0_2px_18px_rgba(0,0,0,.04)] hover:shadow-[0_6px_24px_rgba(0,0,0,.06)] transition overflow-hidden">
                         <a href="<?php echo esc_url($permalink); ?>" class="grid grid-cols-1 md:grid-cols-[320px_1fr] items-stretch gap-0 md:gap-6 h-full">
                             <!-- Медиа слева -->
                             <div class="w-full h-full">
@@ -110,14 +110,14 @@ if ($is_ajax) {
                             <div class="p-5 md:py-5 md:pr-5 md:pl-0 flex flex-col">
                                 <div class="mb-3">
                                     <div class="inline-flex items-center gap-2 text-[13px] font-semibold">
-                                        <span class="inline-block rounded-full bg-[rgba(255,45,114,.08)] text-[#ff2d72] px-2 py-0.5">
+                                        <span class="inline-block rounded-full bg-[rgba(232,101,160,.08)] text-[#e865a0] px-2 py-0.5">
                                             <time datetime="<?php echo esc_attr($date_iso); ?>"><?php echo esc_html($date_human); ?></time>
                                         </span>
                                     </div>
                                 </div>
 
                                 <h2 class="text-xl md:text-2xl font-extrabold leading-snug">
-                                    <span class="group-hover:underline decoration-2 underline-offset-4 decoration-[#ff2d72]">
+                                    <span class="group-hover:underline decoration-2 underline-offset-4 decoration-[#e865a0]">
                                         <?php echo esc_html($title); ?>
                                     </span>
                                 </h2>
@@ -128,7 +128,7 @@ if ($is_ajax) {
                                     </p>
                                 <?php endif; ?>
 
-                                <span class="mt-4 inline-flex items-center gap-2 text-[#ff2d72] font-semibold">
+                                <span class="mt-4 inline-flex items-center gap-2 text-[#e865a0] font-semibold">
                                     Читать
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M13 5l7 7-7 7v-4H4v-6h9V5z" />
@@ -144,7 +144,7 @@ if ($is_ajax) {
             <?php if (!$is_ajax && $q->max_num_pages > 1): ?>
                 <div class="mt-10 flex justify-center">
                     <button id="blog-load-more"
-                        class="px-4 h-10 rounded-[10px] border text-[15px] font-semibold bg-white text-[#ff2d72] border-[#ff2d72] hover:bg-[#ff2d72] hover:text-white transition"
+                        class="px-4 h-10 rounded-[10px] border text-[15px] font-semibold bg-white text-[#e865a0] border-[#e865a0] hover:bg-[#e865a0] hover:text-white transition"
                         data-current="<?php echo (int)$paged; ?>"
                         data-total="<?php echo (int)$q->max_num_pages; ?>"
                         data-ppp="<?php echo (int)$ppp; ?>"

@@ -28,7 +28,7 @@ $args = wp_parse_args($args ?? [], [
                         <input type="password" name="password" autocomplete="current-password" required class="mt-1 w-full h-11 rounded-lg bg-[#2a2f36] border border-gray-700 px-3 outline-none focus:border-gray-500 text-white" placeholder="••••••••">
                     </label>
                     <div class="flex items-center justify-between pt-2">
-                        <button type="submit" class="h-11 px-4 rounded-full bg-[#ff2d72] text-white font-medium hover:opacity-90 transition">Войти</button>
+                        <button type="submit" class="h-11 px-4 rounded-full bg-[#e865a0] text-white font-medium hover:opacity-90 transition">Войти</button>
                         <p class="text-sm text-gray-400 hover:text-white transition" data-authui-switch="add">Зарегистрироваться</p>
                     </div>
                 </form>
@@ -66,7 +66,7 @@ $args = wp_parse_args($args ?? [], [
                         <label for="reg-terms-checkbox">Я принимаю правила сайта</label>
                     </div>
                     <div class="flex items-center justify-between pt-2">
-                        <button type="submit" class="h-11 px-4 rounded-full bg-[#ff2d72] text-white font-medium hover:opacity-90 transition">Зарегистрироваться</button>
+                        <button type="submit" class="h-11 px-4 rounded-full bg-[#e865a0] text-white font-medium hover:opacity-90 transition">Зарегистрироваться</button>
                         <p class="text-sm text-gray-400 hover:text-white transition" data-authui-switch="login">У меня уже есть аккаунт</p>
                     </div>
                 </form>
@@ -252,7 +252,7 @@ $args = wp_parse_args($args ?? [], [
             </svg>
             Войти
         </a>
-        <a href="#" data-auth-btn-add class="inline-flex items-center justify-center h-11 px-4 rounded-full bg-[#ff2d72] text-white hover:opacity-90 transition">
+        <a href="#" data-auth-btn-add class="inline-flex items-center justify-center h-11 px-4 rounded-full bg-[#e865a0] text-white hover:opacity-90 transition">
             <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 6L9 17l-5-5" />
             </svg>

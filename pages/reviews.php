@@ -20,7 +20,7 @@ if (!function_exists('mr_starline')) {
         $out = '<div class="flex items-center gap-0.5" aria-label="Рейтинг ' . $r . ' из 5">';
         for ($i = 1; $i <= 5; $i++) {
             $fill = $i <= $r ? 'currentColor' : 'none';
-            $cls  = $i <= $r ? 'text-[#ff2d72]' : 'text-neutral-300';
+            $cls  = $i <= $r ? 'text-[#e865a0]' : 'text-neutral-300';
             $out .= '<svg class="w-4 h-4 ' . $cls . '" viewBox="0 0 24 24" fill="' . $fill . '" stroke="currentColor" stroke-width="1.5"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.25l-7.19-.61L12 2 9.19 8.64 2 9.25l5.46 4.72L5.82 21z"/></svg>';
         }
         return $out . '</div>';
@@ -159,11 +159,11 @@ $q = new WP_Query([
                     }
                     $m_img      = $m_is_model ? mr_get_model_photo_url($mid, 'medium_large') : '';
                 ?>
-                    <li class="rounded-2xl border border-[rgba(255,45,114,.18)] bg-white p-4 md:p-5 shadow-[0_2px_18px_rgba(0,0,0,.04)] hover:shadow-[0_6px_24px_rgba(0,0,0,.06)] transition">
+                    <li class="rounded-2xl border border-[rgba(232,101,160,.18)] bg-white p-4 md:p-5 shadow-[0_2px_18px_rgba(0,0,0,.04)] hover:shadow-[0_6px_24px_rgba(0,0,0,.06)] transition">
                         <div class="flex gap-4">
                             <?php if ($m_img): ?>
                                 <a href="<?php echo esc_url($m_link ?: '#'); ?>"
-                                    class="block w-32 h-24 md:w-40 md:h-28 flex-shrink-0 overflow-hidden rounded-xl ring-1 ring-[rgba(255,45,114,.2)]">
+                                    class="block w-32 h-24 md:w-40 md:h-28 flex-shrink-0 overflow-hidden rounded-xl ring-1 ring-[rgba(232,101,160,.2)]">
                                     <img src="<?php echo esc_url($m_img); ?>"
                                         alt="<?php echo esc_attr($m_title); ?>"
                                         class="w-full h-full object-cover" loading="lazy" decoding="async">
@@ -178,7 +178,7 @@ $q = new WP_Query([
 
                                         <div class="mt-1 text-sm">
                                             <?php if ($m_link): ?>
-                                                <a class="text-[#ff2d72] hover:text-black underline decoration-1 underline-offset-2"
+                                                <a class="text-[#e865a0] hover:text-black underline decoration-1 underline-offset-2"
                                                     href="<?php echo esc_url($m_link); ?>">
                                                     <?php echo esc_html($m_title); ?>
                                                 </a>
@@ -229,9 +229,9 @@ $q = new WP_Query([
                         ?>
                             <li>
                                 <?php if ($is_cur): ?>
-                                    <span class="px-3 py-2 rounded-xl bg-[#ff2d72] text-white shadow-sm"><?php echo esc_html($text); ?></span>
+                                    <span class="px-3 py-2 rounded-xl bg-[#e865a0] text-white shadow-sm"><?php echo esc_html($text); ?></span>
                                 <?php else: ?>
-                                    <a class="px-3 py-2 rounded-xl border border-[rgba(255,45,114,.25)] text-black hover:bg-[#ff2d72] hover:text-white hover:border-[#ff2d72] transition"
+                                    <a class="px-3 py-2 rounded-xl border border-[rgba(232,101,160,.25)] text-black hover:bg-[#e865a0] hover:text-white hover:border-[#e865a0] transition"
                                         href="<?php echo esc_url($href); ?>"><?php echo esc_html($text); ?></a>
                                 <?php endif; ?>
                             </li>

@@ -2,7 +2,7 @@
 
 /**
  * Template Name: FAQ
- * Description: Вопрос—ответ с акцентом #ff2d72 и обновлённым дизайном.
+ * Description: Вопрос—ответ с акцентом #e865a0 и обновлённым дизайном.
  */
 if (!defined('ABSPATH')) exit;
 
@@ -66,7 +66,7 @@ foreach ($faq_items as $it) {
             <h1 class="inline-block text-[32px] md:text-[40px] leading-tight font-extrabold text-black">
                 <?php echo esc_html($h1); ?>
             </h1>
-            <div class="mx-auto mt-2 h-1 w-24 rounded-full bg-[#ff2d72]"></div>
+            <div class="mx-auto mt-2 h-1 w-24 rounded-full bg-[#e865a0]"></div>
 
             <?php if ($lead): ?>
                 <p class="mt-4 text-neutral-700 max-w-[760px] mx-auto">
@@ -77,7 +77,7 @@ foreach ($faq_items as $it) {
 
         <?php if (!empty($faq_items)): ?>
             <!-- Панель с FAQ: мягкая карточка с лёгкой тенью -->
-            <section id="faq-acc" class="rounded-2xl border border-[rgba(255,45,114,.18)] bg-white shadow-[0_10px_30px_rgba(0,0,0,.05)]">
+            <section id="faq-acc" class="rounded-2xl border border-[rgba(232,101,160,.18)] bg-white shadow-[0_10px_30px_rgba(0,0,0,.05)]">
                 <ul class="divide-y divide-neutral-200">
                     <?php foreach ($faq_items as $i => $it):
                         $qid    = 'faq-q-' . ($i + 1);
@@ -95,14 +95,14 @@ foreach ($faq_items as $it) {
                                     <!-- ИСПРАВЛЕНО: div заменен на span для валидации W3C -->
                                     <span class="flex items-start gap-3">
                                         <!-- Акцентная метка слева -->
-                                        <span class="mt-1 inline-block w-1 h-5 rounded-full bg-[#ff2d72]"></span>
+                                        <span class="mt-1 inline-block w-1 h-5 rounded-full bg-[#e865a0]"></span>
                                         <span class="text-[15px] md:text-[16px] font-semibold text-black">
                                             <?php echo esc_html($q_txt ?: 'Вопрос'); ?>
                                         </span>
                                     </span>
 
                                     <!-- Иконка-переключатель -->
-                                    <span class="relative ml-4 inline-flex items-center justify-center w-7 h-7 rounded-full border border-[rgba(255,45,114,.28)] text-[#ff2d72]">
+                                    <span class="relative ml-4 inline-flex items-center justify-center w-7 h-7 rounded-full border border-[rgba(232,101,160,.28)] text-[#e865a0]">
                                         <svg class="w-4 h-4 acc-chevron transition-transform duration-200 group-open:rotate-180" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                             <path d="M7 10l5 5 5-5H7z" />
                                         </svg>

@@ -115,7 +115,7 @@ if (have_posts()) : the_post();
                     <?php endif; ?>
 
                     <!-- Основной контент -->
-                    <article class="prose prose-neutral max-w-none prose-img:rounded-sm prose-a:text-[#ff2d72]">
+                    <article class="prose prose-neutral max-w-none prose-img:rounded-sm prose-a:text-[#e865a0]">
                         <?php
                         the_content();
                         wp_link_pages([
@@ -139,7 +139,7 @@ if (have_posts()) : the_post();
                         <p class="text-sm text-neutral-700 mb-4">Оставьте отзыв — он появится после модерации. E-mail виден только модератору.</p>
 
                         <!-- Форма -->
-                        <form id="blog-review-form" class="rounded-xl border border-[rgba(255,45,114,.18)] bg-white p-4 md:p-5 space-y-4"
+                        <form id="blog-review-form" class="rounded-xl border border-[rgba(232,101,160,.18)] bg-white p-4 md:p-5 space-y-4"
                             method="post" data-ajax="<?php echo esc_url($ajax_url); ?>">
                             <input type="hidden" name="action" value="blog_add_review">
                             <input type="hidden" name="nonce" value="<?php echo esc_attr($nonce); ?>">
@@ -150,18 +150,18 @@ if (have_posts()) : the_post();
                                 <div>
                                     <label class="block text-sm mb-1">Имя*</label>
                                     <input name="name" type="text" required placeholder="Ваше имя"
-                                        class="w-full rounded-lg border border-neutral-300 bg-white text-black placeholder-neutral-400 px-3 py-2 outline-none focus:border-[#ff2d72]">
+                                        class="w-full rounded-lg border border-neutral-300 bg-white text-black placeholder-neutral-400 px-3 py-2 outline-none focus:border-[#e865a0]">
                                 </div>
                                 <div>
                                     <label class="block text-sm mb-1">E-mail*</label>
                                     <input name="email" type="email" required placeholder="you@example.com"
-                                        class="w-full rounded-lg border border-neutral-300 bg-white text-black placeholder-neutral-400 px-3 py-2 outline-none focus:border-[#ff2d72]">
+                                        class="w-full rounded-lg border border-neutral-300 bg-white text-black placeholder-neutral-400 px-3 py-2 outline-none focus:border-[#e865a0]">
                                     <p class="mt-1 text-[12px] text-neutral-500">Не публикуется.</p>
                                 </div>
                                 <div>
                                     <label class="block text-sm mb-1">Оценка*</label>
                                     <select name="rating" required
-                                        class="w-full rounded-lg border border-neutral-300 bg-white text-black px-3 py-2 outline-none focus:border-[#ff2d72]">
+                                        class="w-full rounded-lg border border-neutral-300 bg-white text-black px-3 py-2 outline-none focus:border-[#e865a0]">
                                         <option value="">Выберите</option>
                                         <option value="5">5 — Отлично</option>
                                         <option value="4">4 — Хорошо</option>
@@ -175,11 +175,11 @@ if (have_posts()) : the_post();
                             <div>
                                 <label class="block text-sm mb-1">Сообщение*</label>
                                 <textarea name="message" rows="4" required placeholder="Ваш отзыв"
-                                    class="w-full rounded-lg border border-neutral-300 bg-white text-black placeholder-neutral-400 px-3 py-2 outline-none focus:border-[#ff2d72]"></textarea>
+                                    class="w-full rounded-lg border border-neutral-300 bg-white text-black placeholder-neutral-400 px-3 py-2 outline-none focus:border-[#e865a0]"></textarea>
                             </div>
 
                             <button id="blog-review-submit" type="submit"
-                                class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-[#ff2d72] text-white hover:bg-[#e62967] transition">
+                                class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-[#e865a0] text-white hover:bg-[#e62967] transition">
                                 Отправить на модерацию
                             </button>
 
@@ -275,7 +275,7 @@ if (have_posts()) : the_post();
                                 ?>
                                     <li class="<?php echo esc_attr($hidden_cls); ?>">
                                         <a href="<?php echo esc_url($s_link); ?>"
-                                            class="group grid grid-cols-[80px,1fr] gap-3 items-start rounded-xl border border-[rgba(255,45,114,.18)] bg-white p-2 hover:shadow-[0_6px_16px_rgba(0,0,0,.06)] transition">
+                                            class="group grid grid-cols-[80px,1fr] gap-3 items-start rounded-xl border border-[rgba(232,101,160,.18)] bg-white p-2 hover:shadow-[0_6px_16px_rgba(0,0,0,.06)] transition">
                                             <div class="w-[80px] h-[80px] rounded-lg overflow-hidden bg-neutral-100">
                                                 <?php if ($s_img): ?>
                                                     <img src="<?php echo esc_url($s_img); ?>" alt="<?php echo esc_attr($s_title); ?>"
@@ -285,10 +285,10 @@ if (have_posts()) : the_post();
                                                 <?php endif; ?>
                                             </div>
                                             <div class="min-w-0">
-                                                <span class="inline-flex items-center rounded-full bg-[rgba(255,45,114,.08)] text-[#ff2d72] px-2 py-[2px] text-[11px] font-semibold">
+                                                <span class="inline-flex items-center rounded-full bg-[rgba(232,101,160,.08)] text-[#e865a0] px-2 py-[2px] text-[11px] font-semibold">
                                                     <time datetime="<?php echo esc_attr($s_date_iso); ?>"><?php echo esc_html($s_date_human); ?></time>
                                                 </span>
-                                                <h3 class="mt-1 text-[14px] font-extrabold leading-snug text-black group-hover:underline underline-offset-4 decoration-[#ff2d72]">
+                                                <h3 class="mt-1 text-[14px] font-extrabold leading-snug text-black group-hover:underline underline-offset-4 decoration-[#e865a0]">
                                                     <?php echo esc_html($s_title); ?>
                                                 </h3>
                                                 <?php if ($s_desc): ?>
@@ -307,7 +307,7 @@ if (have_posts()) : the_post();
                             <?php if ($i > 4): ?>
                                 <div class="mt-3">
                                     <button type="button" id="side-more-btn"
-                                        class="w-full text-center text-[13px] font-semibold px-3 py-2 rounded-full border border-[#ff2d72] text-[#ff2d72] hover:bg-[rgba(255,45,114,.06)] transition">
+                                        class="w-full text-center text-[13px] font-semibold px-3 py-2 rounded-full border border-[#e865a0] text-[#e865a0] hover:bg-[rgba(232,101,160,.06)] transition">
                                         Показать ещё
                                     </button>
                                 </div>

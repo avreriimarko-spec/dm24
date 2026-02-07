@@ -73,17 +73,17 @@
   @apply !bg-black;
 }
 
-/* ===== Базовый контент (светлый, акцент #ff2d72) ===== */
+/* ===== Базовый контент (светлый, акцент #e865a0) ===== */
 :root {
-  --accent: #ff2d72; /* основной акцентный цвет */
+  --accent: #e865a0; /* основной акцентный цвет */
   --link-color: #1d4ed8; /* синий для ссылок */
   --secondary-accent: #ff5e7d; /* дополнительный акцентный цвет */
   --ink: #000; /* основной текст */
   --ink-2: #111827; /* заголовки/ховеры */
   --text: #1f2937; /* параграфы */
   --line: #e5e7eb; /* тонкие линии/скролл */
-  --border: rgba(255, 45, 114, 0.22); /* границы с акцентным оттенком */
-  --thead: rgba(255, 45, 114, 0.06); /* фон thead */
+  --border: rgba(232,101,160, 0.22); /* границы с акцентным оттенком */
+  --thead: rgba(232,101,160, 0.06); /* фон thead */
 }
 
 /* --- Заголовки: розовый акцент --- */
@@ -436,12 +436,12 @@
 }
 
 #main-nav .nav-anim:hover {
-  background-color: rgba(255, 45, 114, 0.06); /* мягкий розовый фон */
-  color: #ff2d72;
+  background-color: rgba(232,101,160, 0.06); /* мягкий розовый фон */
+  color: #e865a0;
 }
 
 #main-nav .nav-anim:hover svg {
-  color: #ff2d72;
+  color: #e865a0;
   stroke: currentColor;
   transform: translateY(-1px);
   transition: color 0.25s ease, stroke 0.25s ease, transform 0.18s ease;
@@ -452,7 +452,7 @@
 }
 
 #main-nav .nav-anim:hover > span:first-of-type {
-  color: #ff2d72;
+  color: #e865a0;
   transform: translateY(-1px);
 }
 
@@ -484,14 +484,14 @@
 }
 
 #mobile-drawer a:hover {
-  color: #ff2d72;
-  background-color: rgba(255, 45, 114, 0.06);
+  color: #e865a0;
+  background-color: rgba(232,101,160, 0.06);
 }
 
 /* Фокус-контур для доступности */
 header a:focus-visible,
 header button:focus-visible {
-  outline: 2px solid #ff2d72;
+  outline: 2px solid #e865a0;
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -530,7 +530,7 @@ h2 > span::first-letter,
 h2 > strong::first-letter,
 h2 > em::first-letter,
 h2 > b::first-letter {
-  color: #ff2d72 !important;
+  color: #e865a0 !important;
 }
 
 /* Если первым идёт SVG-иконка, красим первую букву следующего узла */
@@ -538,7 +538,7 @@ h1 > svg:first-child + a::first-letter,
 h1 > svg:first-child + span::first-letter,
 h2 > svg:first-child + a::first-letter,
 h2 > svg:first-child + span::first-letter {
-  color: #ff2d72 !important;
+  color: #e865a0 !important;
 }
 
 .models-filter-form input[type="checkbox"] {
@@ -580,7 +580,7 @@ h2 > svg:first-child + span::first-letter {
 }
 
 :root {
-  --ea-accent: #ff2d72;
+  --ea-accent: #e865a0;
   /* розовый как на сайте */
   --ea-accent-2: #ff4b88;
   /* чуть светлее для градиента/hover */
@@ -592,9 +592,9 @@ h2 > svg:first-child + span::first-letter {
   /* серый для описаний */
   --ea-border: rgba(17, 24, 39, 0.08);
   --ea-shadow: 0 14px 35px rgba(0, 0, 0, 0.12);
-  --ea-badge-bg: rgba(255, 45, 114, 0.08);
-  --ea-badge-brd: rgba(255, 45, 114, 0.25);
-  --ea-badge-text: #ff2d72;
+  --ea-badge-bg: rgba(232,101,160, 0.08);
+  --ea-badge-brd: rgba(232,101,160, 0.25);
+  --ea-badge-text: #e865a0;
 }
 
 .ea-tg-pop-overlay {
@@ -717,7 +717,7 @@ h2 > svg:first-child + span::first-letter {
   letter-spacing: 0.2px;
   text-decoration: none;
   transition: filter 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease;
-  box-shadow: 0 8px 18px rgba(255, 45, 114, 0.28);
+  box-shadow: 0 8px 18px rgba(232,101,160, 0.28);
 }
 
 .ea-tg-join:hover {
@@ -1196,8 +1196,8 @@ h2 > svg:first-child + span::first-letter {
 }
 
 .chip:hover {
-  border-color: #ff2d72;
-  box-shadow: 0 2px 10px rgba(255, 45, 114, 0.12);
+  border-color: #e865a0;
+  box-shadow: 0 2px 10px rgba(232,101,160, 0.12);
 }
 
 .chip:active {

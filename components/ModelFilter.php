@@ -117,7 +117,7 @@ function render_model_filter(): string
         /* Dropdown Selection States */
         .mf-dropdown-item:has(.filter-checkbox:checked),
         .mf-dropdown-item.is-active {
-            background: linear-gradient(135deg, #ff2d72 0%, #ff4d88 100%);
+            background: linear-gradient(135deg, #e865a0 0%, #ff4d88 100%);
         }
         .mf-dropdown-item:has(.filter-checkbox:checked) span,
         .mf-dropdown-item.is-active span {
@@ -126,7 +126,7 @@ function render_model_filter(): string
         }
         .mf-dropdown-item:has(.filter-checkbox:checked):hover,
         .mf-dropdown-item.is-active:hover {
-            background: linear-gradient(135deg, #e01b5d 0%, #ff2d72 100%);
+            background: linear-gradient(135deg, #e01b5d 0%, #e865a0 100%);
         }
 
         /* Action button styles */
@@ -138,7 +138,7 @@ function render_model_filter(): string
             background-color: #3d5b77ff;
         }
         #mf-apply {
-            background-color: #ff2d72;
+            background-color: #e865a0;
             color: white;
         }
         #mf-apply:hover {

@@ -233,7 +233,7 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
                 </div>
 
                 <button id="<?= $uid ?>_btn"
-                    class="mt-3 inline-flex items-center gap-2 text-[#ff2d72] font-semibold hover:opacity-90 transition"
+                    class="mt-3 inline-flex items-center gap-2 text-[#e865a0] font-semibold hover:opacity-90 transition"
                     aria-expanded="<?= $is_bot ? 'true' : 'false' ?>"
                     <?= $is_bot ? 'hidden' : '' ?>>
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -728,7 +728,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <button
                             type="button"
                             class="faq-trigger w-full text-left px-5 py-4 flex items-center justify-between gap-4 bg-white hover:bg-neutral-50 transition-colors border-l-4"
-                            style="border-left-color:#ff2d72"
+                            style="border-left-color:#e865a0"
                             aria-expanded="<?= $is_open ? 'true' : 'false' ?>"
                             aria-controls="<?= esc_attr($pid) ?>">
                             <span class="pr-6 font-semibold text-[15px] leading-snug"><?= esc_html($q) ?></span>
@@ -738,11 +738,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         </button>
 
                         <!-- тонкая линия-акцент под вопросом -->
-                        <div class="h-px bg-neutral-200 relative after:absolute after:left-0 after:top-0 after:h-px after:w-24 after:bg-[#ff2d72]"></div>
+                        <div class="h-px bg-neutral-200 relative after:absolute after:left-0 after:top-0 after:h-px after:w-24 after:bg-[#e865a0]"></div>
 
                         <div id="<?= esc_attr($pid) ?>" class="faq-panel <?= $is_open ? '' : 'is-collapsed' ?>">
                             <div class="px-5 md:px-6 py-4 md:py-5">
-                                <div class="prose prose-sm max-w-[820px] mx-auto text-neutral-800 prose-a:text-[#ff2d72] prose-a:underline hover:prose-a:no-underline">
+                                <div class="prose prose-sm max-w-[820px] mx-auto text-neutral-800 prose-a:text-[#e865a0] prose-a:underline hover:prose-a:no-underline">
                                     <?= wp_kses_post(apply_filters('the_content', $a)) ?>
                                 </div>
                             </div>
@@ -825,7 +825,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div style="color:white;font-family:sans-serif;text-align:center;padding:40px;">
                 <p style="font-size:18px;">🎥 Видео не поддерживается напрямую</p>
                 <p style="margin-top:10px;font-size:14px;">Попробуйте открыть по ссылке:</p>
-                <a href="${url}" target="_blank" style="color:#ff2d72;text-decoration:underline;">${url}</a>
+                <a href="${url}" target="_blank" style="color:#e865a0;text-decoration:underline;">${url}</a>
             </div>`;
                         iframe.classList.remove('hidden');
                     }

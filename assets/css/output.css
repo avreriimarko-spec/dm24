@@ -1877,21 +1877,21 @@ body {
   border-color: rgb(58 58 64 / var(--tw-border-opacity, 1));
 }
 
-.border-\[\#ff2d72\] {
+.border-\[\#e865a0\] {
   --tw-border-opacity: 1;
-  border-color: rgb(255 45 114 / var(--tw-border-opacity, 1));
+  border-color: rgb(232 101 160 / var(--tw-border-opacity, 1));
 }
 
 .border-\[rgba\(255\2c 45\2c 114\2c \.18\)\] {
-  border-color: rgba(255,45,114,.18);
+  border-color: rgba(232,101,160,.18);
 }
 
 .border-\[rgba\(255\2c 45\2c 114\2c \.25\)\] {
-  border-color: rgba(255,45,114,.25);
+  border-color: rgba(232,101,160,.25);
 }
 
 .border-\[rgba\(255\2c 45\2c 114\2c \.28\)\] {
-  border-color: rgba(255,45,114,.28);
+  border-color: rgba(232,101,160,.28);
 }
 
 .border-black {
@@ -1991,17 +1991,17 @@ body {
   background-color: rgb(49 54 61 / var(--tw-bg-opacity, 1));
 }
 
-.bg-\[\#ff2d72\] {
+.bg-\[\#e865a0\] {
   --tw-bg-opacity: 1;
-  background-color: rgb(255 45 114 / var(--tw-bg-opacity, 1));
+  background-color: rgb(232 101 160 / var(--tw-bg-opacity, 1));
 }
 
 .bg-\[rgba\(255\2c 45\2c 114\2c \.08\)\] {
-  background-color: rgba(255,45,114,.08);
+  background-color: rgba(232,101,160,.08);
 }
 
 .bg-\[rgba\(255\2c 45\2c 114\2c \.15\)\] {
-  background-color: rgba(255,45,114,.15);
+  background-color: rgba(232,101,160,.15);
 }
 
 .bg-amber-500\/95 {
@@ -2554,9 +2554,9 @@ body {
   color: rgb(34 197 94 / var(--tw-text-opacity, 1));
 }
 
-.text-\[\#ff2d72\] {
+.text-\[\#e865a0\] {
   --tw-text-opacity: 1;
-  color: rgb(255 45 114 / var(--tw-text-opacity, 1));
+  color: rgb(232 101 160 / var(--tw-text-opacity, 1));
 }
 
 .text-black {
@@ -2703,8 +2703,8 @@ body {
   text-decoration-line: underline;
 }
 
-.decoration-\[\#ff2d72\] {
-  text-decoration-color: #ff2d72;
+.decoration-\[\#e865a0\] {
+  text-decoration-color: #e865a0;
 }
 
 .decoration-1 {
@@ -2733,8 +2733,8 @@ body {
   color: rgb(163 163 163 / var(--tw-placeholder-opacity, 1));
 }
 
-.accent-\[\#ff2d72\] {
-  accent-color: #ff2d72;
+.accent-\[\#e865a0\] {
+  accent-color: #e865a0;
 }
 
 .opacity-0 {
@@ -2851,7 +2851,7 @@ body {
 }
 
 .ring-\[rgba\(255\2c 45\2c 114\2c \.2\)\] {
-  --tw-ring-color: rgba(255,45,114,.2);
+  --tw-ring-color: rgba(232,101,160,.2);
 }
 
 .ring-white\/50 {
@@ -3014,10 +3014,10 @@ body {
   background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1)) !important;
 }
 
-/* ===== Базовый контент (светлый, акцент #ff2d72) ===== */
+/* ===== Базовый контент (светлый, акцент #e865a0) ===== */
 
 :root {
-  --accent: #ff2d72;
+  --accent: #e865a0;
   /* основной акцентный цвет */
   --link-color: #1d4ed8;
   /* синий для ссылок */
@@ -3031,9 +3031,9 @@ body {
   /* параграфы */
   --line: #e5e7eb;
   /* тонкие линии/скролл */
-  --border: rgba(255, 45, 114, 0.22);
+  --border: rgba(232,101,160, 0.22);
   /* границы с акцентным оттенком */
-  --thead: rgba(255, 45, 114, 0.06);
+  --thead: rgba(232,101,160, 0.06);
   /* фон thead */
 }
 
@@ -3451,13 +3451,13 @@ body {
 }
 
 #main-nav .nav-anim:hover {
-  background-color: rgba(255, 45, 114, 0.06);
+  background-color: rgba(232,101,160, 0.06);
   /* мягкий розовый фон */
-  color: #ff2d72;
+  color: #e865a0;
 }
 
 #main-nav .nav-anim:hover svg {
-  color: #ff2d72;
+  color: #e865a0;
   stroke: currentColor;
   transform: translateY(-1px);
   transition: color 0.25s ease, stroke 0.25s ease, transform 0.18s ease;
@@ -3468,7 +3468,7 @@ body {
 }
 
 #main-nav .nav-anim:hover > span:first-of-type {
-  color: #ff2d72;
+  color: #e865a0;
   transform: translateY(-1px);
 }
 
@@ -3506,15 +3506,15 @@ body {
 }
 
 #mobile-drawer a:hover {
-  color: #ff2d72;
-  background-color: rgba(255, 45, 114, 0.06);
+  color: #e865a0;
+  background-color: rgba(232,101,160, 0.06);
 }
 
 /* Фокус-контур для доступности */
 
 header a:focus-visible,
 header button:focus-visible {
-  outline: 2px solid #ff2d72;
+  outline: 2px solid #e865a0;
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -3562,7 +3562,7 @@ h2 > span::first-letter,
 h2 > strong::first-letter,
 h2 > em::first-letter,
 h2 > b::first-letter {
-  color: #ff2d72 !important;
+  color: #e865a0 !important;
 }
 
 /* Если первым идёт SVG-иконка, красим первую букву следующего узла */
@@ -3571,7 +3571,7 @@ h1 > svg:first-child + a::first-letter,
 h1 > svg:first-child + span::first-letter,
 h2 > svg:first-child + a::first-letter,
 h2 > svg:first-child + span::first-letter {
-  color: #ff2d72 !important;
+  color: #e865a0 !important;
 }
 
 .models-filter-form input[type="checkbox"] {
@@ -3617,7 +3617,7 @@ h2 > svg:first-child + span::first-letter {
 }
 
 :root {
-  --ea-accent: #ff2d72;
+  --ea-accent: #e865a0;
   /* розовый как на сайте */
   --ea-accent-2: #ff4b88;
   /* чуть светлее для градиента/hover */
@@ -3629,9 +3629,9 @@ h2 > svg:first-child + span::first-letter {
   /* серый для описаний */
   --ea-border: rgba(17, 24, 39, 0.08);
   --ea-shadow: 0 14px 35px rgba(0, 0, 0, 0.12);
-  --ea-badge-bg: rgba(255, 45, 114, 0.08);
-  --ea-badge-brd: rgba(255, 45, 114, 0.25);
-  --ea-badge-text: #ff2d72;
+  --ea-badge-bg: rgba(232,101,160, 0.08);
+  --ea-badge-brd: rgba(232,101,160, 0.25);
+  --ea-badge-text: #e865a0;
 }
 
 .ea-tg-pop-overlay {
@@ -3757,7 +3757,7 @@ h2 > svg:first-child + span::first-letter {
   letter-spacing: 0.2px;
   text-decoration: none;
   transition: filter 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease;
-  box-shadow: 0 8px 18px rgba(255, 45, 114, 0.28);
+  box-shadow: 0 8px 18px rgba(232,101,160, 0.28);
 }
 
 .ea-tg-join:hover {
@@ -4265,8 +4265,8 @@ h2 > svg:first-child + span::first-letter {
 }
 
 .chip:hover {
-  border-color: #ff2d72;
-  box-shadow: 0 2px 10px rgba(255, 45, 114, 0.12);
+  border-color: #e865a0;
+  box-shadow: 0 2px 10px rgba(232,101,160, 0.12);
 }
 
 .chip:active {
@@ -4325,10 +4325,10 @@ h2 > svg:first-child + span::first-letter {
   width: 6rem;
 }
 
-.after\:bg-\[\#ff2d72\]::after {
+.after\:bg-\[\#e865a0\]::after {
   content: var(--tw-content);
   --tw-bg-opacity: 1;
-  background-color: rgb(255 45 114 / var(--tw-bg-opacity, 1));
+  background-color: rgb(232 101 160 / var(--tw-bg-opacity, 1));
 }
 
 .after\:\!text-sm::after {
@@ -4362,9 +4362,9 @@ h2 > svg:first-child + span::first-letter {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.hover\:border-\[\#ff2d72\]:hover {
+.hover\:border-\[\#e865a0\]:hover {
   --tw-border-opacity: 1;
-  border-color: rgb(255 45 114 / var(--tw-border-opacity, 1));
+  border-color: rgb(232 101 160 / var(--tw-border-opacity, 1));
 }
 
 .hover\:border-gray-500:hover {
@@ -4406,17 +4406,17 @@ h2 > svg:first-child + span::first-letter {
   background-color: rgb(230 41 103 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-\[\#ff2d72\]:hover {
+.hover\:bg-\[\#e865a0\]:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(255 45 114 / var(--tw-bg-opacity, 1));
+  background-color: rgb(232 101 160 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-\[\#ff2d72\]\/90:hover {
-  background-color: rgb(255 45 114 / 0.9);
+.hover\:bg-\[\#e865a0\]\/90:hover {
+  background-color: rgb(232 101 160 / 0.9);
 }
 
 .hover\:bg-\[rgba\(255\2c 45\2c 114\2c \.06\)\]:hover {
-  background-color: rgba(255,45,114,.06);
+  background-color: rgba(232,101,160,.06);
 }
 
 .hover\:bg-black\/70:hover {
@@ -4464,9 +4464,9 @@ h2 > svg:first-child + span::first-letter {
   background-color: rgb(255 255 255 / 0.3);
 }
 
-.hover\:text-\[\#ff2d72\]:hover {
+.hover\:text-\[\#e865a0\]:hover {
   --tw-text-opacity: 1;
-  color: rgb(255 45 114 / var(--tw-text-opacity, 1));
+  color: rgb(232 101 160 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-black:hover {
@@ -4522,9 +4522,9 @@ h2 > svg:first-child + span::first-letter {
   opacity: 0.9;
 }
 
-.focus\:border-\[\#ff2d72\]:focus {
+.focus\:border-\[\#e865a0\]:focus {
   --tw-border-opacity: 1;
-  border-color: rgb(255 45 114 / var(--tw-border-opacity, 1));
+  border-color: rgb(232 101 160 / var(--tw-border-opacity, 1));
 }
 
 .focus\:border-black:focus {
@@ -4554,8 +4554,8 @@ h2 > svg:first-child + span::first-letter {
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
-.focus\:ring-\[\#ff2d72\]\/30:focus {
-  --tw-ring-color: rgb(255 45 114 / 0.3);
+.focus\:ring-\[\#e865a0\]\/30:focus {
+  --tw-ring-color: rgb(232 101 160 / 0.3);
 }
 
 .focus\:ring-black:focus {

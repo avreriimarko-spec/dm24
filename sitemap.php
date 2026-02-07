@@ -4,7 +4,7 @@ Template Name: HTML Sitemap
 */
 get_header();
 
-$ACCENT = '#ff2d72';
+$ACCENT = '#e865a0';
 
 /** helpers */
 function esc_chip_link($url, $text)

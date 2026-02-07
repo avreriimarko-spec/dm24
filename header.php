@@ -41,7 +41,7 @@ $GLOBALS['seo_descr'] = $descr;
     <?php get_template_part('json-ld/index'); ?>
     <style>
         :root {
-            --ea-accent: #ff2d72;
+            --ea-accent: #e865a0;
             /* розовый как на сайте */
             --ea-accent-2: #ff4b88;
             /* чуть светлее для градиента/hover */
@@ -53,9 +53,9 @@ $GLOBALS['seo_descr'] = $descr;
             /* серый для описаний */
             --ea-border: rgba(17, 24, 39, .08);
             --ea-shadow: 0 14px 35px rgba(0, 0, 0, .12);
-            --ea-badge-bg: rgba(255, 45, 114, .08);
-            --ea-badge-brd: rgba(255, 45, 114, .25);
-            --ea-badge-text: #ff2d72;
+            --ea-badge-bg: rgba(232,101,160, .08);
+            --ea-badge-brd: rgba(232,101,160, .25);
+            --ea-badge-text: #e865a0;
         }
 
         .ea-tg-pop-overlay {
@@ -178,7 +178,7 @@ $GLOBALS['seo_descr'] = $descr;
             letter-spacing: .2px;
             text-decoration: none;
             transition: filter .2s ease, transform .08s ease, box-shadow .2s ease;
-            box-shadow: 0 8px 18px rgba(255, 45, 114, .28);
+            box-shadow: 0 8px 18px rgba(232,101,160, .28);
         }
 
         .ea-tg-join:hover {
@@ -415,7 +415,7 @@ $menu = [
                     </button>
 
                     <button type="button" data-auth-btn-add
-                        class="inline-flex items-center h-10 px-4 rounded-full bg-[#ff2d72] text-white hover:opacity-90 transition"
+                        class="inline-flex items-center h-10 px-4 rounded-full bg-[#e865a0] text-white hover:opacity-90 transition"
                         aria-label="Добавить анкету" title="Добавить анкету">
                         <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M20 6L9 17l-5-5" />
@@ -531,7 +531,7 @@ $menu = [
                             </button>
 
                             <button type="button" data-auth-btn-add
-                                class="w-full inline-flex justify-center items-center h-11 rounded-full bg-[#ff2d72] text-white font-medium hover:opacity-90 transition"
+                                class="w-full inline-flex justify-center items-center h-11 rounded-full bg-[#e865a0] text-white font-medium hover:opacity-90 transition"
                                 aria-label="Добавить анкету" title="Добавить анкету">
                                 <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" aria-hidden="true">

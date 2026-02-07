@@ -141,7 +141,7 @@ if (empty($name) || empty($img_src)) return;
 
             <?php if ($is_new): ?>
                 <div class="absolute top-0 right-0 z-40 w-[90px] h-[90px] overflow-hidden pointer-events-none select-none">
-                    <div class="absolute top-[12px] right-[-40px] w-[140px] rotate-45 bg-[#ff2d72] text-white text-[12px] font-bold text-center py-1 shadow-md flex items-center justify-center gap-1">
+                    <div class="absolute top-[12px] right-[-40px] w-[140px] rotate-45 bg-[#e865a0] text-white text-[12px] font-bold text-center py-1 shadow-md flex items-center justify-center gap-1">
                         <img src="<?= esc_url($icon_dir) ?>new.png" alt="Новая" class="w-4 h-4">
                         Новая
                     </div>

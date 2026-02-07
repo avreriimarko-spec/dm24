@@ -102,12 +102,12 @@ if (is_singular('blog')) {
                flex items-center justify-center flex-wrap gap-x-1.5 gap-y-1.5 text-[13px] md:text-[14px]">
                 <?php foreach ($crumbs as $i => $c): ?>
                     <?php if ($i > 0): ?>
-                        <li aria-hidden="true" class="px-1 text-[#ff2d72] select-none">›</li>
+                        <li aria-hidden="true" class="px-1 text-[#e865a0] select-none">›</li>
                     <?php endif; ?>
                     <li class="leading-none">
                         <?php if (!empty($c['url'])): ?>
                             <a href="<?php echo esc_url($c['url']); ?>"
-                                class="text-white hover:text-[#ff2d72] transition-colors">
+                                class="text-white hover:text-[#e865a0] transition-colors">
                                 <?php echo esc_html($c['label']); ?>
                             </a>
                         <?php else: ?>

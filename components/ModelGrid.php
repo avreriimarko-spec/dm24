@@ -488,10 +488,10 @@ function render_model_grid_with_filters()
               ?>
                 <li>
                   <?php if ($is_cur): ?>
-                    <span class="px-4 h-10 inline-flex items-center justify-center rounded-[10px] border text-[15px] font-semibold bg-[#ff2d72] text-white border-[#ff2d72]"><?php echo esc_html($text); ?></span>
+                    <span class="px-4 h-10 inline-flex items-center justify-center rounded-[10px] border text-[15px] font-semibold bg-[#e865a0] text-white border-[#e865a0]"><?php echo esc_html($text); ?></span>
                   <?php else: ?>
                     <a
-                      class="mf-page-btn px-4 h-10 inline-flex items-center justify-center rounded-[10px] border text-[15px] font-semibold bg-white text-[#ff2d72] border-[#ff2d72] hover:bg-[#ff2d72] hover:text-white transition"
+                      class="mf-page-btn px-4 h-10 inline-flex items-center justify-center rounded-[10px] border text-[15px] font-semibold bg-white text-[#e865a0] border-[#e865a0] hover:bg-[#e865a0] hover:text-white transition"
                       data-page="<?php echo esc_attr($page_num ?: $text); ?>"
                       href="<?php echo esc_url($href); ?>"
                     ><?php echo esc_html($text); ?></a>

@@ -334,7 +334,7 @@ $enc_float_wa = base64_encode('https://wa.me/' . $wa_clean);
         <?php if (!$is_home_active): ?>
             <li class="flex-1 text-center md:flex-none md:w-[55px]">
                 <a href="<?php echo esc_url($home_link); ?>" class="flex flex-col items-center justify-center py-1 min-w-0">
-                    <span class="inline-grid w-10 h-10 place-items-center rounded-full bg-[#ff2d72] text-white">
+                    <span class="inline-grid w-10 h-10 place-items-center rounded-full bg-[#e865a0] text-white">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 10.5 12 3l9 7.5" />
                             <path d="M5 10v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9" />
@@ -373,7 +373,7 @@ $enc_float_wa = base64_encode('https://wa.me/' . $wa_clean);
 
         <li class="hidden flex-1 text-center justify-center md:flex-none md:w-[55px]" data-scroll-btn>
             <button type="button" class="flex flex-col items-center justify-center py-1 min-w-0 w-full h-full cursor-pointer">
-                <span class="inline-grid w-10 h-10 place-items-center rounded-full bg-[#ff2d72] text-white">
+                <span class="inline-grid w-10 h-10 place-items-center rounded-full bg-[#e865a0] text-white">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 19V5"></path>
                         <path d="M5 12l7-7 7 7"></path>

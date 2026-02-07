@@ -78,7 +78,7 @@
   align-items: center;
   padding-inline: 10px;
   border-radius: 30px;
-  background: #ff2d72;
+  background: #e865a0;
   color: #fff;
   font-weight: 700;
   font-size: 12px;
@@ -192,7 +192,7 @@
 }
 
 .anketa-card__metro {
-  color: #ff2d72;
+  color: #e865a0;
 }
 
 /* #region about */

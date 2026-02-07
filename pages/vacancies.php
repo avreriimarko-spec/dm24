@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) exit;
 
 get_header();
 
-$ACCENT   = '#ff2d72';
+$ACCENT   = '#e865a0';
 $has_acf  = function_exists('get_field');
 
 /** Заголовки */

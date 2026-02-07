@@ -618,7 +618,7 @@ $lb_items = array_merge(
                                 echo '
                                     <div class="flex items-center justify-center flex-col p-2 w-full" style="background-color: #f2f2f2ff;">
                                         <span style="color: #404040; font-size: 14px;">' . esc_html($label) . '</span>
-                                        <a href="' . esc_url($term_link) . '" class="text-[#ff2d72] text-base" style="width: max-content;">'
+                                        <a href="' . esc_url($term_link) . '" class="text-[#e865a0] text-base" style="width: max-content;">'
                                         . esc_html($m) .
                                         '</a>
                                     </div>
@@ -666,7 +666,7 @@ $lb_items = array_merge(
                                 $term_link = untrailingslashit(home_url($term->slug));
 
                                 if (!empty($term_link) && !is_wp_error($term_link)) {
-                                    $val = '<a href="' . esc_url($term_link) . '" class="text-[#ff2d72] hover:underline font-normal">' . esc_html($val) . '</a>';
+                                    $val = '<a href="' . esc_url($term_link) . '" class="text-[#e865a0] hover:underline font-normal">' . esc_html($val) . '</a>';
                                 }
                             }
                         }
@@ -730,7 +730,7 @@ $lb_items = array_merge(
                         </div>
 
                         <button id="<?= $uid ?>_btn"
-                                class="mt-4 mx-auto flex items-center gap-2 text-[#ff2d72] font-semibold hover:opacity-90 transition"
+                                class="mt-4 mx-auto flex items-center gap-2 text-[#e865a0] font-semibold hover:opacity-90 transition"
                                 aria-expanded="<?= $is_bot ? 'true' : 'false' ?>"
                                 <?= $is_bot ? 'hidden' : '' ?>>
                             <svg class="w-4 h-4 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -971,7 +971,7 @@ $lb_items = array_merge(
                                     </svg>
                                 <?php else : ?>
                                     <svg viewBox="0 0 20 20" fill="none">
-                                        <path d="M5 5l10 10M15 5L5 15" stroke="#ff2d72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M5 5l10 10M15 5L5 15" stroke="#e865a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 <?php endif; ?>
                             </span>
@@ -1062,7 +1062,7 @@ $lb_items = array_merge(
                 margin-top: 8px;
                 display: flex;
                 gap: 6px;
-                color: #ff2d72;
+                color: #e865a0;
             }
 
             .model-reviews__hearts svg {
@@ -1299,7 +1299,7 @@ $lb_items = array_merge(
             }
 
             .model-reviews__form-card label.star.text-yellow-500 {
-                color: #ff2d72;
+                color: #e865a0;
             }
 
             .model-reviews__form-card label.star.text-neutral-300 {

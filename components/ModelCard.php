@@ -252,14 +252,14 @@ $wa_number = $contacts['wa'] ?? '';
 
                         <?php if ($has_outcall_prices || $has_incall_prices): ?>
                             <div class="anketa-card__prices">
-                                <div><span>1 час</span><strong style="color: #ff2d72;"><?= esc_html($format_price($price_outcall_1h)) ?></strong></div>
-                                <div><span>2 часа</span><strong style="color: #ff2d72;"><?= esc_html($format_price($price_outcall_2h)) ?></strong></div>
+                                <div><span>1 час</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_1h)) ?></strong></div>
+                                <div><span>2 часа</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_2h)) ?></strong></div>
 
                                 <?php 
                                     if ($format_price($price_outcall_night) === '—') {
                                         $color = 'initial';
                                     } else {
-                                        $color = '#ff2d72';
+                                        $color = '#e865a0';
                                     }
                                 ?>
                                 <div><span>Ночь</span><strong style="color: <?= $color; ?>;"><?= esc_html($format_price($price_outcall_night)) ?></strong></div>

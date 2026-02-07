@@ -36,7 +36,7 @@ $nonce    = wp_create_nonce('casting_nonce');
 
             <!-- Прогресс (Валидный HTML без style) -->
             <div class="rounded-full h-2 bg-neutral-800 overflow-hidden mb-6">
-                <div id="progress-fill" class="h-full w-0 transition-all duration-500 ease-in-out bg-[#ff2d72]"></div>
+                <div id="progress-fill" class="h-full w-0 transition-all duration-500 ease-in-out bg-[#e865a0]"></div>
             </div>
 
             <!-- Форма -->
@@ -52,14 +52,14 @@ $nonce    = wp_create_nonce('casting_nonce');
                     <div>
                         <label class="block text-sm text-neutral-400 mb-1">Имя *</label>
                         <input name="name" type="text" required placeholder="Ваше имя"
-                            class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#ff2d72] focus:ring-2 focus:ring-[#ff2d72]/30 outline-none transition">
+                            class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#e865a0] focus:ring-2 focus:ring-[#e865a0]/30 outline-none transition">
                     </div>
 
                     <!-- Возраст -->
                     <div>
                         <label class="block text-sm text-neutral-400 mb-1">Возраст *</label>
                         <select name="age" required
-                            class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#ff2d72] focus:ring-2 focus:ring-[#ff2d72]/30 outline-none transition">
+                            class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#e865a0] focus:ring-2 focus:ring-[#e865a0]/30 outline-none transition">
                             <!-- ВАЖНО: value="" обязательно для required select -->
                             <option value="" disabled selected>Выберите возраст</option>
                             <option value="18–21">18–21</option>
@@ -71,7 +71,7 @@ $nonce    = wp_create_nonce('casting_nonce');
 
                     <div class="flex justify-end">
                         <button type="button"
-                            class="bg-[#ff2d72] hover:bg-[#ff2d72]/90 text-white font-semibold px-5 py-2.5 rounded-lg transition"
+                            class="bg-[#e865a0] hover:bg-[#e865a0]/90 text-white font-semibold px-5 py-2.5 rounded-lg transition"
                             onclick="nextStep()">Далее</button>
                     </div>
                 </div>
@@ -84,19 +84,19 @@ $nonce    = wp_create_nonce('casting_nonce');
                         <div>
                             <label class="block text-sm text-black mb-1">Рост *</label>
                             <input name="height" type="number" required
-                                class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#ff2d72] focus:ring-2 focus:ring-[#ff2d72]/30 outline-none transition">
+                                class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#e865a0] focus:ring-2 focus:ring-[#e865a0]/30 outline-none transition">
                         </div>
                         <div>
                             <label class="block text-sm text-black mb-1">Вес *</label>
                             <input name="weight" type="number" required
-                                class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#ff2d72] focus:ring-2 focus:ring-[#ff2d72]/30 outline-none transition">
+                                class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#e865a0] focus:ring-2 focus:ring-[#e865a0]/30 outline-none transition">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm text-black mb-1">Тип фигуры *</label>
                         <select name="body_type" required
-                            class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#ff2d72] focus:ring-2 focus:ring-[#ff2d72]/30 outline-none transition">
+                            class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#e865a0] focus:ring-2 focus:ring-[#e865a0]/30 outline-none transition">
                             <!-- ВАЖНО: value="" обязательно для required select -->
                             <option value="" disabled selected>Выберите тип</option>
                             <option value="Стройная">Стройная</option>
@@ -111,7 +111,7 @@ $nonce    = wp_create_nonce('casting_nonce');
                             class="border border-[#3A3A40] text-black px-5 py-2.5 rounded-lg hover:bg-[#2A2A2E]"
                             onclick="prevStep()">Назад</button>
                         <button type="button"
-                            class="bg-[#ff2d72] hover:bg-[#ff2d72]/90 text-white px-5 py-2.5 rounded-lg"
+                            class="bg-[#e865a0] hover:bg-[#e865a0]/90 text-white px-5 py-2.5 rounded-lg"
                             onclick="nextStep()">Далее</button>
                     </div>
                 </div>
@@ -125,11 +125,11 @@ $nonce    = wp_create_nonce('casting_nonce');
                         <span class="block text-sm text-black mb-2">Как связаться? *</span>
                         <div class="flex gap-4 text-black">
                             <label class="inline-flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="contact_type" value="telegram" required class="accent-[#ff2d72]">
+                                <input type="radio" name="contact_type" value="telegram" required class="accent-[#e865a0]">
                                 <span>Telegram</span>
                             </label>
                             <label class="inline-flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="contact_type" value="whatsapp" class="accent-[#ff2d72]">
+                                <input type="radio" name="contact_type" value="whatsapp" class="accent-[#e865a0]">
                                 <span>WhatsApp</span>
                             </label>
                         </div>
@@ -139,7 +139,7 @@ $nonce    = wp_create_nonce('casting_nonce');
                     <div>
                         <label class="block text-sm text-black mb-1">Контакт (ник или номер) *</label>
                         <input name="contact" type="text" required placeholder="@username или +380..."
-                            class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#ff2d72] focus:ring-2 focus:ring-[#ff2d72]/30 outline-none transition">
+                            class="w-full rounded-lg border border-[#3A3A40] text-black px-3 py-2 focus:border-[#e865a0] focus:ring-2 focus:ring-[#e865a0]/30 outline-none transition">
                     </div>
 
                     <div class="flex justify-between">
@@ -147,7 +147,7 @@ $nonce    = wp_create_nonce('casting_nonce');
                             class="border border-[#3A3A40] text-black px-5 py-2.5 rounded-lg hover:bg-[#2A2A2E]"
                             onclick="prevStep()">Назад</button>
                         <button type="submit"
-                            class="bg-[#ff2d72] hover:bg-[#ff2d72]/90 text-white px-5 py-2.5 rounded-lg">Отправить</button>
+                            class="bg-[#e865a0] hover:bg-[#e865a0]/90 text-white px-5 py-2.5 rounded-lg">Отправить</button>
                     </div>
                 </div>
             </form>
@@ -156,7 +156,7 @@ $nonce    = wp_create_nonce('casting_nonce');
             <div id="success-message" class="hidden text-center mt-8 border border-[#3A3A40] p-8 rounded-xl">
                 <h2 class="text-2xl font-bold mb-3 text-black">Анкета принята!</h2>
                 <p class="text-black mb-5">Менеджер свяжется с вами в течение 30 минут.</p>
-                <a href="/" class="inline-block bg-[#ff2d72] hover:bg-[#ff2d72]/90 text-white px-6 py-2.5 rounded-lg font-semibold">На главную</a>
+                <a href="/" class="inline-block bg-[#e865a0] hover:bg-[#e865a0]/90 text-white px-6 py-2.5 rounded-lg font-semibold">На главную</a>
             </div>
         </div>
 
@@ -170,7 +170,7 @@ $nonce    = wp_create_nonce('casting_nonce');
                         $a = (string)($row['answer'] ?? '');
                         if ($q === '' && $a === '') continue; ?>
                         <details class="border border-[#3A3A40] rounded-lg p-4">
-                            <summary class="cursor-pointer font-semibold text-[#ff2d72]"><?= esc_html($q); ?></summary>
+                            <summary class="cursor-pointer font-semibold text-[#e865a0]"><?= esc_html($q); ?></summary>
                             <div class="mt-2 text-black text-sm"><?= wp_kses_post($a); ?></div>
                         </details>
                     <?php endforeach; ?>

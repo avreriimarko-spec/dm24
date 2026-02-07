@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) exit;
 
 get_header();
 
-$ACCENT = '#ff2d72';
+$ACCENT = '#e865a0';
 
 /* ===== ACF / поля страницы ===== */
 $heading = function_exists('get_field') ? (get_field('h1') ?: get_the_title()) : get_the_title();
