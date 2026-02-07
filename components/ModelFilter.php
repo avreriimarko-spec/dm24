@@ -180,8 +180,7 @@ function render_model_filter(): string
             const state = {
                 currentPage: 1,
                 isLoading: false,
-                hasMore: true,
-                observer: null
+                hasMore: true
             };
 
             // --- Methods ---
@@ -257,28 +256,7 @@ function render_model_filter(): string
                         state.hasMore = false;
                     } finally {
                         state.isLoading = false;
-                        methods.initInfiniteScroll();
                     }
-                },
-
-                initInfiniteScroll() {
-                    if (state.observer) state.observer.disconnect();
-                    
-                    let sentinel = document.getElementById('mf-sentinel');
-                    if (!sentinel) {
-                        sentinel = document.createElement('div');
-                        sentinel.id = 'mf-sentinel';
-                        sentinel.style.height = '1px';
-                        ui.wrap.appendChild(sentinel);
-                    }
-
-                    state.observer = new IntersectionObserver((entries) => {
-                        if (entries[0].isIntersecting && !state.isLoading && state.hasMore) {
-                            state.currentPage++;
-                            methods.fetchResults(state.currentPage, false);
-                        }
-                    }, { rootMargin: '400px' });
-                    state.observer.observe(sentinel);
                 }
             };
 
@@ -368,7 +346,6 @@ function render_model_filter(): string
             });
 
             // --- Init ---
-            methods.initInfiniteScroll();
         });
     })();
     JS;

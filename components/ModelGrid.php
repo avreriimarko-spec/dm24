@@ -380,7 +380,7 @@ function render_model_grid_with_filters()
     if (!empty($att_ids)) _prime_post_caches(array_unique($att_ids), true, true);
   }
 
-  $page_mode = 'button';
+  $page_mode = 'pagination';
 
   ob_start();
 
@@ -472,14 +472,8 @@ function render_model_grid_with_filters()
 
     if (!$append) echo '</ul>';
 
-    if (!$append && ($page_mode === 'button' || (!empty($pagination_links) && !$is_tax_ctx))) : ?>
+    if (!$append && (!empty($pagination_links) && !$is_tax_ctx)) : ?>
       <div id="mf-pagination" class="w-full flex flex-col items-center gap-3 mt-3 mb-4">
-        <?php if ($page_mode === 'button' && $has_more): ?>
-          <div id="mf-more-wrap" class="w-full flex justify-center">
-            <button id="mf-more-btn" type="button" class="px-4 h-10 rounded-[10px] border text-[15px] font-semibold bg-white text-[#ff2d72] border-[#ff2d72] hover:bg-[#ff2d72] hover:text-white transition">Показать ещё</button>
-          </div>
-        <?php endif; ?>
-
         <?php if (!empty($pagination_links)): ?>
           <nav id="mf-pages" class="w-full flex justify-center" aria-label="Пагинация">
             <ul class="flex flex-wrap justify-center gap-2">

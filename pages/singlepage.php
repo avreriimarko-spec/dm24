@@ -384,7 +384,15 @@ $lb_items = array_merge(
 );
 
 ?>
-<main class="mx-auto w-full lg:w-[1200px] px-4 bg-white text-neutral-700">
+<main class="mx-auto w-full lg:w-[1200px] px-4 bg-white text-neutral-700 singlepage-root">
+    <style>
+        .singlepage-root.singlepage-root *,
+        .singlepage-root.singlepage-root *::before,
+        .singlepage-root.singlepage-root *::after,
+        .singlepage-root.singlepage-root [class*="rounded"] {
+            border-radius: 0;
+        }
+    </style>
 
     <article class="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-8 py-6">
         <!-- ========== ЛЕВО (5/12): компактнее ========== -->
@@ -1001,7 +1009,7 @@ $lb_items = array_merge(
             }
 
             .model-reviews__map {
-                border-radius: 16px;
+                border-radius: 0;
                 overflow: hidden;
                 background: #f5f5f5;
                 min-height: 340px;
@@ -1036,7 +1044,7 @@ $lb_items = array_merge(
                 padding: 15px 40px;
                 font-weight: 600;
                 font-size: 18px;
-                border-radius: 5px;
+                border-radius: 0;
                 line-height: 1;
                 transition: background .2s ease;
             }
@@ -1091,7 +1099,7 @@ $lb_items = array_merge(
             .model-reviews__modal {
                 position: fixed;
                 inset: 0;
-                z-index: 50;
+                z-index: 10000;
                 display: none;
             }
 
@@ -1107,12 +1115,13 @@ $lb_items = array_merge(
 
             .model-reviews__dialog {
                 position: relative;
-                max-width: 640px;
+                max-width: 560px;
                 margin: 6vh auto;
                 background: #fff;
-                border-radius: 12px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-                padding: 22px 22px 26px;
+                border-radius: 0;
+                border: 1px solid #d1d5db;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                padding: 0;
                 max-height: 88vh;
                 overflow: auto;
             }
@@ -1122,28 +1131,28 @@ $lb_items = array_merge(
                 align-items: center;
                 justify-content: space-between;
                 gap: 12px;
-                margin-bottom: 12px;
-                padding-bottom: 10px;
-                border-bottom: 1px solid #e5e5e5;
+                margin-bottom: 0;
+                padding: 16px 18px;
+                border-bottom: 1px solid #e5e7eb;
             }
 
             .model-reviews__modal-head h3 {
-                font-size: 22px;
-                font-weight: 700;
+                font-size: 20px;
+                font-weight: 600;
                 color: #404040;
                 margin: 0;
             }
 
             .model-reviews__close {
-                width: 34px;
-                height: 34px;
-                border-radius: 999px;
+                width: 32px;
+                height: 32px;
+                border-radius: 0;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 color: #333;
                 background: transparent;
-                border: 1px solid #e5e5e5;
+                border: 1px solid #d1d5db;
             }
 
             .model-reviews__close svg {
@@ -1152,11 +1161,101 @@ $lb_items = array_merge(
             }
 
             .model-reviews__rules {
-                margin: 0 0 16px 0;
+                margin: 16px 0 14px 0;
                 padding-left: 20px;
                 color: #6b6b6b;
                 font-size: 14px;
                 line-height: 1.5;
+                list-style: decimal;
+                list-style-position: inside;
+            }
+
+            .model-reviews__modal-body {
+                padding: 0 18px 18px;
+            }
+
+            .model-reviews__form-card {
+                margin-top: 6px;
+            }
+
+            .model-reviews__form-card .js-mr-form label,
+            .model-reviews__form-card .js-mr-form .text-sm {
+                color: #6b7280;
+                font-weight: 500;
+            }
+
+            .model-reviews__form-card .js-mr-form textarea,
+            .model-reviews__form-card .js-mr-form input[type="text"],
+            .model-reviews__form-card .js-mr-form input[type="email"] {
+                border: 1px solid #d1d5db;
+                border-radius: 0;
+                padding: 12px 12px;
+                font-size: 14px;
+                color: #374151;
+                background: #fff;
+                box-shadow: none;
+            }
+
+            .model-reviews__form-card .js-mr-form textarea::placeholder,
+            .model-reviews__form-card .js-mr-form input::placeholder {
+                color: #9ca3af;
+            }
+
+            .model-reviews__form-card .js-mr-form textarea {
+                min-height: 120px;
+            }
+
+            .model-reviews__form-card .js-mr-form .mr-send {
+                width: 100%;
+                justify-content: center;
+                border-radius: 0;
+                padding: 12px 16px;
+                font-weight: 600;
+                background: #f26aa0;
+                color: #fff;
+            }
+
+            .model-reviews__form-card .js-mr-form .mr-send:hover {
+                background: #e95a93;
+            }
+
+            .model-reviews__form-card #mr-stars-<?php echo esc_attr($uid); ?>,
+            .model-reviews__form-card .mr-stars {
+                justify-content: center;
+                gap: 8px;
+            }
+
+            @media (max-width: 640px) {
+                .model-reviews__dialog {
+                    width: calc(100% - 24px);
+                    margin: 12px auto;
+                    max-height: calc(100vh - 24px);
+                }
+
+                .model-reviews__modal-head {
+                    padding: 14px 14px;
+                }
+
+                .model-reviews__modal-body {
+                    padding: 0 14px 14px;
+                }
+
+                .model-reviews__rules {
+                    margin: 12px 0 12px 0;
+                }
+
+                .model-reviews__close {
+                    width: 28px;
+                    height: 28px;
+                }
+
+                .model-reviews__form-card .js-mr-form textarea {
+                    min-height: 96px;
+                }
+
+                .model-reviews__form-card .js-mr-form .mr-send {
+                    padding: 12px 12px;
+                }
             }
 
             .model-reviews,
@@ -1169,7 +1268,7 @@ $lb_items = array_merge(
             .model-reviews__content #reviews time,
             .model-reviews__content #reviews .text-neutral-700,
             .model-reviews__content #reviews .text-black {
-                color: #404040 !important;
+                color: #374151;
             }
 
             .model-reviews__form-card {
@@ -1223,11 +1322,49 @@ $lb_items = array_merge(
 
             .model-reviews__content #reviews article {
                 border: 0;
-                border-radius: 8px;
+                border-radius: 0;
                 box-shadow: none;
-                background: #f2f2f2ff;
+                background: #f5f5f5;
                 padding: 14px 16px;
                 margin-bottom: 12px;
+            }
+
+            .model-reviews__content #reviews article header {
+                display: block;
+                margin: 0 0 6px;
+            }
+
+            .model-reviews__content #reviews .mr-headline {
+                font-size: 16px;
+                font-weight: 600;
+                color: #374151;
+                line-height: 1.3;
+            }
+
+            .model-reviews__content #reviews .mr-headline .mr-date {
+                font-weight: 500;
+                color: #6b6b6b;
+            }
+
+            .model-reviews__content #reviews article .mr-rating {
+                margin-top: 6px;
+                display: flex;
+                gap: 6px;
+                color: #ff5b9a;
+            }
+
+            .model-reviews__content #reviews article .mr-rating svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .model-reviews__content #reviews article .text-neutral-700 {
+                margin-top: 6px;
+                color: #374151;
+            }
+
+            .model-reviews__content #reviews article footer {
+                display: none;
             }
 
             .model-reviews__content #reviews article:last-child {
@@ -1240,8 +1377,8 @@ $lb_items = array_merge(
             }
 
             .model-reviews__content #reviews [aria-label^="Рейтинг"] svg {
-                width: 20px;
-                height: 20px;
+                width: 18px;
+                height: 18px;
             }
 
             @media (max-width: 640px) {
@@ -1381,62 +1518,6 @@ $lb_items = array_merge(
                 </div>
             </section>
 
-            <!-- ===== Похожие анкеты ===== -->
-            <?php
-            $nat_ids = wp_get_post_terms($id, 'nationalnost_tax', ['fields' => 'ids']);
-            $args = [
-                'post_type'           => 'models',
-                'post_status'         => 'publish',
-                'posts_per_page'      => 4,
-                'post__not_in'        => [$id],
-                'orderby'             => 'rand',
-                'no_found_rows'       => true,
-                'ignore_sticky_posts' => true,
-            ];
-            if (!is_wp_error($nat_ids) && !empty($nat_ids)) {
-                $args['tax_query'] = [[
-                    'taxonomy' => 'nationalnost_tax',
-                    'field'    => 'term_id',
-                    'terms'    => array_map('intval', (array)$nat_ids),
-                    'operator' => 'IN',
-                ]];
-            }
-            $related = get_posts($args);
-            if (empty($related)) {
-                unset($args['tax_query']);
-                $related = get_posts($args);
-            }
-
-            if (!empty($related)) { ?>
-                <section class="mt-12" aria-labelledby="similar-title">
-                    <h2 id="similar-title" class="text-2xl font-bold mb-6">Другие анкеты похожие на <?php echo $name ?></h2>
-                    <ul class="cards-grid cards-grid--models">
-                        <?php foreach ($related as $p) {
-                            $district_names = wp_get_post_terms($p->ID, 'rayonu_tax', ['fields' => 'names']);
-                            $district = (!is_wp_error($district_names) && $district_names)
-                                ? implode(', ', $district_names)
-                                : (function_exists('get_field') ? (get_field('district', $p->ID) ?: '') : '');
-                            $model = [
-                                'ID'                    => $p->ID,
-                                'name'                  => function_exists('get_field') ? (get_field('name', $p->ID) ?: get_the_title($p->ID)) : get_the_title($p->ID),
-                                'uri'                   => get_permalink($p->ID),
-                                'modelGalleryThumbnail' => function_exists('get_field') ? get_field('photo', $p->ID) : '',
-                                'district'              => $district,
-                                'price'                 => function_exists('get_field') ? get_field('price', $p->ID) : '',
-                                'price_outcall'         => function_exists('get_field') ? get_field('price_outcall', $p->ID) : '',
-                                'online'                => function_exists('get_field') ? get_field('online', $p->ID) : '',
-                                'height'                => function_exists('get_field') ? get_field('height', $p->ID) : '',
-                                'weight'                => function_exists('get_field') ? get_field('weight', $p->ID) : '',
-                                'age'                   => function_exists('get_field') ? get_field('age', $p->ID) : '',
-                                'bust'                  => function_exists('get_field') ? get_field('bust', $p->ID) : '',
-                                'description'           => function_exists('get_field') ? get_field('description', $p->ID) : '',
-                            ];
-                            set_query_var('model', $model);
-                            get_template_part('components/ModelCardLegacy');
-                        } ?>
-                    </ul>
-                </section>
-            <?php } ?>
         </section>
     </article>
 
@@ -1569,6 +1650,53 @@ $lb_items = array_merge(
                             '<path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733C11.285 4.876 9.623 3.75 7.688 3.75 5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>' +
                             '</svg>';
                         icon.outerHTML = heartSmall;
+                    });
+                }
+
+                var reviewCards = reviewsSection.querySelectorAll('#reviews article');
+                if (reviewCards.length) {
+                    reviewCards.forEach(function(card) {
+                        if (!card || card.dataset.mrStyled === '1') return;
+                        card.dataset.mrStyled = '1';
+                        if (card.classList.contains('model-reviews__empty')) return;
+
+                        var header = card.querySelector('header');
+                        var footer = card.querySelector('footer');
+                        var timeEl = footer ? footer.querySelector('time') : null;
+                        var nameEl = header ? header.querySelector('h3') : null;
+
+                        if (header && nameEl && timeEl) {
+                            var headline = document.createElement('div');
+                            headline.className = 'mr-headline';
+
+                            var nameSpan = document.createElement('span');
+                            nameSpan.className = 'mr-name';
+                            nameSpan.textContent = (nameEl.textContent || '').trim();
+
+                            var dateSpan = document.createElement('span');
+                            dateSpan.className = 'mr-date';
+                            dateSpan.textContent = (timeEl.textContent || '').trim();
+
+                            headline.appendChild(nameSpan);
+                            headline.appendChild(document.createTextNode(' / '));
+                            headline.appendChild(dateSpan);
+
+                            nameEl.replaceWith(headline);
+                        }
+
+                        if (header) {
+                            var ratingWrap = header.querySelector('[aria-label^="Рейтинг"]');
+                            if (ratingWrap) {
+                                var parentWrap = ratingWrap.parentElement;
+                                if (parentWrap && parentWrap !== header && parentWrap.childElementCount === 1) {
+                                    ratingWrap = parentWrap;
+                                }
+                                ratingWrap.classList.add('mr-rating');
+                                header.insertAdjacentElement('afterend', ratingWrap);
+                            }
+                        }
+
+                        if (footer) footer.remove();
                     });
                 }
 
