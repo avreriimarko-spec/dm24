@@ -107,6 +107,12 @@ if (!$img_src) {
 /** ИКОНКИ И МЕТА */
 $is_verified    = has_term('', 'drygie_tax', $post_id);
 $is_recommended = !empty($model['recommended']) ? $model['recommended'] : get_post_meta($post_id, 'recommended', true);
+$elite_threshold = 120000;
+$has_elite_term = has_term('elitnyye-prostitutki', 'drygie_tax', $post_id);
+$elite_by_price = ($price_outcall_1h >= $elite_threshold) || ($price_incall_1h >= $elite_threshold);
+$elite_by_acf   = function_exists('get_field') ? (bool)get_field('vip', $post_id) : false;
+$is_elite       = ($has_elite_term || $elite_by_price || $elite_by_acf);
+$is_individual  = has_term('individualki-almaty', 'drygie_tax', $post_id);
 
 if (empty($name) || empty($img_src)) return;
 
@@ -206,10 +212,6 @@ $wa_number = $contacts['wa'] ?? '';
                 <!-- <?php if ($district): ?>
                     <div class="anketa-card__district"><?= esc_html($district) ?></div>
                 <?php endif; ?> -->
-                <?php if ($metro): ?>
-                    <div class="anketa-card__metro"><?= esc_html($metro) ?></div>
-                <?php endif; ?>
-
                 <?php if ($has_stats || $has_outcall_prices || $has_incall_prices): ?>
                     <div class="anketa-card__stats-and-prices">
                         <?php if ($has_stats): ?>
@@ -243,12 +245,6 @@ $wa_number = $contacts['wa'] ?? '';
                                 ?>
                                 <div><span>Ночь</span><strong style="color: <?= $color; ?>;"><?= esc_html($format_price($price_outcall_night)) ?></strong></div>
                                 
-                                <?php if ($has_incall_prices): ?>
-                                    <div style="justify-content: start; gap: 5px;">
-                                        <img src="<?= esc_url($icon_dir) ?>checked.svg" style="height: 15px;" />
-                                        <strong>Выезд</strong>
-                                    </div>
-                                <?php endif; ?>    
                             </div>
                         <?php endif; ?>
                     </div>
@@ -283,12 +279,20 @@ $wa_number = $contacts['wa'] ?? '';
                     </div>
                 <?php endif; ?>
 
-                <!-- <?php if (!empty($short_desc)): ?>
-                    <div class="anketa-card__about">
-                        <span>Обо мне:</span>
-                        <p><?= esc_html($short_desc) ?></p>
+                <?php
+                    $tag_base = 'display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 0; border: 0; font-size: 11px; line-height: 1; font-weight: 700; letter-spacing: .04em; width: max-content;';
+                    $tags = [];
+                    if ($has_incall_prices) $tags[] = ['label' => 'Выезд', 'style' => $tag_base . ' background: linear-gradient(135deg, #ff6a00 0%, #ffb347 100%); color: #ffffff;'];
+                    if ($is_elite) $tags[] = ['label' => 'VIP', 'style' => $tag_base . ' background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%); color: #5a3b00;'];
+                    if ($is_individual) $tags[] = ['label' => 'Индивидуалка', 'style' => $tag_base . ' background: linear-gradient(135deg, #4aa3ff 0%, #7c4dff 100%); color: #ffffff;'];
+                ?>
+                <?php if (!empty($tags)): ?>
+                    <div class="anketa-card__tags" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 6px;">
+                        <?php foreach ($tags as $tag): ?>
+                            <div class="anketa-card__tag" style="<?= esc_attr($tag['style']) ?>"><?= esc_html($tag['label']) ?></div>
+                        <?php endforeach; ?>
                     </div>
-                <?php endif; ?> -->
+                <?php endif; ?>
             </div>
         </div>
     </article>

@@ -177,9 +177,8 @@
 
 .anketa-card__service {
   color: white;
-  background-color: #2aabee;
-  border-radius: 5px;
-  padding-inline: 5px;
+  background: linear-gradient(135deg, #6a00ff 0%, #b400ff 100%);
+  padding-inline: 3px;
   font-size: 11px;
 }
 
