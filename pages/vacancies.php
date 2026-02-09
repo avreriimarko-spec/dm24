@@ -106,7 +106,7 @@ $positions = array_values(array_filter(array_map(function ($row) {
 
                             <div class="mt-4">
                                 <a href="#vacancy-apply"
-                                    class="inline-flex items-center justify-center px-4 py-2 rounded-xl font-semibold text-white active:translate-y-px transition"
+                                    class="inline-flex items-center justify-center px-4 py-2 font-semibold text-white active:translate-y-px transition"
                                     style="background:<?= esc_attr($ACCENT) ?>;">
                                     Откликнуться
                                 </a>
@@ -134,13 +134,13 @@ $positions = array_values(array_filter(array_map(function ($row) {
                     <label class="block">
                         <span class="block text-sm mb-1">Имя*</span>
                         <input name="name" type="text" required placeholder="Ваше имя"
-                            class="w-full rounded-xl border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
+                            class="w-full border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
                             style="border-color:<?= esc_attr($ACCENT) ?>33; --tw-ring-color: <?= esc_attr($ACCENT) ?>;">
                     </label>
                     <label class="block">
                         <span class="block text-sm mb-1">Телефон*</span>
                         <input name="phone" type="tel" required placeholder="+7 999 000-00-00"
-                            class="w-full rounded-xl border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
+                            class="w-full border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
                             style="border-color:<?= esc_attr($ACCENT) ?>33; --tw-ring-color: <?= esc_attr($ACCENT) ?>;">
                     </label>
                 </div>
@@ -149,7 +149,7 @@ $positions = array_values(array_filter(array_map(function ($row) {
                     <label class="block">
                         <span class="block text-sm mb-1">Город (необязательно)</span>
                         <input name="city" type="text" placeholder="Ваш город"
-                            class="w-full rounded-xl border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
+                            class="w-full border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
                             style="border-color:<?= esc_attr($ACCENT) ?>33; --tw-ring-color: <?= esc_attr($ACCENT) ?>;">
                     </label>
                 </div>
@@ -157,14 +157,14 @@ $positions = array_values(array_filter(array_map(function ($row) {
                 <label class="block">
                     <span class="block text-sm mb-1">Сообщение (необязательно)</span>
                     <textarea name="message" rows="4" placeholder="Коротко о себе, опыт, удобное время для связи"
-                        class="w-full rounded-xl border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
+                        class="w-full border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
                         style="border-color:<?= esc_attr($ACCENT) ?>33; --tw-ring-color: <?= esc_attr($ACCENT) ?>;"></textarea>
                 </label>
 
                 <label class="block">
                     <span class="block text-sm mb-1">Фото (до 5 шт., JPG/PNG/WebP, ≤ 8 МБ за файл)</span>
                     <input name="photo[]" type="file" accept=".jpg,.jpeg,.png,.webp" multiple
-                        class="w-full rounded-xl border px-3 py-2 bg-white file:mr-3 file:rounded-lg file:border-0 file:px-3 file:py-2 file:text-white hover:file:opacity-90"
+                        class="w-full border px-3 py-2 bg-white file:mr-3 file:border-0 file:px-3 file:py-2 file:text-white hover:file:opacity-90"
                         style="border-color:<?= esc_attr($ACCENT) ?>33; color:inherit; --file-bg: <?= esc_attr($ACCENT) ?>;">
                     <style>
                         input[type=file]::file-selector-button {
@@ -174,12 +174,12 @@ $positions = array_values(array_filter(array_map(function ($row) {
                 </label>
 
                 <button id="vacancy-submit" type="submit"
-                    class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-semibold text-white active:translate-y-px transition"
+                    class="inline-flex items-center justify-center px-5 py-2.5 font-semibold text-white active:translate-y-px transition"
                     style="background:<?= esc_attr($ACCENT) ?>;">
                     Отправить заявку
                 </button>
 
-                <div id="vacancy-alert" class="hidden mt-3 text-sm rounded-xl px-3 py-2 border"
+                <div id="vacancy-alert" class="hidden mt-3 text-sm px-3 py-2 border"
                     style="border-color:<?= esc_attr($ACCENT) ?>33"></div>
             </form>
         </section>

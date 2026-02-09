@@ -86,196 +86,88 @@ $nav_links = [
     ['label' => 'Блог',                        'slug' => 'blog'],
 ];
 
-?>
-<footer class="bg-[#212529] text-gray-400">
-    <div class="mx-auto max-w-7xl px-4 py-16">
-        <?php
-        // Утилиты
-        $normalize_slug = static function ($link) {
-            $raw = '';
-            if (!empty($link['slug'])) {
-                $raw = (string)$link['slug'];
-            } elseif (!empty($link['url'])) {
-                $u = wp_parse_url($link['url']);
-                $raw = $u['path'] ?? '';
-            }
-            return trim(strtolower($raw), '/');
-        };
+$normalize_slug = static function ($link) {
+    $raw = '';
+    if (!empty($link['slug'])) {
+        $raw = (string)$link['slug'];
+    } elseif (!empty($link['url'])) {
+        $u = wp_parse_url($link['url']);
+        $raw = $u['path'] ?? '';
+    }
+    return trim(strtolower($raw), '/');
+};
 
-        $legal_slugs_map = ['politika-konfidentsialnosti', 'usloviya-polzovaniya'];
+$legal_slugs_map = ['politika-konfidentsialnosti', 'usloviya-polzovaniya'];
 
-        $legal_links = [];
-        $main_links  = [];
+$legal_links = [];
+$main_links  = [];
 
-        if (!empty($nav_links) && is_array($nav_links)) {
-            foreach ($nav_links as $link) {
-                $label = trim($link['label'] ?? '');
-                if ($label === '') continue;
-                $norm = $normalize_slug($link);
-                if (in_array($norm, $legal_slugs_map, true)) {
-                    $legal_links[] = $link;
-                } else {
-                    $main_links[]  = $link;
-                }
-            }
+if (!empty($nav_links) && is_array($nav_links)) {
+    foreach ($nav_links as $link) {
+        $label = trim($link['label'] ?? '');
+        if ($label === '') continue;
+        $norm = $normalize_slug($link);
+        if (in_array($norm, $legal_slugs_map, true)) {
+            $legal_links[] = $link;
+        } else {
+            $main_links[]  = $link;
         }
+    }
+}
 
-        $build_url = static function ($link) {
-            if (!empty($link['url'])) return esc_url($link['url']);
-            $slug = trim($link['slug'] ?? '', '/');
-            return esc_url(home_url("/{$slug}"));
-        };
+$build_url = static function ($link) {
+    if (!empty($link['url'])) return esc_url($link['url']);
+    $slug = trim($link['slug'] ?? '', '/');
+    return esc_url(home_url("/{$slug}"));
+};
 
-        $site_name = $site_name ?? get_bloginfo('name');
-        $year      = $year ?? date_i18n('Y');
+$site_name = $site_name ?? get_bloginfo('name');
+$year      = $year ?? date_i18n('Y');
 
-        // Получаем текущий URL для сравнения
-        $current_url = home_url(add_query_arg([], $GLOBALS['wp']->request));
-        $current_url = user_trailingslashit($current_url);
-        ?>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 max-w-5xl mx-auto">
-            <nav class="flex flex-col items-start w-full space-y-6 order-1" aria-label="Основная навигация">
-                <?php if (!empty($main_links)): ?>
-                    <div>
-                        <h2 class="text-white font-semibold mb-4 text-lg">Навигация</h2>
-                        <ul class="space-y-3" id="footer-nav-list">
-                            <?php foreach ($main_links as $index => $link_data):
-                                $url = $build_url($link_data);
-                                $is_active = (user_trailingslashit($url) === $current_url);
-                            ?>
-                                <li class="<?= $index > 1 ? 'hidden extra-link' : '' ?>">
-                                    <?php if ($is_active): ?>
-                                        <span class="text-white font-medium cursor-default">
-                                            <?= esc_html($link_data['label'] ?? '') ?>
-                                        </span>
-                                    <?php else: ?>
-                                        <a href="<?= $url ?>"
-                                            class="hover:text-white hover:underline transition-colors duration-200">
-                                            <?= esc_html($link_data['label'] ?? '') ?>
-                                        </a>
-                                    <?php endif; ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-
-                        <?php if (count($main_links) > 2): ?>
-                            <button type="button"
-                                id="footer-nav-toggle"
-                                class="mt-4 flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
-                                <svg id="footer-nav-icon" class="w-4 h-4 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 9l6 6 6-6" />
-                                </svg>
-                                <span>Показать ещё</span>
-                            </button>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
+?>
+<footer class="site-footer">
+    <div class="site-footer__top">
+        <?php if (!empty($main_links)): ?>
+            <nav class="site-footer__nav" aria-label="Навигация">
+                <?php foreach ($main_links as $link): ?>
+                    <a href="<?= $build_url($link) ?>"><?= esc_html($link['label'] ?? '') ?></a>
+                <?php endforeach; ?>
             </nav>
-
-            <nav class="flex flex-col w-full items-start text-left sm:items-center sm:text-center space-y-6 order-2"
-                aria-label="Правовая информация">
-                <?php if (!empty($legal_links)): ?>
-                    <div>
-                        <h2 class="text-white font-semibold mb-4 text-lg">Правовая информация</h2>
-                        <ul class="space-y-3">
-                            <?php foreach ($legal_links as $link_data):
-                                $url = $build_url($link_data);
-                                $is_active = (user_trailingslashit($url) === $current_url);
-                            ?>
-                                <li>
-                                    <?php if ($is_active): ?>
-                                        <span class="text-white font-medium cursor-default">
-                                            <?= esc_html($link_data['label'] ?? '') ?>
-                                        </span>
-                                    <?php else: ?>
-                                        <a href="<?= $url ?>"
-                                            class="hover:text-white hover:underline transition-colors duration-200">
-                                            <?= esc_html($link_data['label'] ?? '') ?>
-                                        </a>
-                                    <?php endif; ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endif; ?>
-            </nav>
-
-            <nav class="flex flex-col w-full items-start sm:items-end sm:text-right space-y-6 order-3"
-                aria-label="Контакты">
-                <div>
-                    <h2 class="text-white font-semibold mb-4 text-lg">Связаться</h2>
-                    <ul class="space-y-4">
-                        <?php if ($tg_user_handle): ?>
-                            <li>
-                                <a href="javascript:void(0);" 
-                                   data-enc="<?= esc_attr($enc_tg_user) ?>"
-                                   class="protected-contact inline-flex items-center gap-3 group"
-                                   rel="nofollow">
-                                    <svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M22 3 2 10.3l6.7 2.2L19 6.2 10.6 14l.3 6 3.2-4.4 4.8 3.6L22 3z" />
-                                    </svg>
-                                    <span class="group-hover:text-white group-hover:underline transition-colors">Telegram</span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-
-                        <?php if ($tg_channel_handle): ?>
-                            <li>
-                                <a href="javascript:void(0);" 
-                                   data-enc="<?= esc_attr($enc_tg_channel) ?>"
-                                   class="protected-contact inline-flex items-center gap-3 group"
-                                   rel="nofollow">
-                                    <svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M22 3 2 10.3l6.7 2.2L19 6.2 10.6 14l.3 6 3.2-4.4 4.8 3.6L22 3z" />
-                                    </svg>
-                                    <span class="group-hover:text-white group-hover:underline transition-colors">Telegram Channel</span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-
-                        <?php if ($wa_number_digits): ?>
-                            <li>
-                                <a href="javascript:void(0);" 
-                                   data-enc="<?= esc_attr($enc_wa_number) ?>"
-                                   class="protected-contact inline-flex items-center gap-3 group"
-                                   rel="nofollow">
-                                    <svg viewBox="0 0 24 24" class="w-5 h-5 text-green-500" fill="currentColor">
-                                        <path d="M20.52 3.48A11.79 11.79 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.1.55 4.06 1.51 5.75L0 24l6.4-1.68A12 12 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.23-3.48-8.52zM12 21.5a9.43 9.43 0 0 1-4.8-1.32l-.34-.2-3.8 1 .99-3.7-.22-.35A9.43 9.43 0 1 1 21.5 12 9.5 9.5 0 0 1 12 21.5zm5.36-7.22c-.29-.15-1.7-.84-1.96-.93-.26-.09-.45-.15-.64.15-.19.29-.74.93-.9 1.12-.17.19-.33.21-.62.08-.29-.14-1.22-.45-2.33-1.49-.86-.77-1.43-1.72-1.59-2.01-.17-.29-.02-.45.13-.6.14-.14.29-.36.43-.54.14-.17.19-.3.29-.5.1-.2.05-.37-.02-.54-.08-.17-.62-1.49-.85-2.04-.22-.54-.45-.46-.64-.47l-.55-.01c-.2 0-.5.07-.76.36-.26.29-1.01.98-1.01 2.39 0 1.41 1.03 2.77 1.17 2.96.14.19 2.04 3.12 4.95 4.37.69.3 1.24.47 1.66.6.69.22 1.31.19 1.8.11.55-.08 1.69-.69 1.94-1.35.24-.66.24-1.24.17-1.36-.07-.12-.26-.19-.55-.34z" />
-                                    </svg>
-                                    <span class="group-hover:text-white group-hover:underline transition-colors">WhatsApp: +77275467994</span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-
-        <div class="mt-16 pt-8 border-t border-gray-800 text-center max-w-4xl mx-auto">
-            <p class="text-sm">© <?= esc_html($site_name) ?>, <?= esc_html($year) ?></p>
-            <p class="text-sm leading-relaxed mt-3">
-                Наше агентство не предлагает интимных услуг и не отвечает за поступки моделей и посетителей сайта. Все сопровождение осуществляется исключительно на взаимной договоренности сторон. Наши услуги в рамках эскорта сводятся исключительно к сопровождению.
-            </p>
-        </div>
+        <?php endif; ?>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('footer-nav-toggle');
-            if (!btn) return;
-            const icon = document.getElementById('footer-nav-icon');
-            const extraLinks = document.querySelectorAll('.extra-link');
-            let expanded = false;
+    <div class="site-footer__bottom">
+        <p>© <?= esc_html($site_name) ?>, <?= esc_html($year) ?></p>
+        <?php
+            $contact_links = [];
+            if (!empty($tg_user_handle)) $contact_links[] = ['label' => 'Telegram', 'enc' => $enc_tg_user];
+            if (!empty($tg_channel_handle)) $contact_links[] = ['label' => 'Telegram Channel', 'enc' => $enc_tg_channel];
+            if (!empty($wa_number_digits)) $contact_links[] = ['label' => 'WhatsApp', 'enc' => $enc_wa_number];
+        ?>
+        <?php if (!empty($contact_links)): ?>
+            <p class="site-footer__contacts">
+                <span>Связаться:</span>
+                <?php foreach ($contact_links as $idx => $c): ?>
+                    <a href="javascript:void(0);" data-enc="<?= esc_attr($c['enc']) ?>" class="protected-contact"><?= esc_html($c['label']) ?></a>
+                    <?php if ($idx < count($contact_links) - 1): ?>
+                        <span class="site-footer__dot">•</span>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </p>
+        <?php endif; ?>
+        <p>Наше агентство не предлагает интимных услуг и не отвечает за поступки моделей и посетителей сайта. Все сопровождение осуществляется исключительно на взаимной договоренности сторон. Наши услуги в рамках эскорта сводятся исключительно к сопровождению.</p>
 
-            btn.addEventListener('click', () => {
-                expanded = !expanded;
-                extraLinks.forEach(el => el.classList.toggle('hidden', !expanded));
-                icon.classList.toggle('rotate-180', expanded);
-                btn.querySelector('span').textContent = expanded ? 'Скрыть' : 'Показать ещё';
-            });
-        });
-    </script>
+        <?php if (!empty($legal_links)): ?>
+            <div class="site-footer__links">
+                <?php foreach ($legal_links as $idx => $link): ?>
+                    <a href="<?= $build_url($link) ?>"><?= esc_html($link['label'] ?? '') ?></a>
+                    <?php if ($idx < count($legal_links) - 1): ?>
+                        <span class="site-footer__dot">•</span>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </div>
 </footer>
 
 <?php
