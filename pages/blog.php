@@ -47,24 +47,24 @@ if ($is_ajax) {
 }
 ?>
 
-<main class="px-4 py-12 bg-white text-black">
-    <div class="max-w-[1200px] mx-auto">
+<main class="page-hero page-hero--blog">
+    <div class="page-hero__inner text-black">
 
         <?php if (!$is_ajax): ?>
             <!-- Заголовок и лид -->
-            <header class="mb-10 text-center">
-                <h1 class="text-[32px] md:text-[40px] font-extrabold tracking-tight">
+            <header class="mb-8 text-left">
+                <h1 class="page-title">
                     <?php echo esc_html($heading); ?>
                 </h1>
                 <?php if ($lead): ?>
-                    <p class="mt-2 text-neutral-700"><?php echo esc_html($lead); ?></p>
+                    <p class="page-lead"><?php echo esc_html($lead); ?></p>
                 <?php endif; ?>
             </header>
         <?php endif; ?>
 
         <?php if ($q->have_posts()): ?>
             <!-- Две колонки: слева картинка, справа текст -->
-            <section id="blog-list" class="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-10">
+            <section id="blog-list" class="blog-list">
                 <?php while ($q->have_posts()): $q->the_post();
                     $acf_h1    = function_exists('get_field') ? (get_field('h1_statiya')   ?: '') : '';
                     $acf_p     = function_exists('get_field') ? (get_field('p_statiya')    ?: '') : '';
@@ -89,11 +89,11 @@ if ($is_ajax) {
                     $date_human = date_i18n('j F Y', get_the_time('U'));
                     $date_iso   = get_the_date('c');
                 ?>
-                    <article class="group rounded-2xl border border-[rgba(232,101,160,.18)] bg-white shadow-[0_2px_18px_rgba(0,0,0,.04)] hover:shadow-[0_6px_24px_rgba(0,0,0,.06)] transition overflow-hidden">
-                        <a href="<?php echo esc_url($permalink); ?>" class="grid grid-cols-1 md:grid-cols-[320px_1fr] items-stretch gap-0 md:gap-6 h-full">
+                    <article class="blog-card group">
+                        <a href="<?php echo esc_url($permalink); ?>" class="flex flex-col">
                             <!-- Медиа слева -->
-                            <div class="w-full h-full">
-                                <div class="w-full h-full md:aspect-auto aspect-[16/9] bg-neutral-100 overflow-hidden md:rounded-none">
+                            <div class="w-full">
+                                <div class="w-full bg-neutral-100 overflow-hidden">
                                     <?php if ($img_url): ?>
                                         <img
                                             src="<?php echo esc_url($img_url); ?>"
@@ -107,28 +107,28 @@ if ($is_ajax) {
                             </div>
 
                             <!-- Текст справа -->
-                            <div class="p-5 md:py-5 md:pr-5 md:pl-0 flex flex-col">
+                            <div class="p-5 flex flex-col">
                                 <div class="mb-3">
-                                    <div class="inline-flex items-center gap-2 text-[13px] font-semibold">
-                                        <span class="inline-block rounded-full bg-[rgba(232,101,160,.08)] text-[#e865a0] px-2 py-0.5">
+                                    <div class="blog-card__meta">
+                                        <span>
                                             <time datetime="<?php echo esc_attr($date_iso); ?>"><?php echo esc_html($date_human); ?></time>
                                         </span>
                                     </div>
                                 </div>
 
-                                <h2 class="text-xl md:text-2xl font-extrabold leading-snug">
+                                <h2 class="text-[18px] md:text-[20px] font-extrabold leading-snug">
                                     <span class="group-hover:underline decoration-2 underline-offset-4 decoration-[#e865a0]">
                                         <?php echo esc_html($title); ?>
                                     </span>
                                 </h2>
 
                                 <?php if ($desc): ?>
-                                    <p class="mt-3 text-[15px] leading-6 text-neutral-700 line-clamp-3">
+                                    <p class="mt-2 text-[14px] leading-6 text-neutral-700 line-clamp-3">
                                         <?php echo esc_html($desc); ?>
                                     </p>
                                 <?php endif; ?>
 
-                                <span class="mt-4 inline-flex items-center gap-2 text-[#e865a0] font-semibold">
+                                <span class="blog-card__cta">
                                     Читать
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M13 5l7 7-7 7v-4H4v-6h9V5z" />
@@ -144,7 +144,7 @@ if ($is_ajax) {
             <?php if (!$is_ajax && $q->max_num_pages > 1): ?>
                 <div class="mt-10 flex justify-center">
                     <button id="blog-load-more"
-                        class="px-4 h-10 rounded-[10px] border text-[15px] font-semibold bg-white text-[#e865a0] border-[#e865a0] hover:bg-[#e865a0] hover:text-white transition"
+                        class="btn-accent"
                         data-current="<?php echo (int)$paged; ?>"
                         data-total="<?php echo (int)$q->max_num_pages; ?>"
                         data-ppp="<?php echo (int)$ppp; ?>"

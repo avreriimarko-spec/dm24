@@ -59,17 +59,17 @@ foreach ($faq_items as $it) {
     ];
 }
 ?>
-<main class="px-4 py-12">
-    <div class="max-w-[1100px] mx-auto">
+<main class="page-hero page-hero--faq">
+    <div class="page-hero__inner max-w-[1100px] mx-auto">
 
-        <header class="text-center mb-10">
-            <h1 class="inline-block text-[32px] md:text-[40px] leading-tight font-extrabold text-black">
+        <header class="text-left mb-8">
+            <h1 class="page-title">
                 <?php echo esc_html($h1); ?>
             </h1>
-            <div class="mx-auto mt-2 h-1 w-24 rounded-full bg-[#e865a0]"></div>
+            <div class="mt-2 h-1 w-24 rounded-full bg-[#e865a0]"></div>
 
             <?php if ($lead): ?>
-                <p class="mt-4 text-neutral-700 max-w-[760px] mx-auto">
+                <p class="page-lead">
                     <?php echo esc_html($lead); ?>
                 </p>
             <?php endif; ?>
@@ -77,7 +77,7 @@ foreach ($faq_items as $it) {
 
         <?php if (!empty($faq_items)): ?>
             <!-- Панель с FAQ: мягкая карточка с лёгкой тенью -->
-            <section id="faq-acc" class="rounded-2xl border border-[rgba(232,101,160,.18)] bg-white shadow-[0_10px_30px_rgba(0,0,0,.05)]">
+            <section id="faq-acc" class="faq-card">
                 <ul class="divide-y divide-neutral-200">
                     <?php foreach ($faq_items as $i => $it):
                         $qid    = 'faq-q-' . ($i + 1);
@@ -90,13 +90,13 @@ foreach ($faq_items as $it) {
                                 <!-- ВОПРОС -->
                                 <summary
                                     id="<?php echo esc_attr($qid); ?>"
-                                    class="flex items-center justify-between w-full cursor-pointer px-5 md:px-6 py-4 md:py-5 select-none">
+                                    class="flex items-start justify-between w-full cursor-pointer px-5 md:px-6 py-4 md:py-5 select-none">
 
                                     <!-- ИСПРАВЛЕНО: div заменен на span для валидации W3C -->
                                     <span class="flex items-start gap-3">
                                         <!-- Акцентная метка слева -->
                                         <span class="mt-1 inline-block w-1 h-5 rounded-full bg-[#e865a0]"></span>
-                                        <span class="text-[15px] md:text-[16px] font-semibold text-black">
+                                        <span class="text-[16px] md:text-[17px] font-semibold text-black">
                                             <?php echo esc_html($q_txt ?: 'Вопрос'); ?>
                                         </span>
                                     </span>

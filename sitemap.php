@@ -54,11 +54,16 @@ $tax_map = [
 ];
 ?>
 
-<main class="px-4 !mt-14 mb-12">
-    <div class="mx-auto w-full max-w-[1200px] bg-white text-black rounded-2xl border" style="border-color:<?= esc_attr($ACCENT) ?>">
-        <div class="p-6 md:p-10">
+<main class="page-hero page-hero--sitemap">
+    <div class="page-hero__inner">
+        <div class="page-card page-card--padded text-black">
 
-            <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-8">Карта сайта</h1>
+            <header class="text-left mb-8">
+                <h1 class="page-title">Карта сайта</h1>
+                <p class="page-lead">
+                    Быстрые ссылки на разделы, модели, услуги и материалы блога.
+                </p>
+            </header>
 
             <!-- Страницы -->
             <section class="mb-10">

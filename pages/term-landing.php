@@ -40,12 +40,15 @@ $q = new WP_Query([
 ]);
 ?>
 
-<main class="mx-auto w-full lg:w-[1200px] px-4 py-8">
+<main class="page-hero page-hero--uslugi">
+    <div class="page-hero__inner max-w-[1200px] mx-auto text-black">
 
-    <header class="mb-8">
-        <h1 class="text-3xl font-bold leading-tight"><?php echo esc_html($h1); ?></h1>
+    <header class="mb-10 grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-6 items-end">
+        <div>
+            <h1 class="page-title"><?php echo esc_html($h1); ?></h1>
+        </div>
         <?php if ($p) { ?>
-            <div class="prose prose-neutral max-w-none mt-3 text-black content">
+            <div class="content text-[15px] md:text-[16px] leading-6 text-neutral-700">
                 <?php echo wpautop(wp_kses_post($p)); ?>
             </div>
         <?php } ?>
@@ -53,7 +56,7 @@ $q = new WP_Query([
 
     <?php if ($q->have_posts()) { ?>
         <!-- Плитки ссылок -->
-        <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
             <?php
             while ($q->have_posts()) {
                 $q->the_post();
@@ -76,26 +79,28 @@ $q = new WP_Query([
                 // 3) Очищаем и режем до 22 слов
                 $desc = wp_trim_words(wp_strip_all_tags((string) $desc_raw), 22, '…');
             ?>
-                <li class="group">
+                <li>
                     <a href="<?php echo esc_url($url); ?>"
-                        class="block rounded-lg border border-neutral-200 hover:border-rose-300 transition-colors overflow-hidden"
+                        class="group flex flex-col md:flex-row-reverse rounded-2xl border border-[rgba(232,101,160,.2)] bg-white shadow-[0_6px_20px_rgba(0,0,0,.05)] hover:shadow-[0_10px_26px_rgba(0,0,0,.08)] transition overflow-hidden"
                         aria-label="<?php echo esc_attr($title); ?>">
                         <?php if ($thumb_url) { ?>
-                            <div class="aspect-[3/2] bg-neutral-100">
+                            <div class="md:w-[42%]">
+                                <div class="aspect-[4/3] bg-neutral-100">
                                 <img
                                     src="<?php echo esc_url($thumb_url); ?>"
                                     alt="<?php echo esc_attr($thumb_alt); ?>"
                                     class="w-full h-full object-cover"
                                     loading="lazy"
                                     decoding="async">
+                                </div>
                             </div>
                         <?php } ?>
-                        <div class="p-4">
-                            <h3 class="font-semibold group-hover:text-rose-600 transition-colors">
+                        <div class="p-4 md:p-5 flex-1">
+                            <h3 class="text-[17px] md:text-[18px] font-semibold group-hover:text-rose-600 transition-colors">
                                 <?php echo esc_html($title); ?>
                             </h3>
                             <?php if (!empty($desc)) { ?>
-                                <p class="mt-2 text-sm text-neutral-600 line-clamp-3">
+                                <p class="mt-2 text-[13px] md:text-[14px] text-neutral-600 leading-5 line-clamp-3">
                                     <?php echo esc_html($desc); ?>
                                 </p>
                             <?php } ?>
@@ -110,11 +115,12 @@ $q = new WP_Query([
     <?php } ?>
 
     <?php if (!empty($text_block)) : ?>
-        <div class="content mx-auto max-w-[1280px] 2xl:max-w-[1400px] px-4 mt-6 bg-neutral-50 text-neutral-800 border border-neutral-200 rounded-sm">
+        <div class="content mx-auto max-w-[1200px] mt-10 bg-white text-neutral-800 border border-[rgba(232,101,160,.18)] rounded-2xl p-6 md:p-8 shadow-[0_8px_24px_rgba(0,0,0,.04)]">
             <?php echo wpautop(wp_kses_post($text_block)); ?>
         </div>
     <?php endif; ?>
 
+    </div>
 </main>
 
 <?php get_footer(); ?>

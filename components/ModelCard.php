@@ -124,7 +124,7 @@ $description = strip_tags($model['description'] ?? get_the_excerpt($post_id) ?? 
 $desc_limit  = (int) get_theme_mod('model_card_desc_length', 220);
 $desc_limit  = max(160, min(260, $desc_limit));
 $short_desc  = mb_substr($description, 0, $desc_limit) . (mb_strlen($description) > $desc_limit ? '…' : '');
-$services_preview = array_slice($services, 0, 6);
+$services_preview = array_slice($services, 0, 3);
 $format_price = static function (int $val) use ($currency): string {
     return $val > 0 ? number_format($val, 0, ',', ' ') . ' ' . $currency : '—';
 };

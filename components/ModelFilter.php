@@ -39,7 +39,7 @@ function render_filter_section(string $taxonomy, string $title): string
             <?php foreach ($terms as $term): ?>
                 <label class="mf-dropdown-item flex items-center px-2 py-2 rounded-md cursor-pointer transition-all duration-200 hover:bg-neutral-50 group">
                     <input type="checkbox" class="filter-checkbox sr-only" name="<?= esc_attr($taxonomy) ?>[]" value="<?= esc_attr($term->slug) ?>">
-                    <span class="text-[11px] font-bold text-neutral-700 group-hover:text-neutral-900 transition-colors"><?= esc_html($term->name) ?></span>
+                    <span class="text-[12px] font-bold text-neutral-700 group-hover:text-neutral-900 transition-colors"><?= esc_html($term->name) ?></span>
                 </label>
             <?php endforeach; ?>
         </div>
