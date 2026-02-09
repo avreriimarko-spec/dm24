@@ -621,7 +621,10 @@ $lb_items = array_merge(
                             $term = get_term_by('name', $m, 'metro_tax');
 
                             if ($term) {
-                                $term_link = home_url($term->slug);
+                                $term_link = get_term_link($term);
+                                if (is_wp_error($term_link)) {
+                                    $term_link = '';
+                                }
                                 $label = $is_first ? 'Метро:' : 'Доп. метро:';
                                 $is_first = false;
 
