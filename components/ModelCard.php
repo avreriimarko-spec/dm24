@@ -282,9 +282,9 @@ $wa_number = $contacts['wa'] ?? '';
                 <?php
                     $tag_base = 'display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 0; border: 0; font-size: 11px; line-height: 1; font-weight: 700; letter-spacing: .04em; width: max-content;';
                     $tags = [];
-                    if ($has_incall_prices) $tags[] = ['label' => 'Выезд', 'style' => $tag_base . ' background: linear-gradient(135deg, #ff6a00 0%, #ffb347 100%); color: #ffffff;'];
-                    if ($is_elite) $tags[] = ['label' => 'VIP', 'style' => $tag_base . ' background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%); color: #5a3b00;'];
-                    if ($is_individual) $tags[] = ['label' => 'Индивидуалка', 'style' => $tag_base . ' background: linear-gradient(135deg, #4aa3ff 0%, #7c4dff 100%); color: #ffffff;'];
+                    if ($has_incall_prices) $tags[] = ['label' => 'Выезд', 'style' => $tag_base . ' background: #d68054; color: #ffffff;'];
+                    if ($is_elite) $tags[] = ['label' => 'VIP', 'style' => $tag_base . ' background: #dbb54b; color: #000;'];
+                    if ($is_individual) $tags[] = ['label' => 'Индивидуалка', 'style' => $tag_base . ' background: #52c4a3; color: #ffffff;'];
                 ?>
                 <?php if (!empty($tags)): ?>
                     <div class="anketa-card__tags" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 6px;">
