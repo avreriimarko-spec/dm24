@@ -148,6 +148,17 @@ function render_model_filter(): string
         /* Utilities */
         .mf-dropdown-content {
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow-x: hidden;
+        }
+        .mf-dropdown-item {
+            align-items: flex-start;
+        }
+        .mf-dropdown-item span {
+            display: block;
+            min-width: 0;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
         .mf-dropdown-item input.filter-checkbox {
             display: none;

@@ -191,7 +191,7 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
         }
         ?>
 
-        <h1 class="max-w-[1280px] 2xl:max-w-[1400px] mx-auto mt-2 px-2 text-3xl md:text-5xl font-extrabold tracking-tight leading-tight text-center">
+        <h1 class="max-w-[1280px] 2xl:max-w-[1400px] mx-auto mt-2 p-4 text-3xl md:text-5xl font-extrabold tracking-tight leading-tight text-center">
             <?php
             // Пытаемся взять из auto_h1 (query_var / globals)
             $h1 = get_query_var('auto_h1');
