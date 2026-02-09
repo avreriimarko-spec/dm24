@@ -90,7 +90,11 @@ if (is_singular('blog')) {
         $crumbs[] = ['label' => get_the_title(), 'url' => ''];
     } else {
         $add_hub($crumbs);
-        $crumbs[] = ['label' => wp_get_document_title(), 'url' => ''];
+        if (is_404()) {
+            $crumbs[] = ['label' => '404', 'url' => ''];
+        } else {
+            $crumbs[] = ['label' => wp_get_document_title(), 'url' => ''];
+        }
     }
 }
 ?>
