@@ -73,7 +73,22 @@ function render_model_filter(): string
 
     ob_start(); ?>
 
-    <div id="mf-static-container" class="w-full bg-white rounded-xl shadow-sm border border-neutral-100 p-4">
+    <div id="mf-drawer-backdrop" class="mf-drawer-backdrop" aria-hidden="true"></div>
+    <button type="button" id="mf-drawer-toggle" class="mf-drawer-toggle" aria-controls="mf-static-container" aria-expanded="false" aria-label="Открыть фильтры">
+        <svg class="mf-drawer-toggle__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 6h18M6 12h12M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+
+    <div id="mf-static-container" class="w-full bg-white rounded-xl shadow-sm border border-neutral-100 p-4" aria-hidden="false">
+        <div class="mf-drawer-header">
+            <span class="mf-drawer-title">Фильтры</span>
+            <button type="button" id="mf-drawer-close" class="mf-drawer-close" aria-label="Закрыть фильтры">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
         <form id="models-filter" class="flex flex-wrap" style="gap: 7px; align-items: end;">
             <input type="hidden" name="action" value="site_filter_models">
             <input type="hidden" name="nonce" value="<?= esc_attr(wp_create_nonce('site_filter_nonce')) ?>">
@@ -84,13 +99,15 @@ function render_model_filter(): string
             <input type="hidden" name="base_tax_taxonomy" value="<?= esc_attr($base_tax_taxonomy) ?>">
             <input type="hidden" name="base_tax_terms" value="<?= esc_attr($base_tax_terms) ?>">
 
-            <div class="flex-1 flex flex-wrap" style="gap: 10px;">
-                <?php foreach ($taxonomies as $slug => $label) {
-                    echo render_filter_section($slug, $label);
-                } ?>
+            <div class="mf-fields">
+                <div class="flex-1 flex flex-wrap" style="gap: 10px;">
+                    <?php foreach ($taxonomies as $slug => $label) {
+                        echo render_filter_section($slug, $label);
+                    } ?>
+                </div>
             </div>
 
-            <div class="w-full md:w-auto shrink-0 flex flex-nowrap items-center" style="gap: 7px;">
+            <div class="mf-actions w-full md:w-auto shrink-0 flex flex-nowrap items-center" style="gap: 7px;">
                 <button type="button" id="mf-reset" 
                     class="flex-1 md:flex-none h-10 px-2 rounded-md font-bold transition uppercase text-xs tracking-wide whitespace-nowrap text-center">
                     Сбросить
@@ -163,6 +180,253 @@ function render_model_filter(): string
         .mf-dropdown-item input.filter-checkbox {
             display: none;
         }
+
+        /* Mobile drawer */
+        .mf-drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 98;
+        }
+
+        .mf-drawer-toggle {
+            display: none;
+            position: fixed;
+            right: 16px;
+            bottom: 18px;
+            z-index: 97;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            background: #ff3ea5;
+            color: #fff;
+            border: 1px solid #ff3ea5;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .mf-drawer-toggle__icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .mf-drawer-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #1b1b1b;
+            margin-bottom: 12px;
+        }
+
+        .mf-drawer-title {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-size: 13px;
+            color: #e6e6e6;
+        }
+
+        .mf-drawer-close {
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #1b1b1b;
+            background: #0b0b0b;
+            color: #e6e6e6;
+        }
+
+        .mf-drawer-close svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        @media (max-width: 767px) {
+            body.mf-drawer-open {
+                overflow: hidden;
+            }
+
+            .mf-drawer-title {
+                color: #111;
+            }
+
+            .mf-drawer-close {
+                border-color: #e1e1ea;
+                background: #ffffff;
+                color: #111;
+            }
+
+            #mf-static-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: min(86vw, 360px);
+                max-width: 100%;
+                transform: translateX(-110%);
+                transition: transform 0.28s ease;
+                z-index: 110;
+                background: #f7f7fb;
+                color: #111;
+                border: 1px solid #e6e6ee;
+                box-shadow: 0 30px 60px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,62,165,0.08) inset;
+                padding: 16px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            #mf-static-container.is-open {
+                transform: translateX(0);
+            }
+
+            .mf-drawer-backdrop.is-open {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .mf-drawer-toggle {
+                display: inline-flex;
+            }
+
+            .mf-drawer-header {
+                display: flex;
+                width: 100%;
+                border-bottom: 1px solid #e6e6ee;
+            }
+
+            #models-filter {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px !important;
+                flex-wrap: nowrap !important;
+                min-height: 0;
+                flex: 1;
+            }
+
+            #models-filter .flex-1 {
+                width: 100%;
+            }
+
+            .mf-fields {
+                flex: 1;
+                min-height: 0;
+                overflow-y: auto;
+                padding-right: 2px;
+            }
+
+            .mf-actions {
+                margin-top: auto;
+                background: #ffffff;
+                padding-top: 12px;
+                padding-bottom: 12px;
+                border-top: 1px solid #e6e6ee;
+                z-index: 2;
+            }
+
+            #mf-static-container .mf-dropdown-container > .text-center {
+                text-align: left;
+                padding-left: 2px;
+            }
+
+            #mf-static-container .mf-dropdown-container > .text-center span {
+                color: #ff3ea5;
+                letter-spacing: 0.16em;
+            }
+
+            #mf-static-container .mf-dropdown-trigger {
+                background: #ffffff;
+                border-color: #e1e1ea;
+                border-left: 2px solid #ff3ea5;
+                text-align: left;
+            }
+
+            #mf-static-container .mf-dropdown-trigger:hover {
+                border-color: #ff3ea5;
+                border-left-color: #ff6bbf;
+                box-shadow: 0 0 0 2px rgba(255, 62, 165, 0.2);
+            }
+
+            #mf-static-container .mf-dropdown-trigger .mf-trigger-label {
+                color: #5b5b6a;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+            }
+
+            #mf-static-container .mf-dropdown-trigger .mf-trigger-label.text-neutral-400 {
+                color: #8a8a98;
+            }
+
+            #mf-static-container .mf-dropdown-trigger .mf-trigger-label.text-black {
+                color: #111;
+            }
+
+            #mf-static-container .mf-dropdown-trigger .mf-trigger-label.font-medium {
+                font-weight: 600;
+            }
+
+            #mf-static-container .mf-dropdown-trigger svg {
+                color: #9a9aa8;
+            }
+
+            #mf-static-container .mf-dropdown-content {
+                background: #ffffff;
+                border-color: #e1e1ea;
+                box-shadow: 0 16px 35px rgba(0,0,0,0.18);
+            }
+
+            #mf-static-container .text-neutral-900,
+            #mf-static-container .text-black {
+                color: #111;
+            }
+
+            #mf-static-container .text-neutral-700 {
+                color: #555;
+            }
+
+            #mf-static-container .mf-dropdown-item {
+                border: 1px solid transparent;
+                text-align: left;
+            }
+
+            #mf-static-container .mf-dropdown-item span {
+                color: #222;
+                text-align: left;
+            }
+
+            #mf-static-container .mf-dropdown-item:hover {
+                background: linear-gradient(135deg, rgba(255,62,165,0.12), rgba(232,101,160,0.08));
+                border-color: rgba(255,62,165,0.2);
+            }
+
+            #mf-reset {
+                background: transparent;
+                border: 1px solid #ff3ea5;
+                color: #ff9ad0;
+            }
+
+            #mf-reset:hover {
+                background: rgba(255, 62, 165, 0.2);
+                color: #ffffff;
+            }
+
+            #mf-apply {
+                background: linear-gradient(135deg, #ff3ea5 0%, #e865a0 100%);
+            }
+
+            #mf-apply:hover {
+                background: linear-gradient(135deg, #ff4db0 0%, #ff6bbf 100%);
+            }
+        }
     </style>
 
     <?php
@@ -183,7 +447,11 @@ function render_model_filter(): string
                 resetBtn: document.getElementById('mf-reset'),
                 sortInput: document.getElementById('mf-sort'), // Hidden input
                 sortTrigger: document.getElementById('mf-sort-trigger'),
-                sortContainer: document.getElementById('mf-sort-container')
+                sortContainer: document.getElementById('mf-sort-container'),
+                drawer: document.getElementById('mf-static-container'),
+                drawerToggle: document.getElementById('mf-drawer-toggle'),
+                drawerClose: document.getElementById('mf-drawer-close'),
+                drawerBackdrop: document.getElementById('mf-drawer-backdrop')
             };
 
             if (!ui.form || !ui.wrap) return;
@@ -197,6 +465,51 @@ function render_model_filter(): string
             // --- Methods ---
 
             const methods = {
+                isMobile() {
+                    return window.matchMedia('(max-width: 767px)').matches;
+                },
+
+                openDrawer() {
+                    if (!ui.drawer || !ui.drawerToggle || !ui.drawerBackdrop) return;
+                    if (!methods.isMobile()) return;
+                    ui.drawer.classList.add('is-open');
+                    ui.drawerBackdrop.classList.add('is-open');
+                    ui.drawerToggle.classList.add('is-open');
+                    ui.drawerToggle.setAttribute('aria-expanded', 'true');
+                    ui.drawer.setAttribute('aria-hidden', 'false');
+                    document.body.classList.add('mf-drawer-open');
+                },
+
+                closeDrawer() {
+                    if (!ui.drawer || !ui.drawerToggle || !ui.drawerBackdrop) return;
+                    ui.drawer.classList.remove('is-open');
+                    ui.drawerBackdrop.classList.remove('is-open');
+                    ui.drawerToggle.classList.remove('is-open');
+                    ui.drawerToggle.setAttribute('aria-expanded', 'false');
+                    if (methods.isMobile()) {
+                        ui.drawer.setAttribute('aria-hidden', 'true');
+                    } else {
+                        ui.drawer.setAttribute('aria-hidden', 'false');
+                    }
+                    document.body.classList.remove('mf-drawer-open');
+                },
+
+                syncDrawerState() {
+                    if (!methods.isMobile()) {
+                        if (ui.drawer) ui.drawer.classList.remove('is-open');
+                        if (ui.drawerBackdrop) ui.drawerBackdrop.classList.remove('is-open');
+                        if (ui.drawerToggle) ui.drawerToggle.classList.remove('is-open');
+                        if (ui.drawerToggle) ui.drawerToggle.setAttribute('aria-expanded', 'false');
+                        if (ui.drawer) ui.drawer.setAttribute('aria-hidden', 'false');
+                        document.body.classList.remove('mf-drawer-open');
+                        return;
+                    }
+
+                    if (ui.drawer && !ui.drawer.classList.contains('is-open')) {
+                        ui.drawer.setAttribute('aria-hidden', 'true');
+                    }
+                },
+
                 updateTriggerLabel(trigger) {
                     const container = trigger.closest('.mf-dropdown-container');
                     const label = container.querySelector('.mf-trigger-label');
@@ -344,7 +657,10 @@ function render_model_filter(): string
                 }
             });
 
-            ui.applyBtn.addEventListener('click', () => methods.fetchResults(1, true));
+            ui.applyBtn.addEventListener('click', async () => {
+                await methods.fetchResults(1, true);
+                if (methods.isMobile()) methods.closeDrawer();
+            });
             
             ui.resetBtn.addEventListener('click', () => {
                 ui.form.reset();
@@ -354,9 +670,24 @@ function render_model_filter(): string
                 // Also reset sorting trigger label if needed, or keep it as is
                 // For now, let's keep it consistent
                 methods.fetchResults(1, true);
+                if (methods.isMobile()) methods.closeDrawer();
             });
 
             // --- Init ---
+            if (ui.drawerToggle) {
+                ui.drawerToggle.addEventListener('click', () => methods.openDrawer());
+            }
+            if (ui.drawerClose) {
+                ui.drawerClose.addEventListener('click', () => methods.closeDrawer());
+            }
+            if (ui.drawerBackdrop) {
+                ui.drawerBackdrop.addEventListener('click', () => methods.closeDrawer());
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') methods.closeDrawer();
+            });
+            window.addEventListener('resize', methods.syncDrawerState);
+            methods.syncDrawerState();
         });
     })();
     JS;
