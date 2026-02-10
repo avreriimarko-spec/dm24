@@ -44,11 +44,11 @@
 }
 
 .anketa-card__media-block {
-  flex: 0.38;
+  flex: 0.48;
 }
 
 .anketa-card__content {
-  flex: 0.62;
+  flex: 0.52;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -61,7 +61,7 @@
 .anketa-card__img-wrapper {
   border-radius: 5px;
   overflow: hidden;
-  height: 200px;
+  height: 260px;
 }
 
 .anketa-card__img {
