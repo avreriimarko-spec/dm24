@@ -137,12 +137,12 @@
   gap: 10px;
 }
 
-.anketa-card__stats {
-  flex: 0.45;
+.anketa-card__stats-and-prices-wrapper {
+  flex: 0.57;
 }
 
-.anketa-card__prices {
-  flex: 0.55;
+.anketa-card__stats--2 {
+  flex: 0.43;
 }
 
 .anketa-card__stats div,

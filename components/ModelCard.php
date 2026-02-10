@@ -214,37 +214,42 @@ $wa_number = $contacts['wa'] ?? '';
                 <?php endif; ?> -->
                 <?php if ($has_stats || $has_outcall_prices || $has_incall_prices): ?>
                     <div class="anketa-card__stats-and-prices">
+                        <div class="anketa-card__stats-and-prices-wrapper">
+                            <?php if ($has_stats): ?>
+                                <div class="anketa-card__stats anketa-card__stats--1">
+                                    <?php if ($age): ?>
+                                        <div><span>Возраст</span><strong><?= esc_html($age) ?></strong></div>
+                                    <?php endif; ?>
+                                    <?php if ($height): ?>
+                                        <div><span>Рост</span><strong><?= esc_html($height) ?></strong></div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                            <?php if ($has_outcall_prices || $has_incall_prices): ?>
+                                <div class="anketa-card__prices">
+                                    <div><span>1 час</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_1h)) ?></strong></div>
+                                    <div><span>2 часа</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_2h)) ?></strong></div>
+                                    <?php
+                                        if ($format_price($price_outcall_night) === '—') {
+                                            $color = 'initial';
+                                        } else {
+                                            $color = '#e865a0';
+                                        }
+                                    ?>
+                                    <div><span>Ночь</span><strong style="color: <?= $color; ?>;"><?= esc_html($format_price($price_outcall_night)) ?></strong></div>
+                            
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
                         <?php if ($has_stats): ?>
-                            <div class="anketa-card__stats">
-                                <?php if ($age): ?>
-                                    <div><span>Возраст</span><strong><?= esc_html($age) ?></strong></div>
-                                <?php endif; ?>
-                                <?php if ($height): ?>
-                                    <div><span>Рост</span><strong><?= esc_html($height) ?></strong></div>
-                                <?php endif; ?>
+                            <div class="anketa-card__stats anketa-card__stats--2">
                                 <?php if ($weight): ?>
                                     <div><span>Вес</span><strong><?= esc_html($weight) ?></strong></div>
                                 <?php endif; ?>
                                 <?php if ($bust): ?>
                                     <div><span>Грудь</span><strong><?= esc_html($bust) ?></strong></div>
                                 <?php endif; ?>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if ($has_outcall_prices || $has_incall_prices): ?>
-                            <div class="anketa-card__prices">
-                                <div><span>1 час</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_1h)) ?></strong></div>
-                                <div><span>2 часа</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_2h)) ?></strong></div>
-
-                                <?php 
-                                    if ($format_price($price_outcall_night) === '—') {
-                                        $color = 'initial';
-                                    } else {
-                                        $color = '#e865a0';
-                                    }
-                                ?>
-                                <div><span>Ночь</span><strong style="color: <?= $color; ?>;"><?= esc_html($format_price($price_outcall_night)) ?></strong></div>
-                                
                             </div>
                         <?php endif; ?>
                     </div>
