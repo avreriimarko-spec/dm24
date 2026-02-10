@@ -13,8 +13,17 @@ $h1         = function_exists('get_field') ? (get_field('h1', $page_id) ?: get_t
 $p          = function_exists('get_field') ? (get_field('p',  $page_id) ?: '') : '';
 $text_block = function_exists('get_field') ? (get_field('seo', $page_id) ?: '') : '';
 
-// Жёстко фиксируем CPT
-$post_type = 'uslugi';
+// Определяем CPT по слагу текущей страницы
+$page_slug = get_post_field('post_name', $page_id);
+$post_type = 'uslugi'; // default
+
+if ($page_slug === 'metro') {
+    $post_type = 'metro';
+} elseif ($page_slug === 'rajony') {
+    $post_type = 'rajon';
+} elseif ($page_slug === 'services') {
+    $post_type = 'uslugi';
+}
 
 // Проверка регистрации CPT
 if (!post_type_exists($post_type)) {
