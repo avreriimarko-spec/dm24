@@ -147,31 +147,10 @@ function render_model_grid_with_filters()
   $exclude_ids_post = isset($_POST['exclude_ids']) ? array_map('intval', is_array($_POST['exclude_ids']) ? $_POST['exclude_ids'] : explode(',', (string)$_POST['exclude_ids'])) : [];
   $reco_global = !empty($GLOBALS['esc_featured_model_ids']) ? array_map('intval', (array)$GLOBALS['esc_featured_model_ids']) : [];
 
-  $slider_ids = [];
-  $is_main_listing = is_front_page() || is_home();
-  $pagination_slugs = [
-    'eskort-almaty',
-    'kizdar-almaty',
-    'prostitutki-na-vyyezd',
-    'prostitutki-priyem',
-    'elitnyye-prostitutki',
-    'deshevyye-prostitutki',
-    's-video',
-    'novye',
-  ];
-  $is_paginated_page = $is_main_listing || in_array($page_slug, $pagination_slugs, true);
-  if (!$is_novye && !$cheap_only) {
-    if (!empty($GLOBALS['site_latest_slider_ids'])) {
-      $slider_ids = array_map('intval', (array)$GLOBALS['site_latest_slider_ids']);
-    } else {
-      $slider_ids = get_posts(['post_type' => 'models', 'post_status' => 'publish', 'posts_per_page' => 15, 'orderby' => 'date', 'order' => 'DESC', 'fields' => 'ids', 'no_found_rows' => true]);
-    }
-  }
-
+  $base_static_ids = array_values(array_unique($reco_global));
+  $should_apply_static = false;
+  $exclude_ids_static = [];
   $exclude_ids_rendered = array_values(array_unique($exclude_ids_post));
-  $base_static_ids = array_values(array_unique(array_merge($reco_global, $slider_ids)));
-  $should_apply_static = ($is_main_listing && !$is_novye && !$cheap_only && !$has_active_filters);
-  $exclude_ids_static = $should_apply_static ? $base_static_ids : [];
   $all_ex = array_values(array_unique(array_merge($exclude_ids_rendered, $exclude_ids_static)));
   $already_count = count($exclude_ids_rendered);
 
