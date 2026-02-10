@@ -22,8 +22,9 @@ $HUB_PAGES = [
     'drygie'       => 'Другие',
     'metro'        => 'Метро',
     'nationalnost' => 'Национальность',
-    'rajon'        => 'Районы',
+    'rajony'       => 'Районы',
     'rost'         => 'Рост',
+    'services'     => 'Услуги',
     'cvet-volos'   => 'Цвет волос',
     'price'        => 'Цена',
 ];
@@ -92,8 +93,14 @@ if (is_singular('blog')) {
         $add_hub($crumbs);
         if (is_404()) {
             $crumbs[] = ['label' => '404', 'url' => ''];
+        } elseif (is_search()) {
+            $crumbs[] = ['label' => 'Поиск: ' . get_search_query(), 'url' => ''];
+        } elseif (is_archive()) {
+            $crumbs[] = ['label' => preg_replace('/^[^:]+: /', '', strip_tags(get_the_archive_title())), 'url' => ''];
+        } elseif (is_home()) {
+            $crumbs[] = ['label' => strip_tags(single_post_title('', false)), 'url' => ''];
         } else {
-            $crumbs[] = ['label' => wp_get_document_title(), 'url' => ''];
+            $crumbs[] = ['label' => get_the_title(), 'url' => ''];
         }
     }
 }
