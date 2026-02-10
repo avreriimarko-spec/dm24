@@ -316,7 +316,7 @@ $wa_number = $contacts['wa'] ?? '';
                     <?php if ($phone_global): ?>
                         <button type="button" 
                                 class="js-card-phone-btn"
-                                style="flex: 1; display: inline-flex; align-items: center; justify-content: center; height: 36px; border-radius: 4px; background-color: #ca3bf6ff; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; border: none; gap: 6px;"
+                                style="flex: 1; display: inline-flex; align-items: center; justify-content: center; height: 36px; border-radius: 4px; background-color: #e865a0; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; border: none; gap: 6px;"
                                 data-phone="<?= esc_attr($phone_global) ?>"
                                 onclick="event.stopPropagation(); event.preventDefault(); var phone=this.dataset.phone||'-'; var span=this.querySelector('.js-phone-label'); if(span) span.textContent=phone; var btn=this; setTimeout(function(){ var a=document.createElement('a'); a.href='tel:'+phone.replace(/\D/g,''); a.className=btn.className; a.style.cssText=btn.style.cssText; a.innerHTML=btn.innerHTML; a.onclick=function(ev){ev.stopPropagation();}; btn.replaceWith(a); },50);">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="pointer-events: none;">
