@@ -237,7 +237,9 @@ $wa_number = $contacts['wa'] ?? '';
                                         }
                                     ?>
                                     <div><span>Ночь</span><strong style="color: <?= $color; ?>;"><?= esc_html($format_price($price_outcall_night)) ?></strong></div>
-                            
+                                    <?php if ($has_incall_prices): ?>
+                                        <div style="margin-top: 4px;"><span>Выезд</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_incall_1h)) ?></strong></div>
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
                         </div>
