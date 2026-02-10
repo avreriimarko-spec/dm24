@@ -174,6 +174,13 @@ $is_cheap_model = has_term('deshevyye-prostitutki', 'price_tax', $post_id);
 $contacts = $resolve_contacts($is_cheap_model);
 $tg_handle = $contacts['tg'] ?? '';
 $wa_number = $contacts['wa'] ?? '';
+$phone_raw = trim((string) get_theme_mod('contact_number'));
+$phone_clean = preg_replace('~\D+~', '', $phone_raw);
+
+$tg_href = $tg_handle ? 'https://t.me/' . $tg_handle : '';
+$wa_href = $wa_number ? 'https://wa.me/' . $wa_number : '';
+$tel_href = $phone_clean ? 'tel:' . $phone_clean : '-';
+
 ?>
 
 <li class="mf-item list-none w-full" data-post-id="<?= esc_attr($post_id) ?>">
@@ -293,7 +300,44 @@ $wa_number = $contacts['wa'] ?? '';
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
+
             </div>
+        </div>
+        <div class="anketa-card__contacts" style="display: flex; gap: 4px; margin-top: 10px;">
+            <?php if ($tel_href): ?>
+                <a href="<?= esc_attr($tel_href) ?>" 
+                   class="anketa-card__contact-btn"
+                   style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px 0; background-color: #fdf2f4; border-radius: 4px; color: #404040; transition: opacity .2s;"
+                   aria-label="Позвонить">
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px;">
+                        <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.43-5.15-3.75-6.57-6.57L9.37 8.91c.27-.27.35-.65.24-1C9.23 6.8 9.04 5.61 9.04 4.38 9.04 3.61 8.42 3 7.65 3H4.35C3.58 3 3 3.61 3 4.38 3 13.9 10.68 21.58 20.2 21.58c.77 0 1.38-.61 1.38-1.38v-3.41c0-.77-.61-1.38-1.38-1.38z"/>
+                    </svg>
+                </a>
+            <?php endif; ?>
+
+            <?php if ($tg_href): ?>
+                <a href="<?= esc_url($tg_href) ?>" 
+                   class="anketa-card__contact-btn"
+                   rel="nofollow noopener"
+                   style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px 0; background-color: #229ED9; border-radius: 4px; color: #fff; transition: opacity .2s;"
+                   aria-label="Telegram">
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px;">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .33z"/>
+                    </svg>
+                </a>
+            <?php endif; ?>
+
+            <?php if ($wa_href): ?>
+                <a href="<?= esc_url($wa_href) ?>" 
+                   class="anketa-card__contact-btn"
+                   rel="nofollow noopener"
+                   style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px 0; background-color: #25D366; border-radius: 4px; color: #fff; transition: opacity .2s;"
+                   aria-label="WhatsApp">
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px;">
+                        <path d="M12.011 20.212c-1.467 0-2.895-.395-4.14-1.14l-2.968.777.791-2.894A8.102 8.102 0 0 1 4.522 12c0-4.505 3.663-8.169 8.169-8.169 4.505 0 8.169 3.664 8.169 8.169 0 4.505-3.664 8.169-8.169 8.169m0-17.405c-5.093 0-9.236 4.144-9.236 9.236 0 1.628.423 3.218 1.226 4.621L3 21.144l4.654-1.221a9.236 9.236 0 1 0 4.357-17.116"/>
+                    </svg>
+                </a>
+            <?php endif; ?>
         </div>
     </article>
 </li>
