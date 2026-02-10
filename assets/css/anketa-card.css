@@ -132,17 +132,13 @@
 
 /* #region stats-and-prices */
 
-.anketa-card__stats-and-prices {
+.anketa-card__stats-wrapper {
   display: flex;
   gap: 10px;
 }
 
-.anketa-card__stats-and-prices-wrapper {
-  flex: 0.57;
-}
-
-.anketa-card__stats--2 {
-  flex: 0.43;
+.anketa-card__stats {
+  flex: 0.5;
 }
 
 .anketa-card__stats div,
@@ -163,7 +159,6 @@
 .anketa-card__prices strong {
   font-size: 13px;
 }
-
 
 /* #endregion */
 

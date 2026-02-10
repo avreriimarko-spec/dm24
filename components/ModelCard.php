@@ -209,43 +209,20 @@ $wa_number = $contacts['wa'] ?? '';
             </div>
     
             <div class="anketa-card__content">
-                <!-- <?php if ($district): ?>
-                    <div class="anketa-card__district"><?= esc_html($district) ?></div>
-                <?php endif; ?> -->
                 <?php if ($has_stats || $has_outcall_prices || $has_incall_prices): ?>
-                    <div class="anketa-card__stats-and-prices">
-                        <div class="anketa-card__stats-and-prices-wrapper">
-                            <?php if ($has_stats): ?>
-                                <div class="anketa-card__stats anketa-card__stats--1">
-                                    <?php if ($age): ?>
-                                        <div><span>Возраст</span><strong><?= esc_html($age) ?></strong></div>
-                                    <?php endif; ?>
-                                    <?php if ($height): ?>
-                                        <div><span>Рост</span><strong><?= esc_html($height) ?></strong></div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endif; ?>
-                            <?php if ($has_outcall_prices || $has_incall_prices): ?>
-                                <div class="anketa-card__prices">
-                                    <div><span>1 час</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_1h)) ?></strong></div>
-                                    <div><span>2 часа</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_2h)) ?></strong></div>
-                                    <?php
-                                        if ($format_price($price_outcall_night) === '—') {
-                                            $color = 'initial';
-                                        } else {
-                                            $color = '#e865a0';
-                                        }
-                                    ?>
-                                    <div><span>Ночь</span><strong style="color: <?= $color; ?>;"><?= esc_html($format_price($price_outcall_night)) ?></strong></div>
-                                    <?php if ($has_incall_prices): ?>
-                                        <div style="margin-top: 4px;"><span>Выезд</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_incall_1h)) ?></strong></div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-
+                    <div class="anketa-card__stats-wrapper">
                         <?php if ($has_stats): ?>
-                            <div class="anketa-card__stats anketa-card__stats--2">
+                            <div class="anketa-card__stats">
+                                <?php if ($age): ?>
+                                    <div><span>Возраст</span><strong><?= esc_html($age) ?></strong></div>
+                                <?php endif; ?>
+                                <?php if ($height): ?>
+                                    <div><span>Рост</span><strong><?= esc_html($height) ?></strong></div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if ($has_stats): ?>
+                            <div class="anketa-card__stats">
                                 <?php if ($weight): ?>
                                     <div><span>Вес</span><strong><?= esc_html($weight) ?></strong></div>
                                 <?php endif; ?>
@@ -256,7 +233,44 @@ $wa_number = $contacts['wa'] ?? '';
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
+                <?php if ($has_outcall_prices || $has_incall_prices): ?>
+                    <div class="anketa-card__price-toggle" style="display: flex; gap: 15px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                        <div style="border-bottom: 2px solid #e865a0; color: #e865a0; padding-bottom: 2px;" onclick="
+                             event.stopPropagation();
+                             var p = this.closest('.anketa-card__content');
+                             p.querySelector('.price-incall').style.display = '';
+                             p.querySelector('.price-outcall').style.display = 'none';
+                             this.style.borderBottomColor = '#e865a0';
+                             this.style.color = '#e865a0';
+                             this.nextElementSibling.style.borderBottomColor = 'transparent';
+                             this.nextElementSibling.style.color = '#888';
+                        ">Апартаменты</div>
+                        <div style="border-bottom: 2px solid transparent; color: #888; padding-bottom: 2px;" onclick="
+                             event.stopPropagation();
+                             var p = this.closest('.anketa-card__content');
+                             p.querySelector('.price-incall').style.display = 'none';
+                             p.querySelector('.price-outcall').style.display = '';
+                             this.style.borderBottomColor = '#e865a0';
+                             this.style.color = '#e865a0';
+                             this.previousElementSibling.style.borderBottomColor = 'transparent';
+                             this.previousElementSibling.style.color = '#888';
+                        ">Выезд</div>
+                    </div>
 
+                    <div class="anketa-card__prices price-incall">
+                        <div><span>1 час</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_incall_1h)) ?></strong></div>
+                        <div><span>2 часа</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_incall_2h)) ?></strong></div>
+                        <?php $color = ($format_price($price_incall_night) === '—') ? 'initial' : '#e865a0'; ?>
+                        <div><span>Ночь</span><strong style="color: <?= $color; ?>;"><?= esc_html($format_price($price_incall_night)) ?></strong></div>
+                    </div>
+
+                    <div class="anketa-card__prices price-outcall" style="display: none;">
+                        <div><span>1 час</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_1h)) ?></strong></div>
+                        <div><span>2 часа</span><strong style="color: #e865a0;"><?= esc_html($format_price($price_outcall_2h)) ?></strong></div>
+                        <?php $color = ($format_price($price_outcall_night) === '—') ? 'initial' : '#e865a0'; ?>
+                        <div><span>Ночь</span><strong style="color: <?= $color; ?>;"><?= esc_html($format_price($price_outcall_night)) ?></strong></div>
+                    </div>
+                <?php endif; ?>
                 <?php
                     $metro_list = is_array($metro) ? array_values(array_filter($metro)) : (trim((string)$metro) !== '' ? [trim((string)$metro)] : []);
                     $metro_primary = $metro_list[0] ?? '';
