@@ -13,7 +13,7 @@ get_header(); ?>
             }
         }
     } else {
-        get_template_part('pages/404');
+        get_template_part('pages/home');
     }
     ?>
 </main>
