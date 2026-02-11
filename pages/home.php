@@ -247,19 +247,18 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
         <div class="w-full flex-1">
 
             <div id="filter-sorting-area" class="w-full flex flex-col gap-6">
-                <?php
-                    $h2_models = get_query_var('auto_h2') ?: ($GLOBALS['auto_h2'] ?? '');
-                    if (!empty($h2_models)): ?>
-                        <h2 class="text-2xl md:text-3xl font-bold tracking-tight break-words [hyphens:auto]">
-                            <?= esc_html($h2_models) ?>
-                        </h2>
-                    <?php else: ?>
-                        <div></div>
-                    <?php endif; ?>
-
                 <?php echo render_model_filter(); ?>
                 
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="title-and-sorting flex flex-col justify-between gap-4">
+                    <?php 
+                        $h2_models = get_query_var('auto_h2') ?: ($GLOBALS['auto_h2'] ?? '');
+                        if (!empty($h2_models)): ?>
+                            <h2 class="text-2xl md:text-3xl font-bold tracking-tight break-words [hyphens:auto]">
+                                <?= esc_html($h2_models) ?>
+                            </h2>
+                        <?php else: ?>
+                            <div></div>
+                        <?php endif; ?>
                     <div class="flex items-center gap-3 self-end md:self-auto">
                         <label for="mf-sort-trigger" class="text-sm font-bold uppercase tracking-wide text-black-500">Сортировка:</label>
                         
@@ -293,6 +292,7 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
                         </div>
                     </div>
                 </div>
+                <style>.title-and-sorting { @media (min-width: 768px) { flex-direction: row } }</style>
             </div>
 
             <div id="ajax-models" class="mt-8">
