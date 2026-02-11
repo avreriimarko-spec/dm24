@@ -13,9 +13,8 @@ function esc_chip_link($url, $text)
 }
 
 /**
- * Рендер секции таксы — ссылки только по term-slug
- * без базового префикса и без закрывающего слэша
- * пример: /vysokie
+ * Рендер секции таксы — исправлено использование get_term_link
+ * для корректного отображения вложенности и префиксов
  */
 function render_tax_section(string $label, string $tx)
 {
@@ -31,8 +30,15 @@ function render_tax_section(string $label, string $tx)
     echo   '<h2 class="s-heading">' . esc_html($label) . '</h2>';
     echo   '<div class="chips">';
     foreach ($terms as $t) {
-        // формируем «открытую» ссылку без завершающего слэша
-        $url = home_url('/' . ltrim($t->slug, '/'));
+        // Используем нативную функцию WP, чтобы учесть иерархию и rewrite rules
+        $url = get_term_link($t);
+        
+        // Если вернулась ошибка (например, таксономия непубличная), пропускаем
+        if (is_wp_error($url)) continue;
+
+        // Убираем слеш на конце для единообразия с остальным кодом sitemap
+        $url = untrailingslashit($url);
+        
         echo esc_chip_link($url, $t->name);
     }
     echo   '</div>';
