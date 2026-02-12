@@ -123,8 +123,6 @@ $q = new WP_Query([
                 if ($desc_raw === '' || (is_string($desc_raw) && trim($desc_raw) === '')) {
                     $desc_raw = get_the_excerpt() ?: get_the_content('');
                 }
-                // 3) Очищаем и режем до 22 слов
-                $desc = wp_trim_words(wp_strip_all_tags((string) $desc_raw), 22, '…');
             ?>
                 <li>
                     <a href="<?php echo esc_url($url); ?>"
@@ -146,11 +144,6 @@ $q = new WP_Query([
                             <h3 class="text-[17px] md:text-[18px] font-semibold group-hover:text-rose-600 transition-colors">
                                 <?php echo esc_html($title); ?>
                             </h3>
-                            <?php if (!empty($desc)) { ?>
-                                <p class="mt-2 text-[13px] md:text-[14px] text-neutral-600 leading-5 line-clamp-3">
-                                    <?php echo esc_html($desc); ?>
-                                </p>
-                            <?php } ?>
                         </div>
                     </a>
                 </li>
