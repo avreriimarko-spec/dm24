@@ -121,10 +121,37 @@ get_header();
 $paged   = max(1, (int)(get_query_var('paged') ?: get_query_var('page') ?: 1));
 $post_id = get_queried_object_id();
 
+// Для taxonomy-URL (services/slug и т.п.) поля должны браться из связанной CPT-записи.
+$qo = get_queried_object();
+if ($qo instanceof WP_Term && !empty($qo->slug)) {
+    $tax_to_post_type = [
+        'uslugi_tax'       => 'uslugi',
+        'price_tax'        => 'tsena',
+        'vozrast_tax'      => 'vozrast',
+        'nationalnost_tax' => 'nacionalnost',
+        'rayonu_tax'       => 'rajon',
+        'metro_tax'        => 'metro',
+        'rost_tax'         => 'rost',
+        'grud_tax'         => 'grud',
+        'ves_tax'          => 'ves',
+        'cvet-volos_tax'   => 'tsvet-volos',
+    ];
+
+    $taxonomy = (string) $qo->taxonomy;
+    if (isset($tax_to_post_type[$taxonomy])) {
+        $linked_post = get_page_by_path((string) $qo->slug, OBJECT, $tax_to_post_type[$taxonomy]);
+        if ($linked_post instanceof WP_Post && !empty($linked_post->ID)) {
+            $post_id = (int) $linked_post->ID;
+        }
+    }
+}
+set_query_var('landing_source_post_id', $post_id);
+
 /**
  * 2) ACF-поля и контент
  */
 $p_after_h1 = function_exists('get_field') ? (get_field('p_atc', $post_id) ?: '') : '';
+$p_under_h2 = function_exists('get_field') ? (get_field('p_title', $post_id) ?: '') : '';
 $content    = function_exists('get_field') ? (get_field('content', $post_id) ?: '') : '';
 $text_block = function_exists('get_field') ? (get_field('text_block', $post_id) ?: '') : '';
 
@@ -158,7 +185,10 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
                 $h1 = $GLOBALS['auto_h1'];
             }
             if (empty($h1)) {
-                $h1 = get_field('h1_atc') ?: get_the_title();
+                $h1 = function_exists('get_field') ? (get_field('h1_atc', $post_id) ?: '') : '';
+            }
+            if (empty($h1)) {
+                $h1 = get_the_title($post_id);
             }
             if ($paged > 1) {
                 $h1 = trim($h1) . ' — страница ' . $paged;
@@ -295,6 +325,12 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
                 <style>.title-and-sorting { @media (min-width: 768px) { flex-direction: row } }</style>
             </div>
 
+            <?php if (!empty($p_under_h2) && $paged === 1) : ?>
+                <div class="content mt-4 text-neutral-700">
+                    <?= wp_kses_post($p_under_h2) ?>
+                </div>
+            <?php endif; ?>
+
             <div id="ajax-models" class="mt-8">
                 <?php echo render_model_grid_with_filters(); ?>
             </div>
@@ -303,8 +339,8 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
 
     <script>
         window.pageContext = {
-            post_type: '<?= esc_js(get_post_type()); ?>',
-            post_slug: '<?= esc_js(get_post_field('post_name', get_queried_object_id())); ?>',
+            post_type: '<?= esc_js(get_post_type($post_id)); ?>',
+            post_slug: '<?= esc_js((string) get_post_field('post_name', $post_id)); ?>',
             is_singular: <?= is_singular() ? 'true' : 'false'; ?>,
             is_tax: <?= is_tax() ? 'true' : 'false'; ?>,
             taxonomy: '<?= is_tax() ? esc_js(get_queried_object()->taxonomy ?? '') : ''; ?>',

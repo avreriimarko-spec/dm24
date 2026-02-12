@@ -5,7 +5,10 @@
 
 if (!defined('ABSPATH')) exit;
 
-$post_id      = get_queried_object_id();
+$post_id      = (int) get_query_var('landing_source_post_id');
+if ($post_id <= 0) {
+    $post_id = get_queried_object_id();
+}
 $faq_h1       = function_exists('get_field') ? (get_field('faq_h1', $post_id) ?: '') : '';
 $faq_p        = function_exists('get_field') ? (get_field('faq_p',  $post_id) ?: '') : '';
 $faq_rows_raw = function_exists('get_field') ? (get_field('faq',    $post_id) ?: []) : [];

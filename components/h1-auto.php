@@ -42,7 +42,34 @@ $post_type   = '';
 $taxonomy    = '';
 $title_piece = '';
 
-if ($qo instanceof WP_Post) {
+// Для taxonomy-URL определяем связанную CPT-запись по slug.
+$linked_post_from_term = null;
+if ($qo instanceof WP_Term && !empty($qo->slug)) {
+    $tax_to_post_type = [
+        'uslugi_tax'       => 'uslugi',
+        'price_tax'        => 'tsena',
+        'vozrast_tax'      => 'vozrast',
+        'nationalnost_tax' => 'nacionalnost',
+        'rayonu_tax'       => 'rajon',
+        'metro_tax'        => 'metro',
+        'rost_tax'         => 'rost',
+        'grud_tax'         => 'grud',
+        'ves_tax'          => 'ves',
+        'cvet-volos_tax'   => 'tsvet-volos',
+    ];
+
+    $tx = (string) $qo->taxonomy;
+    if (isset($tax_to_post_type[$tx])) {
+        $linked_post_from_term = get_page_by_path((string) $qo->slug, OBJECT, $tax_to_post_type[$tx]);
+    }
+}
+
+if ($linked_post_from_term instanceof WP_Post) {
+    $id          = (int) $linked_post_from_term->ID;
+    $post_type   = (string) $linked_post_from_term->post_type;
+    $title_raw   = get_the_title($linked_post_from_term);
+    $title_piece = is_string($title_raw) ? _auto_heading_clean(wp_strip_all_tags($title_raw)) : '';
+} elseif ($qo instanceof WP_Post) {
     $id          = $qo->ID;
     $post_type   = $qo->post_type;
     $title_raw   = get_the_title($qo);
@@ -73,15 +100,34 @@ $context = '';
 
 if ($post_type === 'models') {
     $context = 'models';
-} elseif ($post_type === 'metro' || $taxonomy === 'metro') {
+} elseif ($post_type === 'metro' || $taxonomy === 'metro' || $taxonomy === 'metro_tax') {
     $context = 'metro';
-} elseif ($post_type === 'rajon' || $taxonomy === 'rajon') {
+} elseif ($post_type === 'rajon' || $taxonomy === 'rajon' || $taxonomy === 'rayonu_tax') {
     $context = 'rajon';
-} elseif ($post_type === 'uslugi' || $taxonomy === 'uslugi') {
+} elseif ($post_type === 'uslugi' || $taxonomy === 'uslugi' || $taxonomy === 'uslugi_tax') {
     $context = 'uslugi';
 }
 
-if ($context === 'models' && $title_piece !== '') {
+$h1_from_record = '';
+$h2_from_record = '';
+if (function_exists('get_field') && $id) {
+    $h1_from_record = _auto_heading_clean((string) get_field('h1_atc', $id));
+    $h2_from_record = _auto_heading_clean((string) get_field('h2_title', $id));
+}
+
+// Для посадочных страниц приоритет всегда у полей связанной записи.
+if ($linked_post_from_term instanceof WP_Post) {
+    $h1 = $h1_from_record;
+    $h2 = $h2_from_record;
+    if ($h1 === '' && $title_piece !== '') {
+        $h1 = $title_piece;
+    }
+} elseif ($h1_from_record !== '' || $h2_from_record !== '') {
+    $h1 = $h1_from_record;
+    $h2 = $h2_from_record;
+}
+
+if ($h1 === '' && $context === 'models' && $title_piece !== '') {
 
     // Берём возраст ТАК ЖЕ, как в шаблоне
     $age_raw = trim((string) (function_exists('get_field') ? get_field('age', $id) : ''));
@@ -111,15 +157,15 @@ if ($context === 'models' && $title_piece !== '') {
     } else {
         $h1 = "Проститутка {$title_piece}, Алматы";
     }
-} elseif ($context === 'metro' && $title_piece !== '') {
+} elseif ($h1 === '' && $context === 'metro' && $title_piece !== '') {
 
     $h1 = "Проститутки у метро {$title_piece}";
     $h2 = "Анкеты проституток {$title_piece}";
-} elseif ($context === 'rajon' && $title_piece !== '') {
+} elseif ($h1 === '' && $context === 'rajon' && $title_piece !== '') {
 
     $h1 = "Проститутки районе {$title_piece}";
     $h2 = "Анкеты проституток {$title_piece}";
-} elseif ($context === 'uslugi' && $title_piece !== '') {
+} elseif ($h1 === '' && $context === 'uslugi' && $title_piece !== '') {
 
     $h1 = "Проститутки с услугой {$title_piece} в Алматы";
     $h2 = "Анкеты проституток с услугой {$title_piece}";
