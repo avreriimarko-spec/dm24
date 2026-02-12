@@ -302,14 +302,18 @@ $menu = [
                 </<?php echo $logo_tag; ?>>
 
                 <?php if (!wp_is_mobile()) : ?>
+                    <?php
+                    $current_url = home_url(add_query_arg([], $GLOBALS['wp']->request));
+                    $current_url = user_trailingslashit($current_url);
+                    $favorites_item = $menu['favorites'] ?? ['Избранные', '/favorites'];
+                    $favorites_link = user_trailingslashit(home_url('/' . trim($favorites_item[1], '/')));
+                    $is_favorites_active = ($favorites_link === $current_url);
+                    ?>
                     <nav class="hidden md:flex flex-grow justify-center" aria-label="Основное меню">
                         <ul id="main-nav" class="flex items-center gap-3 whitespace-nowrap">
                             <?php
-                            // Получаем текущий URL для сравнения
-                            $current_url = home_url(add_query_arg([], $GLOBALS['wp']->request));
-                            $current_url = user_trailingslashit($current_url);
-
                             foreach ($menu as $key => $item) :
+                                if ($key === 'favorites') continue;
                             ?>
                                 <li class="relative group">
                                     <?php if (isset($item['sub_menu'])) : ?>
@@ -358,6 +362,29 @@ $menu = [
                             <?php endforeach; ?>
                         </ul>
                     </nav>
+
+                    <div class="hidden md:flex items-center shrink-0">
+                        <?php if ($is_favorites_active) : ?>
+                            <span
+                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-[#e865a0] text-[#e865a0] cursor-default"
+                                aria-current="page"
+                                aria-label="<?php echo esc_attr($favorites_item[0]); ?>"
+                                title="<?php echo esc_attr($favorites_item[0]); ?>">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                                </svg>
+                            </span>
+                        <?php else : ?>
+                            <a href="<?php echo esc_url($favorites_link); ?>"
+                                class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-gray-700 text-gray-300 hover:text-[#e865a0] hover:border-[#e865a0] transition-colors"
+                                aria-label="<?php echo esc_attr($favorites_item[0]); ?>"
+                                title="<?php echo esc_attr($favorites_item[0]); ?>">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                                </svg>
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 <?php endif; ?>
 
                 <div class="hidden md:flex items-center gap-3">
