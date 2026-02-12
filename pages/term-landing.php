@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Template Name: Родительский шаблон (услуги)
- * Description: Всегда выводит все записи CPT `uslugi` плитками, без пагинации.
+ * Template Name: Родительский шаблон (термы)
+ * Description: Выводит записи связанного CPT плитками, без пагинации.
  */
 
 if (!defined('ABSPATH')) exit;
@@ -14,16 +14,25 @@ $p          = function_exists('get_field') ? (get_field('p',  $page_id) ?: '') :
 $text_block = function_exists('get_field') ? (get_field('seo', $page_id) ?: '') : '';
 
 // Определяем CPT по слагу текущей страницы
-$page_slug = get_post_field('post_name', $page_id);
-$post_type = 'uslugi'; // default
+$page_slug = (string) get_post_field('post_name', $page_id);
+$slug_to_post_type = [
+    'services'     => 'uslugi',
+    'rajony'       => 'rajon',
+    'metro'        => 'metro',
+    'price'        => 'tsena',
+    'vozrast'      => 'vozrast',
+    'nationalnost' => 'nacionalnost',
+    'ves'          => 'ves',
+    'rost'         => 'rost',
+    'grud'         => 'grud',
+    'cvet-volos'   => 'tsvet-volos',
 
-if ($page_slug === 'metro') {
-    $post_type = 'metro';
-} elseif ($page_slug === 'rajony') {
-    $post_type = 'rajon';
-} elseif ($page_slug === 'services') {
-    $post_type = 'uslugi';
-}
+    // Поддержка старых слагов на случай legacy-страниц.
+    'tsena'        => 'tsena',
+    'nacionalnost' => 'nacionalnost',
+    'tsvet-volos'  => 'tsvet-volos',
+];
+$post_type = $slug_to_post_type[$page_slug] ?? 'uslugi';
 
 // Проверка регистрации CPT
 if (!post_type_exists($post_type)) {

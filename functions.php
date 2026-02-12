@@ -407,6 +407,40 @@ add_action('pre_get_posts', function ($query) {
     }
 });
 
+add_filter('template_include', function ($template) {
+    if (!is_page()) {
+        return $template;
+    }
+
+    $slug = (string) get_query_var('pagename');
+    if ($slug === '') {
+        $page_id = get_queried_object_id();
+        if ($page_id) {
+            $slug = (string) get_post_field('post_name', $page_id);
+        }
+    }
+
+    $term_landing_slugs = [
+        'services',
+        'rajony',
+        'metro',
+        'price',
+        'cvet-volos',
+        'grud',
+        'vozrast',
+        'nationalnost',
+        'ves',
+        'rost',
+    ];
+
+    if (!in_array($slug, $term_landing_slugs, true)) {
+        return $template;
+    }
+
+    $forced = locate_template('pages/term-landing.php');
+    return $forced ?: $template;
+}, 99);
+
 
 
 // Отключаем meta name="robots", который WP добавляет через wp_head
