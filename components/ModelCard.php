@@ -63,9 +63,6 @@ $price_outcall_2h = $to_int($model['price_outcall_2_hours'] ?? ($price_outcall_1
 $price_incall_night  = $to_int($model['price_night'] ?? '');
 $price_outcall_night = $to_int($model['price_outcall_night'] ?? '');
 
-/** Пути иконок */
-$icon_dir = get_stylesheet_directory_uri() . '/assets/icons/card/';
-
 /* -------------------- ОПТИМИЗАЦИЯ ФОТО -------------------- */
 $gallery = $model['modelGalleryThumbnail'] ?? [];
 $img_src = '';
@@ -284,7 +281,20 @@ $wa_number = $contacts['wa'] ?? '';
 
                 <?php if ($is_verified): ?>
                     <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
-                        <img src="<?= esc_url($icon_dir) ?>checked.svg" style="height: 20px;">
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 32 32"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            focusable="false"
+                            style="display: block;"
+                        >
+                            <path
+                                fill="#3fbf36"
+                                d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm0 2c-7.7319865 0-14 6.2680135-14 14s6.2680135 14 14 14 14-6.2680135 14-14-6.2680135-14-14-14zm5.7279221 9 1.4142135 1.4142136-8.4852814 8.4852813-5.6568542-5.6568542 1.4142136-1.4142136 4.2419335 4.2419336z"
+                            />
+                        </svg>
                         <strong style="color: #3fbf36">Анкета проверена</strong>
                     </div>
                 <?php endif; ?>
