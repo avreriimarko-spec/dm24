@@ -675,8 +675,8 @@ $lb_items = array_merge(
                             if (!empty($terms) && !is_wp_error($terms)) {
                                 $term = $terms[0];
 
-                                // Ссылка по slug без префикса и вложений
-                                $term_link = untrailingslashit(home_url($term->slug));
+                                // Нативная ссылка терма учитывает rewrite и вложенность.
+                                $term_link = get_term_link($term);
 
                                 if (!empty($term_link) && !is_wp_error($term_link)) {
                                     $val = '<a href="' . esc_url($term_link) . '" class="text-[#e865a0] hover:underline font-normal">' . esc_html($val) . '</a>';

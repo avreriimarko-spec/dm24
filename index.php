@@ -3,17 +3,14 @@ get_header(); ?>
 
 <main>
     <?php
-    if (have_posts()) {
+    if (is_attachment() && have_posts()) {
         while (have_posts()) {
             the_post();
-            if (is_attachment()) {
-                get_template_part('pages/attachment');
-            } else {
-                get_template_part('pages/home');
-            }
+            get_template_part('pages/attachment');
         }
     } else {
-        get_template_part('pages/home'); /* pages/404 -> pages/home */
+        // Home template is self-sufficient and should be rendered once per request.
+        get_template_part('pages/home');
     }
     ?>
 </main>

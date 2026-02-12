@@ -462,3 +462,55 @@ function site_ldjson_collect_model($model)
 add_image_size('model_card', 334, 500, true); // hard crop
 
 add_filter('acf/settings/show_updates', '__return_false');
+
+/**
+ * For selected taxonomy landing pages (/services/{slug}, /price/{slug}, etc.)
+ * point frontend admin-bar "Edit" action to the linked CPT post edit screen.
+ */
+add_action('admin_bar_menu', function (WP_Admin_Bar $wp_admin_bar): void {
+    if (is_admin() || !is_user_logged_in()) {
+        return;
+    }
+
+    $tax_to_post_type = [
+        'uslugi_tax'      => 'uslugi',
+        'price_tax'       => 'tsena',
+        'vozrast_tax'     => 'vozrast',
+        'nationalnost_tax'=> 'nacionalnost',
+        'rost_tax'        => 'rost',
+        'grud_tax'        => 'grud',
+        'ves_tax'         => 'ves',
+        'cvet-volos_tax'  => 'tsvet-volos',
+    ];
+
+    $qo = get_queried_object();
+    if (!($qo instanceof WP_Term) || empty($qo->taxonomy) || empty($qo->slug)) {
+        return;
+    }
+
+    $taxonomy = (string) $qo->taxonomy;
+    if (!isset($tax_to_post_type[$taxonomy]) || !is_tax($taxonomy)) {
+        return;
+    }
+
+    $linked_post = get_page_by_path((string) $qo->slug, OBJECT, $tax_to_post_type[$taxonomy]);
+    if (!($linked_post instanceof WP_Post) || empty($linked_post->ID)) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', (int) $linked_post->ID)) {
+        return;
+    }
+
+    $node = $wp_admin_bar->get_node('edit');
+    if (!$node) {
+        return;
+    }
+
+    $wp_admin_bar->add_node([
+        'id'    => 'edit',
+        'title' => 'Изменить запись',
+        'href'  => get_edit_post_link((int) $linked_post->ID, 'raw'),
+        'meta'  => $node->meta,
+    ]);
+}, 999);

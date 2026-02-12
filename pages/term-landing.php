@@ -34,6 +34,25 @@ $slug_to_post_type = [
 ];
 $post_type = $slug_to_post_type[$page_slug] ?? 'uslugi';
 
+// Для корректной вложенности URL категории строим ссылку через term_link.
+$slug_to_taxonomy = [
+    'services'     => 'uslugi_tax',
+    'rajony'       => 'rayonu_tax',
+    'metro'        => 'metro_tax',
+    'price'        => 'price_tax',
+    'vozrast'      => 'vozrast_tax',
+    'nationalnost' => 'nationalnost_tax',
+    'ves'          => 'ves_tax',
+    'rost'         => 'rost_tax',
+    'grud'         => 'grud_tax',
+    'cvet-volos'   => 'cvet-volos_tax',
+
+    // legacy-страницы
+    'tsena'        => 'price_tax',
+    'nacionalnost' => 'nationalnost_tax',
+];
+$taxonomy = $slug_to_taxonomy[$page_slug] ?? '';
+
 // Проверка регистрации CPT
 if (!post_type_exists($post_type)) {
     echo '<main class="mx-auto w-full lg:w-[1200px] px-4 py-8">';
@@ -81,6 +100,16 @@ $q = new WP_Query([
                 $pid    = get_the_ID();
                 $title  = get_the_title();
                 $url    = get_permalink();
+
+                if ($taxonomy !== '' && taxonomy_exists($taxonomy)) {
+                    $term = get_term_by('slug', (string) get_post_field('post_name', $pid), $taxonomy);
+                    if ($term && !is_wp_error($term)) {
+                        $term_url = get_term_link($term);
+                        if (!is_wp_error($term_url) && is_string($term_url) && $term_url !== '') {
+                            $url = $term_url;
+                        }
+                    }
+                }
 
                 // Превью
                 $thumb_id  = get_post_thumbnail_id($pid);
