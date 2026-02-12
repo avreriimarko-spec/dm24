@@ -9,6 +9,10 @@ Theme name: Kyzdarki
 body {
   background-color: #02293d;
   color: white;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 .custom-img {
@@ -47,6 +51,7 @@ body {
 .site-footer {
   background: #000;
   color: #e6e6e6;
+  margin-top: auto;
 }
 
 .site-footer__top {
