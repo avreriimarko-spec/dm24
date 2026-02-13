@@ -7,7 +7,10 @@ if (!defined('ABSPATH')) exit;
 
 // === ОСНОВНЫЕ ПЕРЕМЕННЫЕ ===
 $year      = (int) date('Y');
-$site_name = get_bloginfo('name') ?: 'almaty.kyzdarki.net';
+$site_name = trim((string) get_bloginfo('name'));
+if ($site_name === '' || preg_match('~almaty|kyzdarki~iu', $site_name)) {
+    $site_name = 'dosugmoskva24';
+}
 $home_url  = home_url('/');
 $logo_url  = get_stylesheet_directory_uri() . '/assets/icons/logo.png';
 
@@ -57,7 +60,7 @@ if (empty($__final_tg) && empty($__final_wa)) {
     $__final_wa = !empty($__wa_variants) ? $__wa_variants[array_rand($__wa_variants)] : '';
 }
 
-$tg_user_handle   = $__final_tg !== '' ? $__final_tg : 'Kyzdar-Almaty';
+$tg_user_handle   = $__final_tg !== '' ? $__final_tg : 'dosugmoskva24';
 $wa_number_digits = $__final_wa !== '' ? $__final_wa : '79874684644';
 $tg_channel_handle = ltrim((string) get_theme_mod('contact_telegram_channel', 'Telegram_Channel_Name'), '@');
 
@@ -121,7 +124,10 @@ $build_url = static function ($link) {
     return esc_url(home_url("/{$slug}"));
 };
 
-$site_name = $site_name ?? get_bloginfo('name');
+$site_name = $site_name ?? trim((string) get_bloginfo('name'));
+if ($site_name === '' || preg_match('~almaty|kyzdarki~iu', $site_name)) {
+    $site_name = 'dosugmoskva24';
+}
 $year      = $year ?? date_i18n('Y');
 
 ?>

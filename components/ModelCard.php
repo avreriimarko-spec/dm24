@@ -54,7 +54,7 @@ if (empty($services)) {
 }
 
 /** Цены */
-$currency      = '₸';
+$currency      = 'RUB';
 $to_int        = static fn($v) => (int)preg_replace('~\D+~', '', (string)$v);
 $price_incall_1h  = $to_int($model['price'] ?? '');
 $price_outcall_1h = $to_int($model['price_outcall'] ?? '');

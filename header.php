@@ -243,7 +243,10 @@ $GLOBALS['seo_descr'] = $descr;
     if (!defined('ABSPATH')) exit;
 
     /** Бренд */
-    $site_name = get_bloginfo('name') ?: 'Escort';
+    $site_name = trim((string) get_bloginfo('name'));
+    if ($site_name === '' || preg_match('~almaty|kyzdarki~iu', $site_name)) {
+        $site_name = 'dosugmoskva24';
+    }
     $logo_url  = get_stylesheet_directory_uri() . '/assets/icons/logo.png';
 
     /** * МЕНЮ 

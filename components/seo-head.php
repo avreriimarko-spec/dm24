@@ -8,8 +8,90 @@
 if (!defined('ABSPATH')) exit;
 if (defined('SEO_HEAD_PRINTED')) return;
 define('SEO_HEAD_PRINTED', true);
+if (!defined('SEO_SITE_BRAND')) define('SEO_SITE_BRAND', 'dosugmoskva24');
 
 /* ================= helpers ================= */
+
+function _seo_site_brand(): string
+{
+    $name = trim((string) wp_strip_all_tags(get_bloginfo('name', 'display')));
+    if ($name === '') return SEO_SITE_BRAND;
+
+    // Если в настройках осталось старое имя проекта, принудительно используем актуальный бренд.
+    if (preg_match('~almaty|kyzdarki~iu', $name)) return SEO_SITE_BRAND;
+
+    return $name;
+}
+
+function _seo_normalize_brand_text(string $s): string
+{
+    $s = trim($s);
+    if ($s === '') return '';
+
+    $s = preg_replace('~almaty\s*kyzdarki~iu', SEO_SITE_BRAND, $s);
+    $s = preg_replace('~almaty\.?kyzdarki(?:\.net|\.kz)?~iu', SEO_SITE_BRAND, $s);
+    $s = preg_replace('~kyzdarki~iu', SEO_SITE_BRAND, $s);
+    $s = preg_replace('~\s+~u', ' ', (string) $s);
+
+    return trim((string) $s);
+}
+
+function _seo_normalize_descr_text(string $s): string
+{
+    $s = trim($s);
+    if ($s === '') return '';
+
+    // В description не используем домен/бренд, заменяем на нейтральное "сайте".
+    $s = preg_replace('~almaty\s*kyzdarki~iu', 'сайте', $s);
+    $s = preg_replace('~almaty\.?kyzdarki(?:\.net|\.kz)?~iu', 'сайте', $s);
+    $s = preg_replace('~dosugmoskva24~iu', 'сайте', $s);
+    $s = preg_replace('~kyzdarki~iu', 'сайте', $s);
+    $s = preg_replace('~\bсайте\s+сайте\b~iu', 'сайте', $s);
+    $s = preg_replace('~\s+~u', ' ', (string) $s);
+
+    return trim((string) $s);
+}
+
+function _seo_is_individualki_page(array $ctx): bool
+{
+    if (function_exists('is_page') && is_page('individualki')) {
+        return true;
+    }
+
+    if (!empty($ctx['id'])) {
+        $slug = (string) get_post_field('post_name', (int) $ctx['id']);
+        if ($slug === 'individualki') {
+            return true;
+        }
+    }
+
+    $pagename = trim((string) get_query_var('pagename'));
+    return trim($pagename, '/') === 'individualki';
+}
+
+function _seo_strip_individualki_mentions(string $s): string
+{
+    if ($s === '') return '';
+
+    $map = [
+        'Индивидуалки'  => 'Проститутки',
+        'индивидуалки'  => 'проститутки',
+        'Индивидуалок'  => 'Проституток',
+        'индивидуалок'  => 'проституток',
+        'Индивидуалка'  => 'Проститутка',
+        'индивидуалка'  => 'проститутка',
+        'Индивидуалке'  => 'Проститутке',
+        'индивидуалке'  => 'проститутке',
+        'Индивидуалкам' => 'Проституткам',
+        'индивидуалкам' => 'проституткам',
+        'Индивидуалками' => 'Проститутками',
+        'индивидуалками' => 'проститутками',
+        'Индивидуалках' => 'Проститутках',
+        'индивидуалках' => 'проститутках',
+    ];
+
+    return strtr($s, $map);
+}
 
 function _seo_decode_entities(string $s): string
 {
@@ -139,6 +221,109 @@ function _seo_min_price_label_by_term($term, string $taxonomy): string
     return $min_label !== '' ? _seo_decode_entities($min_label) : '';
 }
 
+function _seo_min_price_num_by_term($term, string $taxonomy): int
+{
+    $label = _seo_min_price_label_by_term($term, $taxonomy);
+    if ($label === '') return 0;
+    return (int) preg_replace('~\D+~', '', $label);
+}
+
+function _seo_find_related_term_name($term, string $source_taxonomy, string $target_taxonomy): string
+{
+    if (!$term) return '';
+
+    $q = new WP_Query([
+        'post_type'      => 'models',
+        'post_status'    => 'publish',
+        'posts_per_page' => 140,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+        'tax_query'      => [[
+            'taxonomy' => $source_taxonomy,
+            'field'    => 'term_id',
+            'terms'    => [(int) $term->term_id],
+            'operator' => 'IN',
+        ]],
+    ]);
+
+    $stat = [];
+    foreach ((array) $q->posts as $pid) {
+        $terms = get_the_terms((int) $pid, $target_taxonomy);
+        if (empty($terms) || is_wp_error($terms)) continue;
+        foreach ($terms as $t) {
+            $tid = (int) $t->term_id;
+            if (!isset($stat[$tid])) {
+                $stat[$tid] = ['name' => (string) $t->name, 'cnt' => 0];
+            }
+            $stat[$tid]['cnt']++;
+        }
+    }
+    wp_reset_postdata();
+
+    if (empty($stat)) return '';
+    uasort($stat, static function ($a, $b): int {
+        return ((int) $b['cnt']) <=> ((int) $a['cnt']);
+    });
+
+    $top = reset($stat);
+    return !empty($top['name']) ? _seo_decode_entities((string) $top['name']) : '';
+}
+
+function _seo_landing_kind_by_taxonomy(string $taxonomy): string
+{
+    $tax_to_kind = [
+        'metro_tax' => 'metro',
+        'rayonu_tax' => 'rajon',
+        'uslugi_tax' => 'uslugi',
+        'vozrast_tax' => 'appearance',
+        'rost_tax' => 'appearance',
+        'grud_tax' => 'appearance',
+        'ves_tax' => 'appearance',
+        'cvet-volos_tax' => 'appearance',
+        'nationalnost_tax' => 'nationality',
+        'price_tax' => 'price',
+    ];
+    return $tax_to_kind[$taxonomy] ?? '';
+}
+
+function _seo_build_landing_title_by_kind(string $kind, string $cat_name, string $price_txt = ''): string
+{
+    if ($kind === 'metro') {
+        if ($price_txt !== '') {
+            return "Проститутки метро {$cat_name} — интим услуги рядом с метро (цены от {$price_txt} руб.)";
+        }
+        return "Проститутки метро {$cat_name} — интим услуги рядом с метро (цены по договоренности)";
+    }
+
+    if ($kind === 'rajon') {
+        return "Индивидуалки {$cat_name} — интим услуги в районе {$cat_name} (фото и цены)";
+    }
+
+    if ($kind === 'uslugi') {
+        if ($price_txt !== '') {
+            return "{$cat_name} Москва — заказать интим услуги в Москве (цены от {$price_txt} руб.)";
+        }
+        return "{$cat_name} Москва — заказать интим услуги в Москве (цены по договоренности)";
+    }
+
+    if ($kind === 'appearance') {
+        return "{$cat_name} индивидуалки Москва — девушки с внешностью {$cat_name} в Москве";
+    }
+
+    if ($kind === 'nationality') {
+        return "Проститутки национальности {$cat_name} в Москве — анкеты с фото и ценами";
+    }
+
+    if ($kind === 'price') {
+        if ($price_txt !== '') {
+            return "Проститутки по цене {$cat_name} в Москве — анкеты с фото (от {$price_txt} руб.)";
+        }
+        return "Проститутки по цене {$cat_name} в Москве — анкеты с фото и фильтрами";
+    }
+
+    return '';
+}
+
 /** Список станций метро для анкеты models */
 function _seo_get_model_metro_list(int $post_id): string
 {
@@ -171,7 +356,7 @@ function _seo_ctx(): array
         'post_type'   => $id ? get_post_type($id) : '',
         'is_home'     => (is_front_page() || is_home()),
         'is_singular' => is_singular(),
-        'site'        => wp_strip_all_tags(get_bloginfo('name', 'display')),
+        'site'        => _seo_site_brand(),
         'slug'        => (is_singular() && is_object($obj) && !empty($obj->post_name)) ? $obj->post_name : '',
         'paged'       => $paged > 0 ? $paged : 1,
     ];
@@ -200,12 +385,13 @@ function _seo_append_page_suffix(string $text, int $paged): string
 /* ================= генерация заголовков/descr ================= */
 
 /**
- * TITLE:
- * - metro:  Проститутки {станция} Ⓜ️ - {N} доступных анкет, шлюхи метро {станция} от {мин. цена} 24/7! Конфиденциально!
- * - rajon:  Проститутки в {название} районе - {N} доступных анкет, шлюхи район {название района} от {мин. цена} 24/7! Конфиденциально!
- * - uslugi: Снять проститутку с услугой {услуга} в Москва - доступно {N} анкет - 24/7 конфиденциально!
- * - models: {имя} - проститутка у метро {станции}. Возраст - {возраст}, рост - {рост}, размер груди - {размер груди}
- * - прочие: meta "title" или стандартный заголовок записи.
+ * TITLE (по ТЗ):
+ * - uslugi:       {Service_Name} Москва — заказать интим услуги в Москве (цены от {Price})
+ * - appearance:   {Appearance_Type} индивидуалки Москва — девушки с внешностью {Appearance_Type} в Москве
+ * - nationality:  Проститутки национальности {Nationality} в Москве — анкеты с фото и ценами
+ * - rajon:        Индивидуалки {District} — интим услуги в районе {District} (фото и цены)
+ * - metro:        Проститутки метро {Station} — интим услуги рядом с метро (цены от {Price})
+ * - models/прочие: прежняя логика.
  */
 function _seo_build_title(array $ctx): string
 {
@@ -213,7 +399,7 @@ function _seo_build_title(array $ctx): string
     $pt   = $ctx['post_type'];
     $slug = $ctx['slug'];
 
-    // Карта CPT -> taxonomy (для metro/rajon/uslugi/vozrast/rost/price)
+    // Карта CPT -> taxonomy для посадочных страниц по термам.
     $tx_map = [
         'metro'   => 'metro_tax',
         'rajon'   => 'rayonu_tax',
@@ -221,74 +407,41 @@ function _seo_build_title(array $ctx): string
         'vozrast' => 'vozrast_tax',
         'rost'    => 'rost_tax',
         'price'   => 'price_tax',
+        'tsena'   => 'price_tax',
+        'nacionalnost' => 'nationalnost_tax',
+        'grud'    => 'grud_tax',
+        'ves'     => 'ves_tax',
+        'tsvet-volos' => 'cvet-volos_tax',
     ];
-
     // Иерархические "страничные" CPT
     if ($ctx['is_singular'] && $pt && isset($tx_map[$pt]) && $ctx['id']) {
-        $title_field = _seo_get_meta_str($ctx['id'], 'title');
-        if ($title_field !== '') return _seo_decode_entities($title_field);
-
         $tax = $tx_map[$pt];
         $term = _seo_find_term_by_slug($tax, $slug);
         $cat_name = $term ? $term->name : get_the_title($ctx['id']);
         $cat_name = _seo_decode_entities($cat_name);
 
-        if ($pt === 'metro') {
-            $n       = _seo_count_models_by_term($term, $tax);
-            $min_str = _seo_min_price_label_by_term($term, $tax);
-
-            $base = "Проститутки {$cat_name} Ⓜ️";
-            if ($n > 0) {
-                $base .= " - {$n} доступных анкет";
-            }
-
-            $tail = "шлюхи метро {$cat_name}";
-            if ($min_str !== '') {
-                $tail .= " от {$min_str}";
-            }
-            $tail .= " 24/7! Конфиденциально!";
-
-            return $base . ', ' . $tail;
+        $price_num = _seo_min_price_num_by_term($term, $tax);
+        $price_txt = $price_num > 0 ? number_format_i18n($price_num) : '';
+        $kind = _seo_landing_kind_by_taxonomy($tax);
+        if ($kind !== '') {
+            $built = _seo_build_landing_title_by_kind($kind, $cat_name, $price_txt);
+            if ($built !== '') return $built;
         }
+    }
 
-        if ($pt === 'rajon') {
-            $n       = _seo_count_models_by_term($term, $tax);
-            $min_str = _seo_min_price_label_by_term($term, $tax);
-
-            $base = "Проститутки в {$cat_name} районе";
-            if ($n > 0) {
-                $base .= " - {$n} доступных анкет";
+    // Архивы таксономий (services/slug, metro/slug и т.д.)
+    if (is_tax()) {
+        $qo = get_queried_object();
+        if ($qo instanceof WP_Term && !empty($qo->taxonomy)) {
+            $tax = (string) $qo->taxonomy;
+            $kind = _seo_landing_kind_by_taxonomy($tax);
+            if ($kind !== '') {
+                $cat_name = _seo_decode_entities((string) $qo->name);
+                $price_num = _seo_min_price_num_by_term($qo, $tax);
+                $price_txt = $price_num > 0 ? number_format_i18n($price_num) : '';
+                $built = _seo_build_landing_title_by_kind($kind, $cat_name, $price_txt);
+                if ($built !== '') return $built;
             }
-
-            $tail = "шлюхи район {$cat_name}";
-            if ($min_str !== '') {
-                $tail .= " от {$min_str}";
-            }
-            $tail .= " 24/7! Конфиденциально!";
-
-            return $base . ', ' . $tail;
-        }
-
-        if ($pt === 'uslugi') {
-            $n     = _seo_count_models_by_term($term, $tax);
-            $title = "Снять проститутку с услугой {$cat_name} в Москва";
-            if ($n > 0) {
-                $title .= " - доступно {$n} анкет";
-            }
-            $title .= " - 24/7 конфиденциально!";
-            return $title;
-        }
-
-        if ($pt === 'vozrast') {
-            return "{$cat_name} Эскорт модели в Москва по возрасту - снять эскортницу анонимно 24/7";
-        }
-
-        if ($pt === 'rost') {
-            return "Эскортницы {$cat_name} - анкеты эскорт моделей по росту в Москва";
-        }
-
-        if ($pt === 'price') {
-            return "{$cat_name} эскорт модели Москва. Подобрать эскортницу по цене 24/7";
         }
     }
 
@@ -309,7 +462,7 @@ function _seo_build_title(array $ctx): string
 
         $first = $metro_list !== ''
             ? "{$name} - проститутка у метро {$metro_list}."
-            : "{$name} - проститутка в Москва.";
+            : "{$name} - проститутка в Москве.";
 
         $parts = [];
         if ($age !== '')    $parts[] = "Возраст - {$age}";
@@ -323,32 +476,133 @@ function _seo_build_title(array $ctx): string
 
     // Прочие singular: ручной title или заголовок записи
     if ($ctx['is_singular'] && $ctx['id']) {
-        $manual = _seo_get_meta_str($ctx['id'], 'title');
+        $manual = _seo_normalize_brand_text(_seo_get_meta_str($ctx['id'], 'title'));
         if ($manual !== '') return _seo_decode_entities($manual);
-        $t = _seo_decode_entities(get_the_title($ctx['id']));
+        $t = _seo_decode_entities(_seo_normalize_brand_text(get_the_title($ctx['id'])));
         return $t;
     }
 
-    return $site;
+    if (is_search()) {
+        $q = trim((string) get_search_query());
+        return $q !== '' ? "Поиск «{$q}» — {$site}" : "Поиск по сайту — {$site}";
+    }
+
+    if (is_404()) {
+        return "Страница не найдена — {$site}";
+    }
+
+    if (is_post_type_archive()) {
+        $pt_obj = get_queried_object();
+        $label = (is_object($pt_obj) && !empty($pt_obj->labels->name))
+            ? (string) $pt_obj->labels->name
+            : 'Каталог';
+        return _seo_decode_entities("{$label} — {$site}");
+    }
+
+    if (is_tax() || is_category() || is_tag()) {
+        $term_title = trim((string) single_term_title('', false));
+        if ($term_title !== '') {
+            return _seo_decode_entities("{$term_title} — {$site}");
+        }
+    }
+
+    if (is_author()) {
+        $author = trim((string) get_the_author_meta('display_name', (int) get_query_var('author')));
+        if ($author !== '') return _seo_decode_entities("{$author} — {$site}");
+    }
+
+    if (is_date()) {
+        return "Архив публикаций — {$site}";
+    }
+
+    if (is_archive()) {
+        return "Каталог — {$site}";
+    }
+
+    return $site !== '' ? $site : SEO_SITE_BRAND;
 }
 
 /**
- * DESCRIPTION:
- * - metro/rajon/uslugi: 170 символов текста ПОСЛЕ </h1> из p_atc
- * - models: 170 символов из ACF 'description'
- * - прочие: meta 'descr' или excerpt/content
+ * DESCRIPTION (по ТЗ):
+ * - uslugi:     Ищете {Service_Name} в Москве? ... {Count} анкет ... от {Price}
+ * - appearance: Сексуальные {Appearance_Type} в Москве ... {Count} ... от {Price}
+ * - nationality: Анкеты с фильтром «национальность {Nationality}» в Москве ...
+ * - rajon:      Ищете досуг в районе {District}? ... {Count} ... от {Price} ... метро {Station}
+ * - metro:      Секс услуги у метро {Station} ... {Count} ... от {Price}
+ * - models/прочие: прежняя логика.
  */
 function _seo_build_descr(array $ctx): string
 {
     $pt = $ctx['post_type'];
+    $tx_map = [
+        'metro'   => 'metro_tax',
+        'rajon'   => 'rayonu_tax',
+        'uslugi'  => 'uslugi_tax',
+        'vozrast' => 'vozrast_tax',
+        'rost'    => 'rost_tax',
+        'price'   => 'price_tax',
+        'tsena'   => 'price_tax',
+        'nacionalnost' => 'nationalnost_tax',
+        'grud'    => 'grud_tax',
+        'ves'     => 'ves_tax',
+        'tsvet-volos' => 'cvet-volos_tax',
+    ];
+    $appearance_pts = ['vozrast', 'rost', 'grud', 'ves', 'tsvet-volos'];
 
-    // metro / rajon / uslugi — p_atc, текст после H1
-    if ($ctx['is_singular'] && in_array($pt, ['metro', 'rajon', 'vozrast', 'rost', 'price', 'uslugi'], true) && $ctx['id']) {
-        $p_atc = _seo_get_meta_str($ctx['id'], 'p_atc');
-        if ($p_atc !== '') return _seo_take_after_h1_170($p_atc);
-
-        $d = _seo_get_meta_str($ctx['id'], 'descr');
+    if ($ctx['is_singular'] && $pt && isset($tx_map[$pt]) && $ctx['id']) {
+        // Ручное поле descr всегда в приоритете.
+        $d = _seo_normalize_descr_text(_seo_get_meta_str($ctx['id'], 'descr'));
         if ($d !== '') return _seo_trim_170($d);
+
+        $tax = $tx_map[$pt];
+        $slug = $ctx['slug'];
+        $term = _seo_find_term_by_slug($tax, $slug);
+        $cat_name = $term ? _seo_decode_entities((string) $term->name) : _seo_decode_entities(get_the_title($ctx['id']));
+        $count = _seo_count_models_by_term($term, $tax);
+        $count_txt = number_format_i18n(max(0, $count));
+        $price_num = _seo_min_price_num_by_term($term, $tax);
+        $price_txt = $price_num > 0 ? number_format_i18n($price_num) : '';
+
+        if ($pt === 'metro') {
+            if ($price_txt !== '') {
+                return _seo_trim_170("💋 Секс услуги у метро {$cat_name}. На сайте {$count_txt} девушек с реальными фото. Проверенные индивидуалки в 5 минутах от метро. Цены от {$price_txt} руб. за час!");
+            }
+            return _seo_trim_170("💋 Секс услуги у метро {$cat_name}. На сайте {$count_txt} девушек с реальными фото. Проверенные индивидуалки в 5 минутах от метро. Условия встречи уточняйте в анкете.");
+        }
+
+        if ($pt === 'rajon') {
+            $station = _seo_find_related_term_name($term, $tax, 'metro_tax');
+            if ($station === '') $station = 'центра Москвы';
+            if ($price_txt !== '') {
+                return _seo_trim_170("🔥 Ищете досуг в районе {$cat_name}? У нас {$count_txt} проверенных анкет индивидуалок. Реальные фото, цены от {$price_txt} руб. Секс услуги рядом с метро {$station}!");
+            }
+            return _seo_trim_170("🔥 Ищете досуг в районе {$cat_name}? У нас {$count_txt} проверенных анкет индивидуалок. Реальные фото и анкеты с актуальными условиями рядом с метро {$station}.");
+        }
+
+        if ($pt === 'uslugi') {
+            if ($price_txt !== '') {
+                return _seo_trim_170("Ищете {$cat_name} в Москве? 💋 На сайте {$count_txt} анкет с реальными фото. Цены от {$price_txt} руб. за час. Проверенные индивидуалки в Москве!");
+            }
+            return _seo_trim_170("Ищете {$cat_name} в Москве? 💋 На сайте {$count_txt} анкет с реальными фото. Проверенные индивидуалки в Москве, условия встречи указаны в карточках.");
+        }
+
+        if ($pt === 'nacionalnost') {
+            if ($price_txt !== '') {
+                return _seo_trim_170("Анкеты с фильтром «национальность {$cat_name}» в Москве: {$count_txt} проверенных профилей. Реальные фото и цены от {$price_txt} руб. за час.");
+            }
+            return _seo_trim_170("Анкеты с фильтром «национальность {$cat_name}» в Москве: {$count_txt} проверенных профилей с реальными фото и актуальными условиями встреч.");
+        }
+
+        if (in_array($pt, $appearance_pts, true)) {
+            if ($price_txt !== '') {
+                return _seo_trim_170("💋 Сексуальные {$cat_name} в Москве. Посмотрите {$count_txt} проверенных профилей. Реальные фото, честные цены от {$price_txt} руб. Интим услуги рядом с вами!");
+            }
+            return _seo_trim_170("💋 Сексуальные {$cat_name} в Москве. Посмотрите {$count_txt} проверенных профилей с реальными фото и актуальными условиями встреч.");
+        }
+
+        if (($pt === 'price' || $pt === 'tsena') && $price_txt !== '') {
+            return _seo_trim_170("Актуальные анкеты по цене {$cat_name} в Москве. Сравните условия, реальные фото и предложения от {$price_txt} руб. за час.");
+        }
     }
 
     // models: ACF description
@@ -362,7 +616,7 @@ function _seo_build_descr(array $ctx): string
 
     // Прочие singular: descr / excerpt / content
     if ($ctx['is_singular'] && $ctx['id']) {
-        $d = _seo_get_meta_str($ctx['id'], 'descr');
+        $d = _seo_normalize_descr_text(_seo_get_meta_str($ctx['id'], 'descr'));
         if ($d !== '') return _seo_trim_170($d);
 
         $raw = get_post_field('post_excerpt', $ctx['id']) ?: get_post_field('post_content', $ctx['id']);
@@ -373,7 +627,19 @@ function _seo_build_descr(array $ctx): string
         return 'Эскорт-модели с фото, видео и ценами. Фильтры по возрасту, району, метро, национальности. Обновляем ежедневно.';
     }
 
-    return '';
+    if (is_search()) {
+        return _seo_trim_170("Результаты поиска по сайту. Используйте фильтры, чтобы быстрее найти подходящие анкеты.");
+    }
+
+    if (is_404()) {
+        return _seo_trim_170("Страница не найдена. Перейдите в каталог и воспользуйтесь фильтрами по району, метро и цене.");
+    }
+
+    if (is_post_type_archive() || is_archive() || is_tax() || is_category() || is_tag()) {
+        return _seo_trim_170("Актуальный каталог анкет с фото, ценами и фильтрами по району, метро, услугам и другим параметрам.");
+    }
+
+    return _seo_trim_170("Каталог анкет с фото, описаниями и удобными фильтрами для быстрого подбора.");
 }
 
 /** OG картинка */
@@ -397,8 +663,23 @@ function _seo_og_image(): array
 $ctx       = _seo_ctx();
 $title     = _seo_build_title($ctx);
 $descr     = _seo_build_descr($ctx);
+$descr     = _seo_normalize_descr_text($descr);
+
+if (!_seo_is_individualki_page($ctx)) {
+    $title = _seo_strip_individualki_mentions($title);
+    $descr = _seo_strip_individualki_mentions($descr);
+}
+
 $title     = _seo_append_page_suffix($title, $ctx['paged']);
-$descr     = ($ctx['paged'] > 1) ? '' : _seo_append_page_suffix($descr, $ctx['paged']);
+$descr     = _seo_append_page_suffix($descr, $ctx['paged']);
+
+if (trim($title) === '') {
+    $title = _seo_site_brand();
+}
+if (trim($descr) === '') {
+    $descr = _seo_trim_170('Актуальные анкеты с фото, ценами и фильтрами по району, метро и услугам.');
+    $descr = _seo_append_page_suffix($descr, $ctx['paged']);
+}
 $canonical = _seo_canonical($ctx);
 if ($ctx['paged'] > 1) {
     $canonical = untrailingslashit($canonical); // для пагинации убираем закрывающий слэш

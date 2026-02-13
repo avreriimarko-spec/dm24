@@ -159,15 +159,15 @@ if ($h1 === '' && $context === 'models' && $title_piece !== '') {
     }
 } elseif ($h1 === '' && $context === 'metro' && $title_piece !== '') {
 
-    $h1 = "Проститутки у метро {$title_piece}";
+    $h1 = "Проститутки у метро {$title_piece}: проверенные анкеты";
     $h2 = "Анкеты проституток {$title_piece}";
 } elseif ($h1 === '' && $context === 'rajon' && $title_piece !== '') {
 
-    $h1 = "Проститутки в районе {$title_piece}: цены на интим услуги и фото";
+    $h1 = "Проститутки в районе {$title_piece}";
     $h2 = "Анкеты проституток";
 } elseif ($h1 === '' && $context === 'uslugi' && $title_piece !== '') {
 
-    $h1 = "Проститутки с услугой {$title_piece} в Москва";
+    $h1 = "{$title_piece} в Москве: проверенные анкеты";
     $h2 = "Анкеты проституток с услугой {$title_piece}";
 } else {
 

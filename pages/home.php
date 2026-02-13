@@ -209,13 +209,6 @@ if ($is_district_context) {
         if ($district_name !== '') {
             $district_name_safe = esc_html($district_name);
 
-            $district_h1 = "Проститутки в районе {$district_name}: цены на интим услуги и фото";
-            $custom_h1_override = $district_h1;
-            set_query_var('auto_h1', $district_h1);
-            $GLOBALS['auto_h1'] = $district_h1;
-            set_query_var('auto_h2', 'Анкеты проституток');
-            $GLOBALS['auto_h2'] = 'Анкеты проституток';
-
             $models_count = isset($auto_text['models_count']) ? (int) $auto_text['models_count'] : 0;
             if ($models_count <= 0 && function_exists('kyzdarki_auto_text_count_models')) {
                 $models_count = kyzdarki_auto_text_count_models($base_tax);
@@ -290,6 +283,26 @@ if ($is_district_context) {
             while (count($station_items) < 3) {
                 $station_items[] = esc_html($station_fallback_labels[count($station_items)]);
             }
+
+            $h1_station_name = 'Москвы';
+            foreach ($station_terms as $station_term) {
+                if (!$station_term instanceof WP_Term) {
+                    continue;
+                }
+                $station_name_for_h1 = function_exists('kyzdarki_auto_text_clean')
+                    ? kyzdarki_auto_text_clean((string) $station_term->name)
+                    : trim(wp_strip_all_tags((string) $station_term->name));
+                if ($station_name_for_h1 !== '') {
+                    $h1_station_name = $station_name_for_h1;
+                    break;
+                }
+            }
+            $district_h1 = "Проститутки в районе {$district_name}";
+            $custom_h1_override = $district_h1;
+            set_query_var('auto_h1', $district_h1);
+            $GLOBALS['auto_h1'] = $district_h1;
+            set_query_var('auto_h2', 'Анкеты проституток');
+            $GLOBALS['auto_h2'] = 'Анкеты проституток';
 
             $resolve_min_price = static function (string $meta_key, int $term_id = 0): int {
                 $args = [
@@ -466,18 +479,18 @@ if ($is_metro_context) {
         if ($station_name !== '') {
             $station_name_safe = esc_html($station_name);
 
-            $metro_h1 = "Проститутки у метро {$station_name}";
-            $custom_h1_override = $metro_h1;
-            set_query_var('auto_h1', $metro_h1);
-            $GLOBALS['auto_h1'] = $metro_h1;
-            set_query_var('auto_h2', 'Анкеты проституток');
-            $GLOBALS['auto_h2'] = 'Анкеты проституток';
-
             $models_count = isset($auto_text['models_count']) ? (int) $auto_text['models_count'] : 0;
             if ($models_count <= 0 && function_exists('kyzdarki_auto_text_count_models')) {
                 $models_count = kyzdarki_auto_text_count_models($base_tax);
             }
             $models_count_text = number_format_i18n(max(0, $models_count));
+
+            $metro_h1 = "Проститутки у метро {$station_name}: {$models_count_text} проверенных анкет";
+            $custom_h1_override = $metro_h1;
+            set_query_var('auto_h1', $metro_h1);
+            $GLOBALS['auto_h1'] = $metro_h1;
+            set_query_var('auto_h2', 'Анкеты проституток');
+            $GLOBALS['auto_h2'] = 'Анкеты проституток';
 
             $line_name = '';
             $line_meta_keys = ['line_name', 'metro_line', 'line', 'vetka', 'line_title'];
@@ -764,12 +777,6 @@ if ($is_service_context) {
 
         if ($service_name !== '') {
             $service_name_safe = esc_html($service_name);
-            $service_h1 = "{$service_name} в Москве";
-            $custom_h1_override = $service_h1;
-            set_query_var('auto_h1', $service_h1);
-            $GLOBALS['auto_h1'] = $service_h1;
-            set_query_var('auto_h2', 'Анкеты проституток');
-            $GLOBALS['auto_h2'] = 'Анкеты проституток';
 
             $service_models_count = isset($auto_text['models_count']) ? (int) $auto_text['models_count'] : 0;
             if ($service_models_count <= 0 && function_exists('kyzdarki_auto_text_count_models')) {
@@ -783,6 +790,16 @@ if ($is_service_context) {
                     : 'анкет';
                 $service_count_text = $service_count_label . ' ' . $service_count_word;
             }
+
+            $service_h1_count = $service_models_count > 0
+                ? number_format_i18n($service_models_count) . ' проверенных анкет'
+                : 'проверенные анкеты';
+            $service_h1 = "{$service_name} в Москве: {$service_h1_count}";
+            $custom_h1_override = $service_h1;
+            set_query_var('auto_h1', $service_h1);
+            $GLOBALS['auto_h1'] = $service_h1;
+            set_query_var('auto_h2', 'Анкеты проституток');
+            $GLOBALS['auto_h2'] = 'Анкеты проституток';
 
             $resolve_service_min_price = static function (string $meta_key, int $term_id): int {
                 $q = new WP_Query([

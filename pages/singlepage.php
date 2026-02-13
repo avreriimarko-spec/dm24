@@ -629,7 +629,7 @@ $lb_items = array_merge(
                     $row('Грудь',             $bust, 'grud_tax');
                     $row('Цвет волос',        $hair ? implode(', ', $hair) : '', 'cvet-volos_tax');
                     $row('Национальность',    $nation ? implode(', ', $nation) : '', 'nationalnost_tax');
-                    $row('Цена',              $price_in_1h ? number_format($price_in_1h, 0, ',', ' ') . ' ₸' : '', 'price_tax');
+                    $row('Цена',              $price_in_1h ? number_format($price_in_1h, 0, ',', ' ') . ' RUB' : '', 'price_tax');
                     ?>
                 </dl>
             </section>
@@ -668,7 +668,7 @@ $lb_items = array_merge(
                 </style>
 
                 <?php
-                $format_table = fn($v) => $v > 0 ? number_format($v, 0, ',', ' ') . ' ₸' : '-';
+                $format_table = fn($v) => $v > 0 ? number_format($v, 0, ',', ' ') . ' RUB' : '-';
                 ?>
                 <div class="price-grid">
                     <!-- Headings -->
