@@ -34,7 +34,7 @@ function render_model_grid_with_filters()
   if (isset($_POST['elite_only']) && in_array($_POST['elite_only'], ['1', 'true', 'on'])) $elite_only = true;
   if (!$elite_only && $page_slug === 'elitnyye-prostitutki') $elite_only = true;
 
-  $is_escort_page       = ($page_slug === 'eskort');
+  $is_escort_page       = in_array($page_slug, ['escort', 'eskort'], true);
   $is_individual_page   = ($page_slug === 'individualki');
   $is_soderzhanki_page  = ($page_slug === 'soderzhanki');
   $is_kizdar_page       = ($page_slug === 'kizdar');

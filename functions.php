@@ -369,10 +369,12 @@ add_action('template_redirect', function () {
     }
 
     $legacy_slug_map = [
-        'eskort-almaty'      => 'eskort',
+        'eskort-almaty'      => 'escort',
+        'eskort'             => 'escort',
         'individualki-almaty'=> 'individualki',
         'soderzhanki-almaty' => 'soderzhanki',
         'kizdar-almaty'      => 'kizdar',
+        'vse-uslugi'         => 'services',
     ];
 
     foreach ($legacy_slug_map as $old_slug => $new_slug) {
@@ -485,6 +487,75 @@ add_action('pre_get_posts', function ($query) {
     $query->is_singular = true;
     $query->is_404 = false;
 });
+
+// Если tax-URL подменен на page (через pre_get_posts выше), фиксируем единый канон через 301 на permalink страницы.
+add_action('template_redirect', function () {
+    if (is_admin() || !is_page()) {
+        return;
+    }
+
+    $request_uri  = (string) ($_SERVER['REQUEST_URI'] ?? '');
+    $request_path = trim((string) parse_url($request_uri, PHP_URL_PATH), '/');
+    if ($request_path === '') {
+        return;
+    }
+
+    $segments = explode('/', $request_path);
+    if (count($segments) < 2) {
+        return;
+    }
+
+    $tax_base_to_taxonomy = [
+        'services'    => 'uslugi_tax',
+        'rajony'      => 'rayonu_tax',
+        'metro'       => 'metro_tax',
+        'price'       => 'price_tax',
+        'vozrast'     => 'vozrast_tax',
+        'nationalnost'=> 'nationalnost_tax',
+        'ves'         => 'ves_tax',
+        'cvet-volos'  => 'cvet-volos_tax',
+        'rost'        => 'rost_tax',
+        'grud'        => 'grud_tax',
+    ];
+
+    $base = (string) ($segments[0] ?? '');
+    if (!isset($tax_base_to_taxonomy[$base])) {
+        return;
+    }
+
+    $page_id = (int) get_queried_object_id();
+    if ($page_id <= 0) {
+        return;
+    }
+
+    $page_slug = (string) get_post_field('post_name', $page_id);
+    if ($page_slug === '' || (string) end($segments) !== $page_slug) {
+        return;
+    }
+
+    $term = get_term_by('slug', $page_slug, $tax_base_to_taxonomy[$base]);
+    if (!$term || is_wp_error($term)) {
+        return;
+    }
+
+    $target_url = (string) get_permalink($page_id);
+    if ($target_url === '') {
+        return;
+    }
+
+    $target_path = trim((string) parse_url($target_url, PHP_URL_PATH), '/');
+    if ($target_path === '' || $target_path === $request_path) {
+        return;
+    }
+
+    $query = (string) parse_url($request_uri, PHP_URL_QUERY);
+    if ($query !== '') {
+        $target_url .= (strpos($target_url, '?') === false ? '?' : '&') . $query;
+    }
+
+    wp_safe_redirect($target_url, 301);
+    exit;
+}, 2);
 
 add_filter('template_include', function ($template) {
     if (!is_page()) {

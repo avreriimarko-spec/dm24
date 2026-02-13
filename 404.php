@@ -51,7 +51,7 @@ get_header();
                 Карта сайта
             </a>
 
-            <a href="<?php echo esc_url(home_url('/vse-uslugi')); ?>"
+            <a href="<?php echo esc_url(home_url('/services')); ?>"
                 class="btn-ghost">
                 Все услуги
             </a>

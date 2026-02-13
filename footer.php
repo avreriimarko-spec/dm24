@@ -84,7 +84,7 @@ $nav_links = [
     ['label' => 'Контакты',                    'slug' => 'kontakty'],
     ['label' => 'О сайте',                     'slug' => 'o-sajte'],
     ['label' => 'Отзывы',                      'slug' => 'otzyvy'],
-    ['label' => 'Все услуги',                  'slug' => 'vse-uslugi'],
+    ['label' => 'Все услуги',                  'slug' => 'services'],
     ['label' => 'Faq',                        'slug' => 'faq'],
     ['label' => 'Блог',                        'slug' => 'blog'],
 ];
