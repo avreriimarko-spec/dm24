@@ -159,7 +159,7 @@ if ($h1 === '' && $context === 'models' && $title_piece !== '') {
     }
 } elseif ($h1 === '' && $context === 'metro' && $title_piece !== '') {
 
-    $h1 = "Проститутки у метро {$title_piece}: проверенные анкеты";
+    $h1 = "Проститутки у метро {$title_piece}";
     $h2 = "Анкеты проституток {$title_piece}";
 } elseif ($h1 === '' && $context === 'rajon' && $title_piece !== '') {
 
@@ -167,7 +167,7 @@ if ($h1 === '' && $context === 'models' && $title_piece !== '') {
     $h2 = "Анкеты проституток";
 } elseif ($h1 === '' && $context === 'uslugi' && $title_piece !== '') {
 
-    $h1 = "{$title_piece} в Москве: проверенные анкеты";
+    $h1 = "{$title_piece} в Москве";
     $h2 = "Анкеты проституток с услугой {$title_piece}";
 } else {
 
@@ -189,6 +189,9 @@ if ($h2 === '' && function_exists('get_field') && $id) {
 
 $h1 = _auto_heading_clean((string) $h1);
 $h2 = _auto_heading_clean((string) $h2);
+
+// По требованию: в H1 не оставляем хвост после двоеточия.
+$h1 = trim((string) preg_replace('~\s*:\s*.*$~u', '', $h1));
 
 set_query_var('auto_h1', $h1);
 set_query_var('auto_h2', $h2);

@@ -335,7 +335,7 @@ function _seo_build_landing_descr_by_kind(string $kind, string $cat_name): strin
     }
 
     if ($kind === 'uslugi') {
-        return "Актуальный каталог проституток в Москве: анкеты с фото, ценами и фильтрами по услуге «{$cat_name}».";
+        return "Актуальный каталог проституток Москвы с услугой {$cat_name}: анкеты с фото, ценами и фильтрами";
     }
 
     if ($kind === 'appearance') {

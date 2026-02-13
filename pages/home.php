@@ -485,7 +485,7 @@ if ($is_metro_context) {
             }
             $models_count_text = number_format_i18n(max(0, $models_count));
 
-            $metro_h1 = "Проститутки у метро {$station_name}: {$models_count_text} проверенных анкет";
+            $metro_h1 = "Проститутки у метро {$station_name}";
             $custom_h1_override = $metro_h1;
             set_query_var('auto_h1', $metro_h1);
             $GLOBALS['auto_h1'] = $metro_h1;
@@ -791,10 +791,7 @@ if ($is_service_context) {
                 $service_count_text = $service_count_label . ' ' . $service_count_word;
             }
 
-            $service_h1_count = $service_models_count > 0
-                ? number_format_i18n($service_models_count) . ' проверенных анкет'
-                : 'проверенные анкеты';
-            $service_h1 = "{$service_name} в Москве: {$service_h1_count}";
+            $service_h1 = "{$service_name} в Москве";
             $custom_h1_override = $service_h1;
             set_query_var('auto_h1', $service_h1);
             $GLOBALS['auto_h1'] = $service_h1;
@@ -905,6 +902,8 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
                     $h1 = get_the_title($post_id);
                 }
             }
+            // По требованию: в H1 не оставляем хвост после двоеточия.
+            $h1 = trim((string) preg_replace('~\s*:\s*.*$~u', '', (string) $h1));
             if ($paged > 1) {
                 $h1 = trim($h1) . ' — страница ' . $paged;
             }
