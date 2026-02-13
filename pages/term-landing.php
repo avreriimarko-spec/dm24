@@ -6,10 +6,13 @@
  */
 
 if (!defined('ABSPATH')) exit;
+require_once get_template_directory() . '/components/auto-text.php';
 get_header();
 
 $page_id    = get_queried_object_id();
-$h1         = function_exists('get_field') ? (get_field('h1', $page_id) ?: get_the_title($page_id)) : get_the_title($page_id);
+$page_title = (string) get_the_title($page_id);
+$h1_manual  = function_exists('get_field') ? (string) (get_field('h1', $page_id) ?: '') : '';
+$h1         = $h1_manual !== '' ? $h1_manual : $page_title;
 $p          = function_exists('get_field') ? (get_field('p',  $page_id) ?: '') : '';
 $text_block = function_exists('get_field') ? (get_field('seo', $page_id) ?: '') : '';
 
@@ -75,6 +78,26 @@ $q = new WP_Query([
     'no_found_rows'       => true,
     'ignore_sticky_posts' => true,
 ]);
+
+if (function_exists('kyzdarki_generate_term_parent_auto_text')) {
+    $auto_text = kyzdarki_generate_term_parent_auto_text([
+        'post_type' => $post_type,
+        'taxonomy' => $taxonomy,
+        'page_slug' => $page_slug,
+        'items_count' => (int) $q->post_count,
+        'city' => 'Алматы',
+    ]);
+
+    if ($h1_manual === '' && !empty($auto_text['h1'])) {
+        $h1 = (string) $auto_text['h1'];
+    }
+    if ($p === '' && !empty($auto_text['p'])) {
+        $p = (string) $auto_text['p'];
+    }
+    if ($text_block === '' && !empty($auto_text['seo'])) {
+        $text_block = (string) $auto_text['seo'];
+    }
+}
 ?>
 
 <main class="page-hero page-hero--uslugi">

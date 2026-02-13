@@ -3,6 +3,7 @@
 /* Template Post Type: models */
 
 if (!defined('ABSPATH')) exit;
+require_once get_template_directory() . '/components/auto-text.php';
 get_header();
 
 $id   = get_the_ID();
@@ -151,6 +152,19 @@ $price_out_2h    = $get_p('price_outcall_2_hours', $price_out_1h ? $price_out_1h
 $price_out_night = $get_p('price_outcall_night');
 
 $about     = function_exists('get_field') ? get_field('description', $id) : '';
+if (trim(wp_strip_all_tags((string) $about)) === '' && function_exists('kyzdarki_generate_model_auto_about')) {
+    $about = kyzdarki_generate_model_auto_about([
+        'post_id' => $id,
+        'name' => $name,
+        'city' => 'Алматы',
+        'age' => $age,
+        'height' => $height,
+        'weight' => $weight,
+        'bust' => $bust,
+        'districts' => $districts,
+        'metro' => $metro,
+    ]);
+}
 
 /* Статусы */
 $vip      = function_exists('get_field') ? (bool)get_field('vip', $id)       : false;

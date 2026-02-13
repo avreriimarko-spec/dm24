@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) exit;
 
 require_once get_template_directory() . '/components/ModelFilter.php';
 require_once get_template_directory() . '/components/ModelGrid.php';
+require_once get_template_directory() . '/components/auto-text.php';
 
 /* ============================================================
  * 1) БАЗОВЫЙ ФИЛЬТР + ПРЕДВАРИТЕЛЬНЫЙ СПИСОК ДЛЯ JSON-LD
@@ -150,10 +151,49 @@ set_query_var('landing_source_post_id', $post_id);
 /**
  * 2) ACF-поля и контент
  */
-$p_after_h1 = function_exists('get_field') ? (get_field('p_atc', $post_id) ?: '') : '';
+$p_after_h1_manual = function_exists('get_field') ? (get_field('p_atc', $post_id) ?: '') : '';
+$p_after_h1 = $p_after_h1_manual;
 $p_under_h2 = function_exists('get_field') ? (get_field('p_title', $post_id) ?: '') : '';
 $content    = function_exists('get_field') ? (get_field('content', $post_id) ?: '') : '';
 $text_block = function_exists('get_field') ? (get_field('text_block', $post_id) ?: '') : '';
+$p_after_h1_is_auto = false;
+$auto_links_block = '';
+
+if (function_exists('kyzdarki_generate_landing_auto_text')) {
+    $auto_text = kyzdarki_generate_landing_auto_text([
+        'post_id' => $post_id,
+        'post_type' => (string) get_post_type($post_id),
+        'page_slug' => $post_id ? (string) get_post_field('post_name', $post_id) : '',
+        'taxonomy' => ($qo instanceof WP_Term) ? (string) $qo->taxonomy : '',
+        'base_tax' => $base_tax,
+        'city' => 'Алматы',
+    ]);
+
+    if ($p_after_h1 === '' && !empty($auto_text['p_after_h1'])) {
+        $p_after_h1 = (string) $auto_text['p_after_h1'];
+        $p_after_h1_is_auto = true;
+    }
+    if ($p_under_h2 === '' && !empty($auto_text['p_under_h2'])) {
+        $p_under_h2 = (string) $auto_text['p_under_h2'];
+    }
+    if ($content === '' && !empty($auto_text['content'])) {
+        $content = (string) $auto_text['content'];
+    }
+    if ($text_block === '' && !empty($auto_text['text_block'])) {
+        $text_block = (string) $auto_text['text_block'];
+    }
+}
+
+if ($paged === 1 && $p_after_h1_manual === '' && function_exists('kyzdarki_generate_landing_links_block')) {
+    $auto_links_block = kyzdarki_generate_landing_links_block([
+        'post_id' => $post_id,
+        'post_type' => (string) get_post_type($post_id),
+        'page_slug' => $post_id ? (string) get_post_field('post_name', $post_id) : '',
+        'taxonomy' => ($qo instanceof WP_Term) ? (string) $qo->taxonomy : '',
+        'base_tax' => $base_tax,
+        'city' => 'Алматы',
+    ]);
+}
 
 
 /* 3) Локализация JS */
@@ -201,7 +241,9 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
         <?php if ($p_after_h1 && $paged === 1):
             $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
             $is_bot = (bool) preg_match('/bot|crawl|spider|slurp|mediapartners-google|bingpreview|duckduckbot|baiduspider|yandex|ahrefs|semrush|screaming\s?frog|facebookexternalhit|telegrambot/i', $ua);
-            $text_html = wp_kses_post(apply_filters('the_content', $p_after_h1));
+            $text_html = $p_after_h1_is_auto
+                ? wp_kses_post($p_after_h1)
+                : wp_kses_post(apply_filters('the_content', $p_after_h1));
             $uid = uniqid('ah1_'); 
         ?>
             <div class="content mx-auto max-w-[1280px] 2xl:max-w-[1400px] px-4 mt-4 md:mt-5 text-base md:text-lg leading-relaxed space-y-4
@@ -262,6 +304,7 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
                 })();
             </script>
         <?php endif; ?>
+
     </section>
 
     <!-- Секция видео-сторис (только на спец. странице) -->
@@ -282,12 +325,16 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
                 <div class="title-and-sorting flex flex-col justify-between gap-4">
                     <?php 
                         $h2_models = get_query_var('auto_h2') ?: ($GLOBALS['auto_h2'] ?? '');
+                        if ($h2_models === '') {
+                            $h2_models = function_exists('get_field') ? (string) (get_field('h2_title', $post_id) ?: '') : '';
+                        }
+                        if ($h2_models === '') {
+                            $h2_models = 'Проститутки Москвы';
+                        }
                         if (!empty($h2_models)): ?>
                             <h2 class="text-2xl md:text-3xl font-bold tracking-tight break-words [hyphens:auto]">
                                 <?= esc_html($h2_models) ?>
                             </h2>
-                        <?php else: ?>
-                            <div></div>
                         <?php endif; ?>
                     <div class="flex items-center gap-3 self-end md:self-auto">
                         <label for="mf-sort-trigger" class="text-sm font-bold uppercase tracking-wide text-black-500">Сортировка:</label>
@@ -334,6 +381,7 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
             <div id="ajax-models" class="mt-8">
                 <?php echo render_model_grid_with_filters(); ?>
             </div>
+
         </div>
     </section>
 
@@ -349,13 +397,45 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
     </script>
 
 
-    <?php if (!empty($content) && $paged === 1) : ?>
-        <section>
-            <div class="content mx-auto max-w-[1280px] 2xl:max-w-[1400px]
-              mt-6 border border-neutral-200 rounded-sm bg-neutral-50 text-neutral-800
-              overflow-x-auto -mx-4 px-4 pb-1
-              md:overflow-x-visible md:mx-auto md:px-4">
-                <?= wp_kses_post($content) ?>
+    <?php
+    $has_bottom_seo = $paged === 1 && (!empty($auto_links_block) || !empty($content) || !empty($text_block));
+    $clean_bottom_seo_html = static function ($html) {
+        $html = wp_kses_post($html);
+        $html = preg_replace('/\s(?:class|style)=(["\']).*?\1/i', '', $html);
+
+        return preg_replace_callback('/<(p|ul|ol)\b[^>]*>/i', static function ($m) {
+            $tag = preg_replace('/\s{2,}/', ' ', $m[0]);
+            $tag = str_replace(' >', '>', $tag);
+            $name = strtolower($m[1]);
+
+            if ($name === 'p') {
+                return str_replace('<p', '<p style="margin:0;padding:0"', $tag);
+            }
+
+            return str_replace('<' . $name, '<' . $name . ' style="margin:0;padding:0;list-style-position:inside"', $tag);
+        }, $html);
+    };
+    ?>
+    <?php if ($has_bottom_seo) : ?>
+        <section class="mx-auto max-w-[1280px] 2xl:max-w-[1400px] px-4 mb-6">
+            <div class="content bg-neutral-50 text-neutral-800 border border-neutral-200 rounded-sm px-4 py-5 md:py-6">
+                <?php if (!empty($auto_links_block)) : ?>
+                    <div class="[&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:opacity-80">
+                        <?= $clean_bottom_seo_html($auto_links_block) ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($content)) : ?>
+                    <div class="<?= !empty($auto_links_block) ? 'mt-6' : '' ?> overflow-x-auto md:overflow-x-visible">
+                        <?= $clean_bottom_seo_html($content) ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($text_block)) : ?>
+                    <div class="<?= (!empty($auto_links_block) || !empty($content)) ? 'mt-6' : '' ?>">
+                        <?= $clean_bottom_seo_html($text_block) ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
     <?php endif; ?>
@@ -377,15 +457,6 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
             });
         });
     </script>
-
-    <?php if (!empty($text_block) && $paged === 1) : ?>
-        <section>
-            <div class="content mx-auto max-w-[1280px] 2xl:max-w-[1400px] px-4 mt-6
-                bg-neutral-50 text-neutral-800 border border-neutral-200 rounded-sm">
-                <?= wp_kses_post($text_block) ?>
-            </div>
-        </section>
-    <?php endif; ?>
 
 </main>
 
