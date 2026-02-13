@@ -163,8 +163,8 @@ if ($h1 === '' && $context === 'models' && $title_piece !== '') {
     $h2 = "Анкеты проституток {$title_piece}";
 } elseif ($h1 === '' && $context === 'rajon' && $title_piece !== '') {
 
-    $h1 = "Проститутки районе {$title_piece}";
-    $h2 = "Анкеты проституток {$title_piece}";
+    $h1 = "Проститутки в районе {$title_piece}: цены на интим услуги и фото";
+    $h2 = "Анкеты проституток";
 } elseif ($h1 === '' && $context === 'uslugi' && $title_piece !== '') {
 
     $h1 = "Проститутки с услугой {$title_piece} в Алматы";

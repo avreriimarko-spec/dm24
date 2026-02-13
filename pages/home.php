@@ -158,6 +158,7 @@ $content    = function_exists('get_field') ? (get_field('content', $post_id) ?: 
 $text_block = function_exists('get_field') ? (get_field('text_block', $post_id) ?: '') : '';
 $p_after_h1_is_auto = false;
 $auto_links_block = '';
+$district_h1_override = '';
 
 if (function_exists('kyzdarki_generate_landing_auto_text')) {
     $auto_text = kyzdarki_generate_landing_auto_text([
@@ -195,6 +196,265 @@ if ($paged === 1 && $p_after_h1_manual === '' && function_exists('kyzdarki_gener
     ]);
 }
 
+$is_district_context = (($base_tax['taxonomy'] ?? '') === 'rayonu_tax' && !empty($base_tax['terms']));
+if ($is_district_context) {
+    $district_term_id = (int) ((array) $base_tax['terms'])[0];
+    $district_term = get_term($district_term_id, 'rayonu_tax');
+
+    if ($district_term instanceof WP_Term && !is_wp_error($district_term)) {
+        $district_name = function_exists('kyzdarki_auto_text_clean')
+            ? kyzdarki_auto_text_clean((string) $district_term->name)
+            : trim(wp_strip_all_tags((string) $district_term->name));
+
+        if ($district_name !== '') {
+            $district_name_safe = esc_html($district_name);
+            $individualki_url = home_url('/individualki-almaty');
+            $individualki_link = '<a href="' . esc_url($individualki_url) . '">индивидуалки</a>';
+
+            $district_h1 = "Проститутки в районе {$district_name}: цены на интим услуги и фото";
+            $district_h1_override = $district_h1;
+            set_query_var('auto_h1', $district_h1);
+            $GLOBALS['auto_h1'] = $district_h1;
+            set_query_var('auto_h2', 'Анкеты проституток');
+            $GLOBALS['auto_h2'] = 'Анкеты проституток';
+
+            $models_count = isset($auto_text['models_count']) ? (int) $auto_text['models_count'] : 0;
+            if ($models_count <= 0 && function_exists('kyzdarki_auto_text_count_models')) {
+                $models_count = kyzdarki_auto_text_count_models($base_tax);
+            }
+            $models_count_text = number_format_i18n(max(0, $models_count));
+
+            $model_ids_at_district = [];
+            if (function_exists('kyzdarki_auto_text_get_model_ids_by_terms')) {
+                $model_ids_at_district = kyzdarki_auto_text_get_model_ids_by_terms('rayonu_tax', [$district_term_id], 420);
+            }
+
+            $station_terms = [];
+            if (
+                !empty($model_ids_at_district)
+                && function_exists('kyzdarki_auto_text_get_term_rows_by_models')
+                && function_exists('kyzdarki_auto_text_terms_from_rows')
+            ) {
+                $metro_rows = kyzdarki_auto_text_get_term_rows_by_models($model_ids_at_district, 'metro_tax', [], 3);
+                $station_terms = kyzdarki_auto_text_terms_from_rows($metro_rows);
+            }
+
+            if (count($station_terms) < 3) {
+                $fallback_stations = get_terms([
+                    'taxonomy' => 'metro_tax',
+                    'hide_empty' => true,
+                    'number' => 8,
+                ]);
+                if (!is_wp_error($fallback_stations) && !empty($fallback_stations)) {
+                    $known_station_ids = [];
+                    foreach ($station_terms as $station_term) {
+                        if ($station_term instanceof WP_Term) {
+                            $known_station_ids[(int) $station_term->term_id] = true;
+                        }
+                    }
+                    foreach ($fallback_stations as $fallback_station) {
+                        if (!$fallback_station instanceof WP_Term) {
+                            continue;
+                        }
+                        $fallback_station_id = (int) $fallback_station->term_id;
+                        if (isset($known_station_ids[$fallback_station_id])) {
+                            continue;
+                        }
+                        $station_terms[] = $fallback_station;
+                        $known_station_ids[$fallback_station_id] = true;
+                        if (count($station_terms) >= 3) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $station_items = [];
+            foreach ($station_terms as $station_term) {
+                if (!$station_term instanceof WP_Term) {
+                    continue;
+                }
+                $name = function_exists('kyzdarki_auto_text_clean')
+                    ? kyzdarki_auto_text_clean((string) $station_term->name)
+                    : trim(wp_strip_all_tags((string) $station_term->name));
+                if ($name === '') {
+                    continue;
+                }
+                $station_url = get_term_link($station_term);
+                $station_items[] = (is_string($station_url) && $station_url !== '' && !is_wp_error($station_url))
+                    ? '<a href="' . esc_url($station_url) . '">' . esc_html($name) . '</a>'
+                    : esc_html($name);
+                if (count($station_items) >= 3) {
+                    break;
+                }
+            }
+            $station_fallback_labels = ['центральных станций', 'транспортных узлов', 'пересадочных станций'];
+            while (count($station_items) < 3) {
+                $station_items[] = esc_html($station_fallback_labels[count($station_items)]);
+            }
+
+            $resolve_min_price = static function (string $meta_key, int $term_id = 0): int {
+                $args = [
+                    'post_type' => 'models',
+                    'post_status' => 'publish',
+                    'posts_per_page' => 1,
+                    'fields' => 'ids',
+                    'no_found_rows' => true,
+                    'orderby' => 'meta_value_num',
+                    'order' => 'ASC',
+                    'meta_key' => $meta_key,
+                    'meta_type' => 'NUMERIC',
+                    'meta_query' => [[
+                        'key' => $meta_key,
+                        'value' => 0,
+                        'type' => 'NUMERIC',
+                        'compare' => '>',
+                    ]],
+                ];
+                if ($term_id > 0) {
+                    $args['tax_query'] = [[
+                        'taxonomy' => 'rayonu_tax',
+                        'field' => 'term_id',
+                        'terms' => [$term_id],
+                        'operator' => 'IN',
+                    ]];
+                }
+
+                $q = new WP_Query($args);
+
+                $price = 0;
+                if (!empty($q->posts)) {
+                    $pid = (int) $q->posts[0];
+                    $price = (int) get_post_meta($pid, $meta_key, true);
+                }
+                wp_reset_postdata();
+                return max(0, $price);
+            };
+
+            $min_price_outcall = $resolve_min_price('price_outcall', $district_term_id);
+            $min_price_incall = $resolve_min_price('price', $district_term_id);
+            $price_pool = array_filter([$min_price_outcall, $min_price_incall], static function (int $price): bool {
+                return $price > 0;
+            });
+            $min_price = !empty($price_pool) ? min($price_pool) : 0;
+            if ($min_price <= 0) {
+                $global_min_price_outcall = $resolve_min_price('price_outcall');
+                $global_min_price_incall = $resolve_min_price('price');
+                $global_price_pool = array_filter([$global_min_price_outcall, $global_min_price_incall], static function (int $price): bool {
+                    return $price > 0;
+                });
+                $min_price = !empty($global_price_pool) ? min($global_price_pool) : 0;
+            }
+            if ($min_price <= 0 && function_exists('_seo_min_price_label_by_term')) {
+                $min_price_label_raw = (string) _seo_min_price_label_by_term($district_term, 'rayonu_tax');
+                $min_price = (int) preg_replace('~\D+~', '', $min_price_label_raw);
+            }
+            $min_price_text = number_format_i18n(max(1, $min_price));
+
+            $neighbor_terms = [];
+            if (
+                !empty($station_terms)
+                && function_exists('kyzdarki_auto_text_get_model_ids_by_terms')
+                && function_exists('kyzdarki_auto_text_get_term_rows_by_models')
+                && function_exists('kyzdarki_auto_text_terms_from_rows')
+            ) {
+                $station_ids = [];
+                foreach ($station_terms as $station_term) {
+                    if ($station_term instanceof WP_Term) {
+                        $station_ids[] = (int) $station_term->term_id;
+                    }
+                }
+                if (!empty($station_ids)) {
+                    $model_ids_by_stations = kyzdarki_auto_text_get_model_ids_by_terms('metro_tax', $station_ids, 560);
+                    $neighbor_rows = kyzdarki_auto_text_get_term_rows_by_models(
+                        $model_ids_by_stations,
+                        'rayonu_tax',
+                        [$district_term_id],
+                        3
+                    );
+                    $neighbor_terms = kyzdarki_auto_text_terms_from_rows($neighbor_rows);
+                }
+            }
+
+            if (count($neighbor_terms) < 3) {
+                $fallback_neighbors = get_terms([
+                    'taxonomy' => 'rayonu_tax',
+                    'hide_empty' => true,
+                    'exclude' => [$district_term_id],
+                    'number' => 8,
+                ]);
+                if (!is_wp_error($fallback_neighbors) && !empty($fallback_neighbors)) {
+                    $known_neighbor_ids = [];
+                    foreach ($neighbor_terms as $neighbor_term) {
+                        if ($neighbor_term instanceof WP_Term) {
+                            $known_neighbor_ids[(int) $neighbor_term->term_id] = true;
+                        }
+                    }
+                    foreach ($fallback_neighbors as $fallback_neighbor) {
+                        if (!$fallback_neighbor instanceof WP_Term) {
+                            continue;
+                        }
+                        $fallback_neighbor_id = (int) $fallback_neighbor->term_id;
+                        if (isset($known_neighbor_ids[$fallback_neighbor_id])) {
+                            continue;
+                        }
+                        $neighbor_terms[] = $fallback_neighbor;
+                        $known_neighbor_ids[$fallback_neighbor_id] = true;
+                        if (count($neighbor_terms) >= 3) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $neighbor_items = [];
+            foreach ($neighbor_terms as $neighbor_term) {
+                if (!$neighbor_term instanceof WP_Term) {
+                    continue;
+                }
+                $neighbor_name = function_exists('kyzdarki_auto_text_clean')
+                    ? kyzdarki_auto_text_clean((string) $neighbor_term->name)
+                    : trim(wp_strip_all_tags((string) $neighbor_term->name));
+                if ($neighbor_name === '') {
+                    continue;
+                }
+                $neighbor_url = get_term_link($neighbor_term);
+                $neighbor_items[] = '<li>' . (
+                    is_string($neighbor_url) && $neighbor_url !== '' && !is_wp_error($neighbor_url)
+                        ? '<a href="' . esc_url($neighbor_url) . '">' . esc_html($neighbor_name) . '</a>'
+                        : esc_html($neighbor_name)
+                ) . '</li>';
+                if (count($neighbor_items) >= 3) {
+                    break;
+                }
+            }
+            while (count($neighbor_items) < 3) {
+                $neighbor_items[] = '<li>Соседний район</li>';
+            }
+            $neighbor_list = implode('', $neighbor_items);
+
+            $p_after_h1 = '<p>В этом разделе представлен актуальный список проверенных анкет проституток, предлагающих интимный досуг в границах района ' . $district_name_safe . '. Если вы ищете качественный секс отдых без посредников, здесь собраны профили ' . esc_html($models_count_text) . ' индивидуалок, готовых к встрече в ближайшее время. Благодаря удобному расположению в ' . $district_name_safe . ', вы можете организовать свидание с девушкой в течение 15-20 минут.</p>';
+            $p_after_h1_is_auto = true;
+
+            $p_under_h2 = '';
+            $auto_links_block = '';
+            $content = '<h2>Интимный отдых и услуги секса в районе ' . $district_name_safe . '</h2>'
+                . '<p>Выбор ' . $individualki_link . ' в ' . $district_name_safe . ' гарантирует вам полную анонимность и большой выбор программ. Девушки из нашего каталога работают в частном секторе и современных ЖК, обеспечивая комфортный интим сервис в шаговой доступности от ключевых точек района.</p>'
+                . '<ul>'
+                . '<li>Локация и метро: Основная концентрация анкет сосредоточена возле станций ' . $station_items[0] . ', ' . $station_items[1] . ' и ' . $station_items[2] . '.</li>'
+                . '<li>Стоимость услуг: Цены на интим в районе ' . $district_name_safe . ' начинаются от ' . esc_html($min_price_text) . ' рублей за час.</li>'
+                . '<li>Реальные фото: Все анкеты девушек проходят верификацию. Пометка «Проверено» подтверждает, что снимки в профиле на 100% соответствуют реальности.</li>'
+                . '<li>Выезд и прием: Большинство мастеров предлагают как прием в своих апартаментах, так и выезд проституток по любому адресу в пределах ' . $district_name_safe . '.</li>'
+                . '</ul>'
+                . '<h2>Стоимость индивидуалок и подбор анкет поблизости</h2>'
+                . '<p>Если вы не нашли подходящий вариант для досуга непосредственно в ' . $district_name_safe . ', рекомендуем расширить географию поиска. Вы можете найти дешевых проституток или VIP-моделей в соседних локациях:</p>'
+                . '<ol>' . $neighbor_list . '</ol>'
+                . '<p>Такая навигация позволит вам быстро забронировать интим услуги у проверенной леди в радиусе 10-15 минут на авто или такси.</p>';
+            $text_block = '';
+        }
+    }
+}
+
 
 /* 3) Локализация JS */
 wp_register_script('models-filter-app', false, [], null, true);
@@ -220,15 +480,19 @@ wp_localize_script('models-filter-app', 'SiteModelsFilter', [
 
         <h1 class="max-w-[1280px] 2xl:max-w-[1400px] mx-auto mt-2 p-4 text-3xl md:text-5xl font-extrabold tracking-tight leading-tight text-center">
             <?php
-            $h1 = get_query_var('auto_h1');
-            if (empty($h1) && !empty($GLOBALS['auto_h1'])) {
-                $h1 = $GLOBALS['auto_h1'];
-            }
-            if (empty($h1)) {
-                $h1 = function_exists('get_field') ? (get_field('h1_atc', $post_id) ?: '') : '';
-            }
-            if (empty($h1)) {
-                $h1 = get_the_title($post_id);
+            if ($district_h1_override !== '') {
+                $h1 = $district_h1_override;
+            } else {
+                $h1 = get_query_var('auto_h1');
+                if (empty($h1) && !empty($GLOBALS['auto_h1'])) {
+                    $h1 = $GLOBALS['auto_h1'];
+                }
+                if (empty($h1)) {
+                    $h1 = function_exists('get_field') ? (get_field('h1_atc', $post_id) ?: '') : '';
+                }
+                if (empty($h1)) {
+                    $h1 = get_the_title($post_id);
+                }
             }
             if ($paged > 1) {
                 $h1 = trim($h1) . ' — страница ' . $paged;
