@@ -85,7 +85,7 @@ if (function_exists('kyzdarki_generate_term_parent_auto_text')) {
         'taxonomy' => $taxonomy,
         'page_slug' => $page_slug,
         'items_count' => (int) $q->post_count,
-        'city' => 'Алматы',
+        'city' => 'Москва',
     ]);
 
     if ($h1_manual === '' && !empty($auto_text['h1'])) {

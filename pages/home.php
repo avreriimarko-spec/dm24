@@ -167,7 +167,7 @@ if (function_exists('kyzdarki_generate_landing_auto_text')) {
         'page_slug' => $post_id ? (string) get_post_field('post_name', $post_id) : '',
         'taxonomy' => ($qo instanceof WP_Term) ? (string) $qo->taxonomy : '',
         'base_tax' => $base_tax,
-        'city' => 'Алматы',
+        'city' => 'Москва',
     ]);
 
     if ($p_after_h1 === '' && !empty($auto_text['p_after_h1'])) {
@@ -192,7 +192,7 @@ if ($paged === 1 && $p_after_h1_manual === '' && function_exists('kyzdarki_gener
         'page_slug' => $post_id ? (string) get_post_field('post_name', $post_id) : '',
         'taxonomy' => ($qo instanceof WP_Term) ? (string) $qo->taxonomy : '',
         'base_tax' => $base_tax,
-        'city' => 'Алматы',
+        'city' => 'Москва',
     ]);
 }
 
@@ -208,7 +208,7 @@ if ($is_district_context) {
 
         if ($district_name !== '') {
             $district_name_safe = esc_html($district_name);
-            $individualki_url = home_url('/individualki-almaty');
+            $individualki_url = home_url('/individualki');
             $individualki_link = '<a href="' . esc_url($individualki_url) . '">индивидуалки</a>';
 
             $district_h1 = "Проститутки в районе {$district_name}: цены на интим услуги и фото";
@@ -467,7 +467,7 @@ if ($is_metro_context) {
 
         if ($station_name !== '') {
             $station_name_safe = esc_html($station_name);
-            $individualki_url = home_url('/individualki-almaty');
+            $individualki_url = home_url('/individualki');
             $individualki_link = '<a href="' . esc_url($individualki_url) . '">индивидуалки</a>';
             $individualki_link_caps = '<a href="' . esc_url($individualki_url) . '">Индивидуалки</a>';
 

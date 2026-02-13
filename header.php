@@ -251,7 +251,7 @@ $GLOBALS['seo_descr'] = $descr;
      * Ключ массива используется для поиска иконки.
      */
 $menu = [
-    'escort_almaty' => ['Эскорт', '/eskort-almaty'], // Добавлен слэш для корректной работы из любого раздела
+    'escort_almaty' => ['Эскорт', '/eskort'], // Добавлен слэш для корректной работы из любого раздела
     
     // Выпадающий список "Доступность"
     'accessibility' => [
@@ -272,7 +272,7 @@ $menu = [
     ],
 
     'favorites'  => ['Избранные', '/favorites'],
-    'individual' => ['Индивидуалки', '/individualki-almaty'],
+    'individual' => ['Индивидуалки', '/individualki'],
 ];
 
     ?>

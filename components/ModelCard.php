@@ -109,7 +109,7 @@ $has_elite_term = has_term('elitnyye-prostitutki', 'drygie_tax', $post_id);
 $elite_by_price = ($price_outcall_1h >= $elite_threshold) || ($price_incall_1h >= $elite_threshold);
 $elite_by_acf   = function_exists('get_field') ? (bool)get_field('vip', $post_id) : false;
 $is_elite       = ($has_elite_term || $elite_by_price || $elite_by_acf);
-$is_individual  = has_term('individualki-almaty', 'drygie_tax', $post_id);
+$is_individual  = has_term('individualki', 'drygie_tax', $post_id);
 
 if (empty($name) || empty($img_src)) return;
 

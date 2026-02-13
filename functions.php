@@ -352,6 +352,52 @@ add_filter('redirect_canonical', function ($redirect_url, $requested_url) {
     return $redirect_url;
 }, 10, 2);
 
+// 301 для старых city-slug URL на новые URL без города.
+add_action('template_redirect', function () {
+    if (is_admin()) {
+        return;
+    }
+
+    $request_uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
+    if ($request_uri === '') {
+        return;
+    }
+
+    $request_path = trim((string) parse_url($request_uri, PHP_URL_PATH), '/');
+    if ($request_path === '') {
+        return;
+    }
+
+    $legacy_slug_map = [
+        'eskort-almaty'      => 'eskort',
+        'individualki-almaty'=> 'individualki',
+        'soderzhanki-almaty' => 'soderzhanki',
+        'kizdar-almaty'      => 'kizdar',
+    ];
+
+    foreach ($legacy_slug_map as $old_slug => $new_slug) {
+        $suffix = '';
+        if ($request_path === $old_slug) {
+            $suffix = '';
+        } elseif (strpos($request_path, $old_slug . '/') === 0) {
+            $suffix = substr($request_path, strlen($old_slug));
+        } else {
+            continue;
+        }
+
+        $target_path = trim($new_slug . $suffix, '/');
+        $target_url  = user_trailingslashit(home_url('/' . $target_path));
+
+        $query = (string) parse_url($request_uri, PHP_URL_QUERY);
+        if ($query !== '') {
+            $target_url .= (strpos($target_url, '?') === false ? '?' : '&') . $query;
+        }
+
+        wp_safe_redirect($target_url, 301);
+        exit;
+    }
+}, 1);
+
 
 
 remove_action('wp_head', 'wp_generator');

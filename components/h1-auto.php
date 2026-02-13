@@ -153,9 +153,9 @@ if ($h1 === '' && $context === 'models' && $title_piece !== '') {
 
     if ($age_int > 0) {
         $years_word = _auto_heading_ru_years($age_int);
-        $h1 = "Проститутка {$title_piece}, {$age_int} {$years_word}, Алматы";
+        $h1 = "Проститутка {$title_piece}, {$age_int} {$years_word}, Москва";
     } else {
-        $h1 = "Проститутка {$title_piece}, Алматы";
+        $h1 = "Проститутка {$title_piece}, Москва";
     }
 } elseif ($h1 === '' && $context === 'metro' && $title_piece !== '') {
 
@@ -167,7 +167,7 @@ if ($h1 === '' && $context === 'models' && $title_piece !== '') {
     $h2 = "Анкеты проституток";
 } elseif ($h1 === '' && $context === 'uslugi' && $title_piece !== '') {
 
-    $h1 = "Проститутки с услугой {$title_piece} в Алматы";
+    $h1 = "Проститутки с услугой {$title_piece} в Москва";
     $h2 = "Анкеты проституток с услугой {$title_piece}";
 } else {
 

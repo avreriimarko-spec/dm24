@@ -156,7 +156,7 @@ if (trim(wp_strip_all_tags((string) $about)) === '' && function_exists('kyzdarki
     $about = kyzdarki_generate_model_auto_about([
         'post_id' => $id,
         'name' => $name,
-        'city' => 'Алматы',
+        'city' => 'Москва',
         'age' => $age,
         'height' => $height,
         'weight' => $weight,
@@ -419,7 +419,7 @@ $lb_items = array_merge(
                     if (file_exists($auto_h1_component)) { require $auto_h1_component; }
                     $h1 = get_query_var('auto_h1');
                     if (empty($h1) && !empty($GLOBALS['auto_h1'])) { $h1 = $GLOBALS['auto_h1']; }
-                    if (empty($h1)) { $h1 = 'Проститутка ' . $name . ', Алматы'; }
+                    if (empty($h1)) { $h1 = 'Проститутка ' . $name . ', Москва'; }
                     echo esc_html($h1);
                 ?>
             </h1>

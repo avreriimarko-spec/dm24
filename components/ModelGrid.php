@@ -34,14 +34,14 @@ function render_model_grid_with_filters()
   if (isset($_POST['elite_only']) && in_array($_POST['elite_only'], ['1', 'true', 'on'])) $elite_only = true;
   if (!$elite_only && $page_slug === 'elitnyye-prostitutki') $elite_only = true;
 
-  $is_escort_page       = ($page_slug === 'eskort-almaty');
-  $is_individual_page   = ($page_slug === 'individualki-almaty');
-  $is_soderzhanki_page  = ($page_slug === 'soderzhanki-almaty');
-  $is_kizdar_page       = ($page_slug === 'kizdar-almaty');
+  $is_escort_page       = ($page_slug === 'eskort');
+  $is_individual_page   = ($page_slug === 'individualki');
+  $is_soderzhanki_page  = ($page_slug === 'soderzhanki');
+  $is_kizdar_page       = ($page_slug === 'kizdar');
   $scope_drygie_slugs   = [];
-  if ($is_escort_page) $scope_drygie_slugs[] = 'eskort-almaty';
-  if ($is_individual_page) $scope_drygie_slugs[] = 'individualki-almaty';
-  if ($is_soderzhanki_page) $scope_drygie_slugs[] = 'soderzhanki-almaty';
+  if ($is_escort_page) $scope_drygie_slugs[] = 'eskort';
+  if ($is_individual_page) $scope_drygie_slugs[] = 'individualki';
+  if ($is_soderzhanki_page) $scope_drygie_slugs[] = 'soderzhanki';
   $has_active_filters = (isset($_POST['has_active_filters']) && in_array($_POST['has_active_filters'], ['1', 'true', 'on'], true));
 
   // --- 3. Топ-60 НОВЫХ ---
@@ -172,21 +172,21 @@ function render_model_grid_with_filters()
 
   // Спец-разделы (без дублей между ними)
   if ($is_escort_page) {
-    $base_tax = $base_tax ?: ['taxonomy' => 'drygie_tax', 'terms' => [ (int) (get_term_by('slug', 'eskort-almaty', 'drygie_tax')->term_id ?? 0) ]];
-    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['eskort-almaty'], 'operator' => 'IN'];
-    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['individualki-almaty', 'soderzhanki-almaty', 'kizdar-almaty'], 'operator' => 'NOT IN'];
+    $base_tax = $base_tax ?: ['taxonomy' => 'drygie_tax', 'terms' => [ (int) (get_term_by('slug', 'eskort', 'drygie_tax')->term_id ?? 0) ]];
+    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['eskort'], 'operator' => 'IN'];
+    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['individualki', 'soderzhanki', 'kizdar'], 'operator' => 'NOT IN'];
   }
   if ($is_individual_page) {
-    $base_tax = $base_tax ?: ['taxonomy' => 'drygie_tax', 'terms' => [ (int) (get_term_by('slug', 'individualki-almaty', 'drygie_tax')->term_id ?? 0) ]];
-    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['individualki-almaty'], 'operator' => 'IN'];
-    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['eskort-almaty', 'soderzhanki-almaty', 'kizdar-almaty'], 'operator' => 'NOT IN'];
+    $base_tax = $base_tax ?: ['taxonomy' => 'drygie_tax', 'terms' => [ (int) (get_term_by('slug', 'individualki', 'drygie_tax')->term_id ?? 0) ]];
+    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['individualki'], 'operator' => 'IN'];
+    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['eskort', 'soderzhanki', 'kizdar'], 'operator' => 'NOT IN'];
   }
   if ($is_soderzhanki_page) {
-    $base_tax = $base_tax ?: ['taxonomy' => 'drygie_tax', 'terms' => [ (int) (get_term_by('slug', 'soderzhanki-almaty', 'drygie_tax')->term_id ?? 0) ]];
-    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['soderzhanki-almaty'], 'operator' => 'IN'];
-    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['eskort-almaty', 'individualki-almaty', 'kizdar-almaty'], 'operator' => 'NOT IN'];
+    $base_tax = $base_tax ?: ['taxonomy' => 'drygie_tax', 'terms' => [ (int) (get_term_by('slug', 'soderzhanki', 'drygie_tax')->term_id ?? 0) ]];
+    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['soderzhanki'], 'operator' => 'IN'];
+    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['eskort', 'individualki', 'kizdar'], 'operator' => 'NOT IN'];
   }
-  // Для /kizdar-almaty оставляем только фильтр по национальности (без drygie_tax),
+  // Для /kizdar оставляем только фильтр по национальности (без drygie_tax),
   // чтобы выводились все казашки, даже если у них не стоит термин раздела.
 
   if (count($tax_query) > 1 && (!isset($tax_query['relation']))) {

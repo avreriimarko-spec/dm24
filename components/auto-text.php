@@ -173,9 +173,9 @@ if (!function_exists('kyzdarki_auto_text_context')) {
 if (!function_exists('kyzdarki_generate_landing_auto_text')) {
     function kyzdarki_generate_landing_auto_text(array $args = []): array
     {
-        $city = kyzdarki_auto_text_clean((string) ($args['city'] ?? 'Алматы'));
+        $city = kyzdarki_auto_text_clean((string) ($args['city'] ?? 'Москва'));
         if ($city === '') {
-            $city = 'Алматы';
+            $city = 'Москва';
         }
 
         $post_id = (int) ($args['post_id'] ?? 0);
@@ -301,9 +301,9 @@ if (!function_exists('kyzdarki_generate_term_parent_auto_text')) {
     function kyzdarki_generate_term_parent_auto_text(array $args = []): array
     {
         $args['format'] = 'plain';
-        $city = kyzdarki_auto_text_clean((string) ($args['city'] ?? 'Алматы'));
+        $city = kyzdarki_auto_text_clean((string) ($args['city'] ?? 'Москва'));
         if ($city === '') {
-            $city = 'Алматы';
+            $city = 'Москва';
         }
 
         $context = kyzdarki_auto_text_context($args);
@@ -701,9 +701,9 @@ if (!function_exists('kyzdarki_generate_model_auto_about')) {
             return '';
         }
 
-        $city = kyzdarki_auto_text_clean((string) ($args['city'] ?? 'Алматы'));
+        $city = kyzdarki_auto_text_clean((string) ($args['city'] ?? 'Москва'));
         if ($city === '') {
-            $city = 'Алматы';
+            $city = 'Москва';
         }
 
         $name = kyzdarki_auto_text_clean((string) ($args['name'] ?? get_the_title($post_id)));

@@ -1,10 +1,10 @@
 <?php
-// organization.php — JSON-LD разметка организации (Алматы)
+// organization.php — JSON-LD разметка организации (Москва)
 
 if (!defined('ABSPATH')) exit;
 
 // Базовые данные
-$org_name        = 'Эскорт Алматы';
+$org_name        = 'Эскорт Москва';
 $org_url         = home_url('/');
 $org_logo        = function_exists('get_site_icon_url') && get_site_icon_url() ? get_site_icon_url(192) : get_site_url(null, 'favicon-32x32.png');
 $org_description = function_exists('get_field') ? (get_field('descr') ?: get_bloginfo('description')) : get_bloginfo('description');
@@ -25,7 +25,7 @@ if ($email_mod) {
     $org_email = 'admin@' . $host;
 }
 
-// География: Казахстан / Алматы
+// География: Казахстан / Москва
 $area_served = [
     [
         '@type' => 'Country',
@@ -33,7 +33,7 @@ $area_served = [
     ],
     [
         '@type' => 'City',
-        'name'  => 'Алматы',
+        'name'  => 'Москва',
     ],
 ];
 
