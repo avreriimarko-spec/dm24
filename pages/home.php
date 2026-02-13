@@ -757,6 +757,36 @@ if ($is_metro_context) {
     }
 }
 
+$is_service_context = (($base_tax['taxonomy'] ?? '') === 'uslugi_tax' && !empty($base_tax['terms']));
+if ($is_service_context) {
+    $service_term_id = (int) ((array) $base_tax['terms'])[0];
+    $service_term = get_term($service_term_id, 'uslugi_tax');
+
+    if ($service_term instanceof WP_Term && !is_wp_error($service_term)) {
+        $service_name = function_exists('kyzdarki_auto_text_clean')
+            ? kyzdarki_auto_text_clean((string) $service_term->name)
+            : trim(wp_strip_all_tags((string) $service_term->name));
+
+        if ($service_name !== '') {
+            $service_name_safe = esc_html($service_name);
+            $service_h1 = "{$service_name} в Москве";
+            $custom_h1_override = $service_h1;
+            set_query_var('auto_h1', $service_h1);
+            $GLOBALS['auto_h1'] = $service_h1;
+            set_query_var('auto_h2', 'Анкеты проституток');
+            $GLOBALS['auto_h2'] = 'Анкеты проституток';
+
+            $p_after_h1 = '<p>Услуга «' . $service_name_safe . '» в Москве - актуальные анкеты.</p>';
+            $p_after_h1_is_auto = true;
+
+            $p_under_h2 = '';
+            $auto_links_block = '';
+            $content = '<p>Закажите ' . $service_name_safe . ' в Москве. У нас ' . $service_name_safe . ' от лучших анкет Москвы.</p>';
+            $text_block = '';
+        }
+    }
+}
+
 
 /* 3) Локализация JS */
 wp_register_script('models-filter-app', false, [], null, true);
