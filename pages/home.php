@@ -771,12 +771,79 @@ if ($is_service_context) {
             set_query_var('auto_h2', 'Анкеты проституток');
             $GLOBALS['auto_h2'] = 'Анкеты проституток';
 
-            $p_after_h1 = '<p>Услуга «' . $service_name_safe . '» в Москве - актуальные анкеты.</p>';
+            $service_models_count = isset($auto_text['models_count']) ? (int) $auto_text['models_count'] : 0;
+            if ($service_models_count <= 0 && function_exists('kyzdarki_auto_text_count_models')) {
+                $service_models_count = kyzdarki_auto_text_count_models($base_tax);
+            }
+            $service_count_text = 'актуальные анкеты';
+            if ($service_models_count > 0) {
+                $service_count_label = number_format_i18n($service_models_count);
+                $service_count_word = function_exists('kyzdarki_auto_text_plural')
+                    ? kyzdarki_auto_text_plural($service_models_count, 'анкета', 'анкеты', 'анкет')
+                    : 'анкет';
+                $service_count_text = $service_count_label . ' ' . $service_count_word;
+            }
+
+            $resolve_service_min_price = static function (string $meta_key, int $term_id): int {
+                $q = new WP_Query([
+                    'post_type' => 'models',
+                    'post_status' => 'publish',
+                    'posts_per_page' => 1,
+                    'fields' => 'ids',
+                    'no_found_rows' => true,
+                    'orderby' => 'meta_value_num',
+                    'order' => 'ASC',
+                    'meta_key' => $meta_key,
+                    'meta_type' => 'NUMERIC',
+                    'meta_query' => [[
+                        'key' => $meta_key,
+                        'value' => 0,
+                        'type' => 'NUMERIC',
+                        'compare' => '>',
+                    ]],
+                    'tax_query' => [[
+                        'taxonomy' => 'uslugi_tax',
+                        'field' => 'term_id',
+                        'terms' => [$term_id],
+                        'operator' => 'IN',
+                    ]],
+                ]);
+
+                $price = 0;
+                if (!empty($q->posts)) {
+                    $pid = (int) $q->posts[0];
+                    $price = (int) get_post_meta($pid, $meta_key, true);
+                }
+                wp_reset_postdata();
+                return max(0, $price);
+            };
+
+            $service_min_outcall = $resolve_service_min_price('price_outcall', $service_term_id);
+            $service_min_incall = $resolve_service_min_price('price', $service_term_id);
+            $service_price_pool = array_filter([$service_min_outcall, $service_min_incall], static function (int $price): bool {
+                return $price > 0;
+            });
+            $service_min_price = !empty($service_price_pool) ? min($service_price_pool) : 0;
+            if ($service_min_price <= 0 && function_exists('_seo_min_price_label_by_term')) {
+                $service_min_price_raw = (string) _seo_min_price_label_by_term($service_term, 'uslugi_tax');
+                $service_min_price = (int) preg_replace('~\D+~', '', $service_min_price_raw);
+            }
+            $service_min_price_text = number_format_i18n(max(1, $service_min_price));
+
+            $p_after_h1 = '<p>Услуга «' . $service_name_safe . '» в Москве представлена в формате проверенных частных анкет без посредников. Сейчас в разделе ' . esc_html($service_count_text) . ', новые предложения добавляются регулярно.</p>';
             $p_after_h1_is_auto = true;
 
             $p_under_h2 = '';
             $auto_links_block = '';
-            $content = '<p>Закажите ' . $service_name_safe . ' в Москве. У нас ' . $service_name_safe . ' от лучших анкет Москвы.</p>';
+            $content = '<h2>Как выбрать ' . $service_name_safe . ' в Москве</h2>'
+                . '<p>Закажите ' . $service_name_safe . ' в Москве в удобном формате: у нас собраны актуальные предложения от лучших анкет столицы с понятными условиями встречи.</p>'
+                . '<ul>'
+                . '<li>Проверенные анкеты: каждая карточка содержит фото, базовые параметры и описание условий.</li>'
+                . '<li>Стоимость: предложения по услуге «' . $service_name_safe . '» начинаются от ' . esc_html($service_min_price_text) . ' рублей за час.</li>'
+                . '<li>Условия встречи: сравнивайте формат, доступность и дополнительные опции прямо в карточках.</li>'
+                . '<li>Быстрый выбор: используйте фильтры по цене и параметрам, чтобы сократить поиск до 2-3 подходящих вариантов.</li>'
+                . '</ul>'
+                . '<p>Если первый вариант не подходит, обновите сортировку по дате добавления и сравните свежие анкеты в этом же разделе.</p>';
             $text_block = '';
         }
     }

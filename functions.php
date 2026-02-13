@@ -437,20 +437,53 @@ remove_action('wp_head', 'feed_links_extra', 3);
 
 
 add_action('pre_get_posts', function ($query) {
-    if (!is_admin() && $query->is_main_query() && is_tax()) {
-        $slug = get_query_var('term');
-        $page = get_page_by_path($slug, OBJECT, 'page');
+    if (is_admin() || !$query->is_main_query() || !is_tax()) {
+        return;
+    }
 
-        if ($page) {
-            $query->set('post_type', 'page');
-            $query->set('page_id', $page->ID);
-            $query->is_page = true;
-            $query->is_tax = false;
-            $query->is_archive = false;
-            $query->is_singular = true;
-            $query->is_404 = false;
+    // For custom taxonomies the term slug lives in taxonomy-specific query vars.
+    $tax_query_vars = [
+        'uslugi_tax',
+        'rayonu_tax',
+        'metro_tax',
+        'price_tax',
+        'vozrast_tax',
+        'nationalnost_tax',
+        'ves_tax',
+        'cvet-volos_tax',
+        'rost_tax',
+        'grud_tax',
+    ];
+
+    $slug = '';
+    foreach ($tax_query_vars as $var_name) {
+        $candidate = (string) $query->get($var_name);
+        if ($candidate !== '') {
+            $slug = $candidate;
+            break;
         }
     }
+
+    if ($slug === '') {
+        $slug = (string) $query->get('term');
+    }
+
+    if ($slug === '') {
+        return;
+    }
+
+    $page = get_page_by_path($slug, OBJECT, 'page');
+    if (!($page instanceof WP_Post) || $page->post_status !== 'publish') {
+        return;
+    }
+
+    $query->set('post_type', 'page');
+    $query->set('page_id', $page->ID);
+    $query->is_page = true;
+    $query->is_tax = false;
+    $query->is_archive = false;
+    $query->is_singular = true;
+    $query->is_404 = false;
 });
 
 add_filter('template_include', function ($template) {
