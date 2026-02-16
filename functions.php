@@ -488,6 +488,38 @@ add_action('pre_get_posts', function ($query) {
     $query->is_404 = false;
 });
 
+// Для терминов, у которых есть одноименная опубликованная page, отдаем канонический URL страницы.
+add_filter('term_link', function ($termlink, $term, $taxonomy) {
+    if (!($term instanceof WP_Term)) {
+        return $termlink;
+    }
+
+    $supported_taxonomies = [
+        'uslugi_tax',
+        'rayonu_tax',
+        'metro_tax',
+        'price_tax',
+        'vozrast_tax',
+        'nationalnost_tax',
+        'ves_tax',
+        'cvet-volos_tax',
+        'rost_tax',
+        'grud_tax',
+    ];
+
+    if (!in_array((string) $taxonomy, $supported_taxonomies, true)) {
+        return $termlink;
+    }
+
+    $page = get_page_by_path((string) $term->slug, OBJECT, 'page');
+    if (!($page instanceof WP_Post) || $page->post_status !== 'publish') {
+        return $termlink;
+    }
+
+    $page_url = (string) get_permalink((int) $page->ID);
+    return $page_url !== '' ? $page_url : $termlink;
+}, 20, 3);
+
 // Если tax-URL подменен на page (через pre_get_posts выше), фиксируем единый канон через 301 на permalink страницы.
 add_action('template_redirect', function () {
     if (is_admin() || !is_page()) {
