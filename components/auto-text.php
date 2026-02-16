@@ -82,6 +82,39 @@ if (!function_exists('kyzdarki_auto_text_count_models')) {
     }
 }
 
+if (!function_exists('kyzdarki_auto_text_count_models_by_meta')) {
+    function kyzdarki_auto_text_count_models_by_meta(array $meta_keys = []): int
+    {
+        $meta_keys = array_values(array_filter(array_map('sanitize_key', $meta_keys)));
+        if (empty($meta_keys)) {
+            return 0;
+        }
+
+        $or = ['relation' => 'OR'];
+        foreach ($meta_keys as $meta_key) {
+            $or[] = [
+                'key' => $meta_key,
+                'value' => 0,
+                'type' => 'NUMERIC',
+                'compare' => '>',
+            ];
+        }
+
+        $q = new WP_Query([
+            'post_type'      => 'models',
+            'post_status'    => 'publish',
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+            'no_found_rows'  => false,
+            'meta_query'     => $or,
+        ]);
+
+        $count = (int) $q->found_posts;
+        wp_reset_postdata();
+        return $count;
+    }
+}
+
 if (!function_exists('kyzdarki_auto_text_term_name')) {
     function kyzdarki_auto_text_term_name(array $base_tax = [], int $post_id = 0): string
     {
@@ -153,6 +186,7 @@ if (!function_exists('kyzdarki_auto_text_context')) {
             'rajony' => 'rajon',
             'metro' => 'metro',
             'price' => 'price',
+            'prostitutki-priyem' => 'incall',
             'tsena' => 'price',
             'vozrast' => 'vozrast',
             'nationalnost' => 'nationalnost',
@@ -183,7 +217,13 @@ if (!function_exists('kyzdarki_generate_landing_auto_text')) {
         $format = (string) ($args['format'] ?? 'html');
         $context = kyzdarki_auto_text_context($args);
         $term_name = kyzdarki_auto_text_term_name($base_tax, $post_id);
-        $models_count = isset($args['models_count']) ? (int) $args['models_count'] : kyzdarki_auto_text_count_models($base_tax);
+        if (isset($args['models_count'])) {
+            $models_count = (int) $args['models_count'];
+        } elseif ($context === 'incall') {
+            $models_count = kyzdarki_auto_text_count_models_by_meta(['price', 'price_2_hours', 'price_night']);
+        } else {
+            $models_count = kyzdarki_auto_text_count_models($base_tax);
+        }
 
         $count_label = $models_count > 0
             ? $models_count . ' ' . kyzdarki_auto_text_plural($models_count, 'анкета', 'анкеты', 'анкет')
@@ -268,6 +308,14 @@ if (!function_exists('kyzdarki_generate_landing_auto_text')) {
             }
             $under_h2[] = "Используйте дополнительные фильтры, чтобы быстро выбрать подходящую анкету.";
             $seo[] = "Каталог по цвету волос «{$term_name}» упрощает подбор и помогает сравнить анкеты по важным параметрам.";
+        } elseif ($context === 'incall') {
+            $intro[] = "На этой странице собраны проститутки с приёмом в {$city}: анкеты девушек, которые принимают у себя в апартаментах.";
+            if ($count_label !== '') {
+                $intro[] = "Сейчас доступно {$count_label} с актуальными фото и условиями встречи.";
+            }
+            $under_h2[] = "Ниже представлены анкеты с форматом «приём». Используйте фильтры по цене, району и дополнительным параметрам.";
+            $seo[] = "Раздел «проститутки с приёмом» помогает быстро найти варианты с апартаментами и сравнить анкеты по ключевым критериям.";
+            $seo[] = "Перед выбором обращайте внимание на стоимость, расположение и доступность дополнительных услуг.";
         } else {
             $intro[] = "На странице собраны анкеты проституток в {$city} с фото, ценами и основными параметрами.";
             if ($count_label !== '') {
