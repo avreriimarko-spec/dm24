@@ -60,8 +60,8 @@ $price_incall_1h  = $to_int($model['price'] ?? '');
 $price_outcall_1h = $to_int($model['price_outcall'] ?? '');
 $price_incall_2h  = $to_int($model['price_2_hours'] ?? ($price_incall_1h ? $price_incall_1h * 2 : 0));
 $price_outcall_2h = $to_int($model['price_outcall_2_hours'] ?? ($price_outcall_1h ? $price_outcall_1h * 2 : 0));
-$price_incall_night  = $to_int($model['price_night'] ?? '');
-$price_outcall_night = $to_int($model['price_outcall_night'] ?? '');
+$price_incall_night  = $to_int($model['price_night'] ?? ($price_incall_1h ? $price_incall_1h * 8 : 0));
+$price_outcall_night = $to_int($model['price_outcall_night'] ?? ($price_outcall_1h ? $price_outcall_1h * 8 : 0));
 
 /* -------------------- ОПТИМИЗАЦИЯ ФОТО -------------------- */
 $gallery = $model['modelGalleryThumbnail'] ?? [];
@@ -104,7 +104,7 @@ if (!$img_src) {
 /** ИКОНКИ И МЕТА */
 $is_verified    = has_term('', 'drygie_tax', $post_id);
 $is_recommended = !empty($model['recommended']) ? $model['recommended'] : get_post_meta($post_id, 'recommended', true);
-$elite_threshold = 120000;
+$elite_threshold = 25000;
 $has_elite_term = has_term('elitnyye-prostitutki', 'drygie_tax', $post_id);
 $elite_by_price = ($price_outcall_1h >= $elite_threshold) || ($price_incall_1h >= $elite_threshold);
 $elite_by_acf   = function_exists('get_field') ? (bool)get_field('vip', $post_id) : false;

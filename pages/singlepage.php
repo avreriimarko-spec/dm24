@@ -145,11 +145,11 @@ $get_p = function($field, $fallback = 0) use ($id) {
 
 $price_in_1h     = $get_p('price');
 $price_in_2h     = $get_p('price_2_hours', $price_in_1h ? $price_in_1h * 2 : 0);
-$price_in_night  = $get_p('price_night');
+$price_in_night  = $get_p('price_night', $price_in_1h ? $price_in_1h * 8 : 0);
 
 $price_out_1h    = $get_p('price_outcall');
 $price_out_2h    = $get_p('price_outcall_2_hours', $price_out_1h ? $price_out_1h * 2 : 0);
-$price_out_night = $get_p('price_outcall_night');
+$price_out_night = $get_p('price_outcall_night', $price_out_1h ? $price_out_1h * 8 : 0);
 
 $about     = function_exists('get_field') ? get_field('description', $id) : '';
 if (trim(wp_strip_all_tags((string) $about)) === '' && function_exists('kyzdarki_generate_model_auto_about')) {

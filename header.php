@@ -29,10 +29,9 @@ $GLOBALS['seo_descr'] = $descr;
     <?php if (!empty($keywords)): ?>
         <meta name="keywords" content="<?php echo esc_attr($keywords); ?>" />
     <?php endif; ?>
-    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" href="/android-chrome-192x192.png" sizes="192x192" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/icons/favicon-32x32.png'); ?>" />
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/icons/favicon-16x16.png'); ?>" />
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/icons/apple-touch-icon.png'); ?>" />
     <meta name="yandex-verification" content="635b0832d5683f81" />
     <?php if ($post_type === 'models' && is_singular('models') && !empty($og_image_alt)): ?>
         <meta property="og:image:alt" content="<?php echo esc_attr($og_image_alt); ?>" />
@@ -300,8 +299,8 @@ $menu = [
                     class="flex items-center gap-2 select-none shrink-0 <?php echo $is_home ? 'cursor-default' : ''; ?>"
                     aria-label="Логотип <?php echo esc_attr($site_name); ?>">
                     <img src="<?php echo esc_url($logo_url); ?>"
-                        alt="<?php echo esc_attr($site_name . ' — логотип'); ?>" width="50" height="40"
-                        class="h-10 object-contain" loading="eager" decoding="async" fetchpriority="high">
+                        alt="<?php echo esc_attr($site_name . ' — логотип'); ?>" width="279" height="60"
+                        class="h-12 md:h-14 w-auto object-contain" loading="eager" decoding="async" fetchpriority="high">
                 </<?php echo $logo_tag; ?>>
 
                 <?php if (!wp_is_mobile()) : ?>

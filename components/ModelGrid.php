@@ -238,15 +238,15 @@ function render_model_grid_with_filters()
   if ($cheap_only) {
     $meta_query[] = [
       'relation' => 'OR',
-      ['key' => 'price_outcall', 'value' => 100000, 'type' => 'NUMERIC', 'compare' => '<'],
-      ['key' => 'price', 'value' => 100000, 'type' => 'NUMERIC', 'compare' => '<'],
+      ['key' => 'price_outcall', 'value' => 15000, 'type' => 'NUMERIC', 'compare' => '<'],
+      ['key' => 'price', 'value' => 15000, 'type' => 'NUMERIC', 'compare' => '<'],
     ];
   }
   if ($elite_only) {
     $meta_query[] = [
       'relation' => 'OR',
-      ['key' => 'price_outcall', 'value' => 120000, 'type' => 'NUMERIC', 'compare' => '>='],
-      ['key' => 'price', 'value' => 120000, 'type' => 'NUMERIC', 'compare' => '>='],
+      ['key' => 'price_outcall', 'value' => 25000, 'type' => 'NUMERIC', 'compare' => '>='],
+      ['key' => 'price', 'value' => 25000, 'type' => 'NUMERIC', 'compare' => '>='],
     ];
   }
   if ($videos_only) $meta_query[] = ['key' => 'video', 'value' => '[^[:space:]]', 'compare' => 'REGEXP'];
