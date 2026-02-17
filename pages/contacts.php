@@ -207,6 +207,35 @@ $enc_tel = $tel_href ? base64_encode($tel_href) : '';
         word-break: break-word;
     }
 
+    .contacts-messenger-row {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .contacts-messenger-btn {
+        flex: 0.5;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--contacts-accent-soft);
+        background: var(--contacts-accent);
+        color: #fff;
+        text-decoration: none;
+        transition: filter .2s ease;
+    }
+
+    .contacts-messenger-btn:hover {
+        filter: brightness(.94);
+    }
+
+    .contacts-messenger-btn svg {
+        width: 22px;
+        height: 22px;
+    }
+
     .contacts-hours {
         margin-top: 20px;
         padding-top: 18px;
@@ -349,51 +378,10 @@ $enc_tel = $tel_href ? base64_encode($tel_href) : '';
             <aside class="contacts-card">
                 <h2 class="contacts-card__title">Свяжитесь с нами</h2>
 
-                <ul class="contacts-list flex flex-col gap-1">
-                    <?php if ($tg_href && $tg_login_clean): ?>
-                        <li>
-                            <a class="contacts-item protected-contact"
-                                href="javascript:void(0);"
-                                data-enc="<?= esc_attr($enc_tg) ?>"
-                                data-go="tg"
-                                target="_blank"
-                                rel="noopener">
-                                <span class="contacts-item__icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M22 3 2 10.3l6.7 2.2L19 6.2 10.6 14l.3 6 3.2-4.4 4.8 3.6L22 3z" />
-                                    </svg>
-                                </span>
-                                <span>
-                                    <span class="contacts-item__label">Telegram</span>
-                                    <span class="contacts-item__value">@<?= esc_html($tg_login_clean) ?></span>
-                                </span>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-
-                    <?php if ($wa_href && $wa_display): ?>
-                        <li>
-                            <a class="contacts-item protected-contact"
-                                href="javascript:void(0);"
-                                data-enc="<?= esc_attr($enc_wa) ?>"
-                                data-go="wa"
-                                target="_blank"
-                                rel="noopener">
-                                <span class="contacts-item__icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none">
-                                        <path fill="#fff" d="M12.04 2c-5.49 0-9.95 4.46-9.95 9.95 0 1.75.46 3.46 1.33 4.96L2 22l5.24-1.37a9.9 9.9 0 0 0 4.8 1.23h.01c5.49 0 9.95-4.46 9.95-9.95A9.95 9.95 0 0 0 12.04 2Zm0 18.13a8.14 8.14 0 0 1-4.15-1.14l-.3-.18-3.11.81.83-3.03-.2-.31a8.14 8.14 0 1 1 6.93 3.85Zm4.46-6.08c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.17-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.01-.37.1-.49.1-.1.24-.28.36-.41.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.29-.74-1.77-.2-.47-.39-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.65.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28Z"/>
-                                    </svg>
-                                </span>
-                                <span>
-                                    <span class="contacts-item__label">WhatsApp</span>
-                                    <span class="contacts-item__value"><?= esc_html($wa_display) ?></span>
-                                </span>
-                            </a>
-                        </li>
-                    <?php endif; ?>
+                <ul class="contacts-list">
 
                     <?php if ($email): ?>
-                        <li>
+                        <li class="mb-1">
                             <a class="contacts-item" href="mailto:<?= antispambot($email) ?>">
                                 <span class="contacts-item__icon" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -426,6 +414,38 @@ $enc_tel = $tel_href ? base64_encode($tel_href) : '';
                         </li>
                     <?php endif; ?>
                 </ul>
+
+                <?php if (($tg_href && $tg_login_clean) || ($wa_href && $wa_display)): ?>
+                    <div class="contacts-messenger-row" aria-label="Мессенджеры">
+                        <?php if ($tg_href && $tg_login_clean): ?>
+                            <a class="contacts-messenger-btn protected-contact"
+                                href="javascript:void(0);"
+                                data-enc="<?= esc_attr($enc_tg) ?>"
+                                data-go="tg"
+                                target="_blank"
+                                rel="noopener"
+                                aria-label="Telegram">
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M22 3 2 10.3l6.7 2.2L19 6.2 10.6 14l.3 6 3.2-4.4 4.8 3.6L22 3z" />
+                                </svg>
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if ($wa_href && $wa_display): ?>
+                            <a class="contacts-messenger-btn protected-contact"
+                                href="javascript:void(0);"
+                                data-enc="<?= esc_attr($enc_wa) ?>"
+                                data-go="wa"
+                                target="_blank"
+                                rel="noopener"
+                                aria-label="WhatsApp">
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <path fill="#fff" d="M12.04 2c-5.49 0-9.95 4.46-9.95 9.95 0 1.75.46 3.46 1.33 4.96L2 22l5.24-1.37a9.9 9.9 0 0 0 4.8 1.23h.01c5.49 0 9.95-4.46 9.95-9.95A9.95 9.95 0 0 0 12.04 2Zm0 18.13a8.14 8.14 0 0 1-4.15-1.14l-.3-.18-3.11.81.83-3.03-.2-.31a8.14 8.14 0 1 1 6.93 3.85Zm4.46-6.08c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.17-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.01-.37.1-.49.1-.1.24-.28.36-.41.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.29-.74-1.77-.2-.47-.39-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.65.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28Z" />
+                                </svg>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
 
                 <div class="contacts-hours">
                     <p class="contacts-hours__label">Режим работы</p>
