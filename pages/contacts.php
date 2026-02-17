@@ -92,26 +92,250 @@ if ($tg_display) {
 /* ===== AJAX ===== */
 $ajax_url = admin_url('admin-ajax.php');
 $nonce    = wp_create_nonce('contacts_form_nonce');
+
+$enc_wa  = $wa_href ? base64_encode($wa_href) : '';
+$enc_tg  = $tg_href ? base64_encode($tg_href) : '';
+$enc_tel = $tel_href ? base64_encode($tel_href) : '';
 ?>
 
-<main class="px-4 py-10 bg-white text-black">
-    <div class="max-w-[1100px] mx-auto">
-        <!-- Заголовок -->
-        <header class="mb-6 md:mb-8">
-            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight"
-                style="letter-spacing:-.02em;">
-                <?= esc_html($heading); ?>
-            </h1>
-            <?php if ($lead): ?>
-                <p class="mt-4 text-[15px] md:text-base text-neutral-700 leading-relaxed">
-                    <?= esc_html($lead); ?>
-                </p>
-            <?php endif; ?>
-        </header>
+<style>
+    .contacts-page {
+        --contacts-accent: <?= esc_attr($ACCENT) ?>;
+        --contacts-accent-soft: rgba(232, 101, 160, 0.55);
+        --contacts-muted: #6b7280;
+        background: #f5f5f7;
+        color: #0f172a;
+        padding: 36px 16px 44px;
+    }
 
-        <!-- Верхний контент + контакты -->
-        <section class="mb-8">
-            <div class="prose prose-sm max-w-none text-black [&>ul>li]:mb-2">
+    .contacts-page__inner {
+        max-width: 1120px;
+        margin: 0 auto;
+    }
+
+    .contacts-page__lead {
+        margin-bottom: 20px;
+    }
+
+    .contacts-page__title {
+        margin: 0 0 10px;
+        font-size: clamp(28px, 3.5vw, 44px);
+        line-height: 1.1;
+        font-weight: 800;
+    }
+
+    .contacts-page__lead-text {
+        margin: 0;
+        color: #4b5563;
+    }
+
+    .contacts-page__grid {
+        display: grid;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .contacts-card {
+        border: 1px solid var(--contacts-accent-soft);
+        background: #fff;
+        padding: 22px;
+    }
+
+    .contacts-card__title {
+        margin: 0 0 18px;
+        font-size: clamp(28px, 3.2vw, 32px);
+        line-height: 1.05;
+    }
+
+    .contacts-card__hint {
+        margin: -8px 0 20px;
+        color: #4b5563;
+        font-size: 14px;
+    }
+
+    .contacts-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .contacts-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid var(--contacts-accent-soft);
+        padding: 12px;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .contacts-item + .contacts-item {
+        margin-top: 12px;
+    }
+
+    .contacts-item__icon {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: var(--contacts-accent);
+        color: #fff;
+    }
+
+    .contacts-item__icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .contacts-item__label {
+        margin: 0 0 2px;
+        font-size: 12px;
+        line-height: 1.2;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        color: #4b5563;
+        font-weight: 700;
+    }
+
+    .contacts-item__value {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.15;
+        font-weight: 800;
+        word-break: break-word;
+    }
+
+    .contacts-hours {
+        margin-top: 20px;
+        padding-top: 18px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .contacts-hours__label {
+        margin: 0 0 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        font-size: 13px;
+        color: #4b5563;
+        font-weight: 700;
+    }
+
+    .contacts-hours__value {
+        margin: 0;
+        font-size: 30px;
+        line-height: 1.2;
+        font-weight: 800;
+    }
+
+    .contacts-form {
+        margin: 0;
+        display: grid;
+        gap: 14px;
+    }
+
+    .contacts-field__label {
+        display: block;
+        margin: 0 0 7px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        color: #374151;
+        font-weight: 700;
+    }
+
+    .contacts-field__control {
+        width: 100%;
+        border: 1px solid #d1d5db;
+        padding: 11px 13px;
+        font-size: 16px;
+        line-height: 1.25;
+        color: #111827;
+        background: #fff;
+        outline: none;
+    }
+
+    .contacts-field__control:focus {
+        border-color: var(--contacts-accent);
+        box-shadow: 0 0 0 2px rgba(232, 101, 160, 0.12);
+    }
+
+    .contacts-field__control::placeholder {
+        color: #9ca3af;
+    }
+
+    textarea.contacts-field__control {
+        min-height: 142px;
+        resize: vertical;
+    }
+
+    .contacts-submit {
+        width: 100%;
+        border: 0;
+        background: #e1061d;
+        color: #fff;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        min-height: 48px;
+        padding: 12px 16px;
+        cursor: pointer;
+    }
+
+    .contacts-submit:hover {
+        filter: brightness(0.95);
+    }
+
+    .contacts-submit:disabled {
+        cursor: not-allowed;
+        opacity: 0.65;
+    }
+
+    .contacts-privacy {
+        margin: 8px 0 0;
+        font-size: 13px;
+        text-align: center;
+        color: var(--contacts-muted);
+    }
+
+    #contact-alert {
+        border: 1px solid rgba(232, 101, 160, 0.35);
+        padding: 9px 12px;
+        font-size: 14px;
+    }
+
+    #contact-alert.hidden {
+        display: none;
+    }
+
+    @media (max-width: 1023px) {
+        .contacts-item__value,
+        .contacts-hours__value {
+            font-size: 24px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .contacts-page {
+            padding-top: 44px;
+        }
+
+        .contacts-page__grid {
+            grid-template-columns: minmax(310px, 440px) minmax(0, 1fr);
+            gap: 24px;
+        }
+    }
+</style>
+
+<main class="contacts-page">
+    <div class="contacts-page__inner">
+        <header class="contacts-page__lead">
+            <h1 class="contacts-page__title"><?= esc_html($heading); ?></h1>
+            <?php if ($lead): ?>
+                <p class="contacts-page__lead-text"><?= esc_html($lead); ?></p>
+            <?php endif; ?>
+            <div class="prose prose-sm max-w-none text-black [&>ul>li]:mb-2 mt-4">
                 <?php
                 while (have_posts()) {
                     the_post();
@@ -119,135 +343,134 @@ $nonce    = wp_create_nonce('contacts_form_nonce');
                 }
                 ?>
             </div>
+        </header>
 
-            <!-- Список контактов -->
-            <div class="mt-6 rounded-2xl border bg-white p-5 md:p-6"
-                style="border-color:<?= esc_attr($ACCENT) ?>22">
-                <h2 class="text-lg font-bold mb-3">Контакты</h2>
-                <ul class="space-y-3 text-[15px]">
+        <section class="contacts-page__grid" aria-label="Контакты и форма связи">
+            <aside class="contacts-card">
+                <h2 class="contacts-card__title">Свяжитесь с нами</h2>
 
-                    <!-- Email -->
-                    <?php if ($email): ?>
-                        <li class="flex items-center gap-3">
-                            <span class="inline-flex w-8 h-8 rounded-full border shrink-0 items-center justify-center"
-                                style="border-color:<?= esc_attr($ACCENT) ?>22;color:<?= esc_attr($ACCENT) ?>">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5Z" />
-                                </svg>
-                            </span>
-                            <a class="hover:underline font-medium" href="mailto:<?= antispambot($email) ?>">
-                                <?= esc_html($email) ?>
+                <ul class="contacts-list flex flex-col gap-1">
+                    <?php if ($tg_href && $tg_login_clean): ?>
+                        <li>
+                            <a class="contacts-item protected-contact"
+                                href="javascript:void(0);"
+                                data-enc="<?= esc_attr($enc_tg) ?>"
+                                data-go="tg"
+                                target="_blank"
+                                rel="noopener">
+                                <span class="contacts-item__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M22 3 2 10.3l6.7 2.2L19 6.2 10.6 14l.3 6 3.2-4.4 4.8 3.6L22 3z" />
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="contacts-item__label">Telegram</span>
+                                    <span class="contacts-item__value">@<?= esc_html($tg_login_clean) ?></span>
+                                </span>
                             </a>
                         </li>
                     <?php endif; ?>
 
-                    <!-- WhatsApp (Рандомный) -->
                     <?php if ($wa_href && $wa_display): ?>
-                    <?php $enc_wa = base64_encode($wa_href); ?>
-                    <li class="flex items-center gap-3">
-                        <span class="inline-flex w-8 h-8 rounded-full border shrink-0 items-center justify-center"
-                            style="border-color:<?= esc_attr($ACCENT) ?>22;color:<?= esc_attr($ACCENT) ?>">
-                            <svg class="w-4 h-4" viewBox="0 0 16 16" aria-hidden="true">
-                                <path fill="currentColor" d="M13.6 2.3A8 8 0 0 0 0 8c0 1.4.4 2.7 1 3.9L0 16l4.2-1.1A8 8 0 1 0 13.6 2.3ZM8 14.5a6.5 6.5 0 0 1-3.6-1l-2.7.7.7-2.5A6.5 6.5 0 1 1 8 14.5Zm3.6-4.3c-.2-.1-1.2-.6-1.4-.6s-.3-.1-.5.1-.5.6-.6.8-.2.1-.4 0c-.2-.1-.9-.3-1.7-1-.6-.5-1-1.2-1.1-1.4-.1-.2 0-.3.1-.5l.3-.3c.1-.1.1-.2.2-.3 0-.2 0-.3-.1-.4l-.6-1.4c-.1-.2-.3-.2-.4-.2H4c-.2 0-.4.1-.6.3-.2.2-.7.7-.7 1.6s.7 1.9.8 2c.1.1 1.4 2.1 3.4 2.9.5.2.9.3 1.2.4.5.1.9.1 1.3.1.4 0 1.2-.5 1.4-1 .1-.4.1-.8.1-.9s-.2-.1-.4-.2Z" />
-                            </svg>
-                        </span>
-                        <a class="hover:underline font-medium protected-contact" 
-                        href="javascript:void(0);" 
-                        data-enc="<?= esc_attr($enc_wa) ?>" 
-                        data-go="wa"
-                        target="_blank" 
-                        rel="noopener">
-                            WhatsApp: +77275467994
-                        </a>
-                    </li>
-                <?php endif; ?>
+                        <li>
+                            <a class="contacts-item protected-contact"
+                                href="javascript:void(0);"
+                                data-enc="<?= esc_attr($enc_wa) ?>"
+                                data-go="wa"
+                                target="_blank"
+                                rel="noopener">
+                                <span class="contacts-item__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path fill="#fff" d="M12.04 2c-5.49 0-9.95 4.46-9.95 9.95 0 1.75.46 3.46 1.33 4.96L2 22l5.24-1.37a9.9 9.9 0 0 0 4.8 1.23h.01c5.49 0 9.95-4.46 9.95-9.95A9.95 9.95 0 0 0 12.04 2Zm0 18.13a8.14 8.14 0 0 1-4.15-1.14l-.3-.18-3.11.81.83-3.03-.2-.31a8.14 8.14 0 1 1 6.93 3.85Zm4.46-6.08c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.17-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.01-.37.1-.49.1-.1.24-.28.36-.41.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.29-.74-1.77-.2-.47-.39-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.65.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28Z"/>
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="contacts-item__label">WhatsApp</span>
+                                    <span class="contacts-item__value"><?= esc_html($wa_display) ?></span>
+                                </span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
 
-                <?php if ($tg_href && $tg_login_clean): ?>
-                    <?php $enc_tg = base64_encode($tg_href); ?>
-                    <li class="flex items-center gap-3">
-                        <span class="inline-flex w-8 h-8 rounded-full border shrink-0 items-center justify-center"
-                            style="border-color:<?= esc_attr($ACCENT) ?>22;color:<?= esc_attr($ACCENT) ?>">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M22 3 2 10.3l6.7 2.2L19 6.2 10.6 14l.3 6 3.2-4.4 4.8 3.6L22 3z" />
-                            </svg>
-                        </span>
-                        <a class="hover:underline font-medium protected-contact" 
-                        href="javascript:void(0);" 
-                        data-enc="<?= esc_attr($enc_tg) ?>" 
-                        data-go="tg"
-                        target="_blank" 
-                        rel="noopener">
-                            Telegram
-                        </a>
-                    </li>
-                <?php endif; ?>
+                    <?php if ($email): ?>
+                        <li>
+                            <a class="contacts-item" href="mailto:<?= antispambot($email) ?>">
+                                <span class="contacts-item__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5Z" />
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="contacts-item__label">Email</span>
+                                    <span class="contacts-item__value"><?= esc_html($email) ?></span>
+                                </span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
 
-                <?php if ($phone && $tel_href): ?>
-                    <?php $enc_tel = base64_encode($tel_href); ?>
-                    <li class="flex items-center gap-3">
-                        <span class="inline-flex w-8 h-8 rounded-full border shrink-0 items-center justify-center"
-                            style="border-color:<?= esc_attr($ACCENT) ?>22;color:<?= esc_attr($ACCENT) ?>">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path d="M22 16.9v2a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 1h2a2 2 0 0 1 2 1.7c.2 1.3.5 2.6 1 3.8a2 2 0 0 1-.5 2.2L7.7 9.8a16 16 0 0 0 6.5 6.5l1.1-1.8a2 2 0 0 1 2.2-.6c1.2.5 2.5.8 3.8 1a2 2 0 0 1 1.7 2z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                        </span>
-                        <a class="hover:underline font-medium protected-contact" 
-                        href="javascript:void(0);" 
-                        data-enc="<?= esc_attr($enc_tel) ?>">
-                            <?= esc_html($phone) ?>
-                        </a>
-                    </li>
-                <?php endif; ?>
+                    <?php if ($phone && $tel_href): ?>
+                        <li>
+                            <a class="contacts-item protected-contact"
+                                href="javascript:void(0);"
+                                data-enc="<?= esc_attr($enc_tel) ?>">
+                                <span class="contacts-item__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M22 16.9v2a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 1h2a2 2 0 0 1 2 1.7c.2 1.3.5 2.6 1 3.8a2 2 0 0 1-.5 2.2L7.7 9.8a16 16 0 0 0 6.5 6.5l1.1-1.8a2 2 0 0 1 2.2-.6c1.2.5 2.5.8 3.8 1a2 2 0 0 1 1.7 2z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="contacts-item__label">Телефон</span>
+                                    <span class="contacts-item__value"><?= esc_html($phone) ?></span>
+                                </span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
-            </div>
-        </section>
 
-        <!-- Форма -->
-        <section class="rounded-2xl border bg-white"
-            style="border-color:<?= esc_attr($ACCENT) ?>22">
-            <div class="p-5 md:p-6 border-b" style="border-color:<?= esc_attr($ACCENT) ?>22">
-                <h2 class="text-xl font-bold">Напишите нам</h2>
-                <p class="text-sm text-neutral-700 mt-1">Ответим как можно быстрее.</p>
-            </div>
+                <div class="contacts-hours">
+                    <p class="contacts-hours__label">Режим работы</p>
+                    <p class="contacts-hours__value">Ежедневно: 10:00 - 22:00</p>
+                </div>
+            </aside>
 
-            <div class="p-5 md:p-6">
-                <form id="contact-form" class="space-y-4" method="post" data-ajax="<?= esc_url($ajax_url) ?>">
+            <section class="contacts-card">
+                <h2 class="contacts-card__title">Напишите нам</h2>
+                <p class="contacts-card__hint">Оставьте заявку, и наш менеджер свяжется с вами в ближайшее время.</p>
+
+                <form id="contact-form" class="contacts-form" method="post" data-ajax="<?= esc_url($ajax_url) ?>">
                     <input type="hidden" name="action" value="send_contacts_form">
                     <input type="hidden" name="nonce" value="<?= esc_attr($nonce) ?>">
                     <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off">
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <label class="block">
-                            <span class="block text-sm mb-1">Имя*</span>
-                            <input name="name" type="text" required placeholder="Ваше имя"
-                                class="w-full rounded-xl border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
-                                style="border-color:<?= esc_attr($ACCENT) ?>33; --tw-ring-color: <?= esc_attr($ACCENT) ?>;">
-                        </label>
-                        <label class="block">
-                            <span class="block text-sm mb-1">Телефон*</span>
-                            <input name="phone" type="tel" required placeholder="+7 999 000-00-00"
-                                class="w-full rounded-xl border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
-                                style="border-color:<?= esc_attr($ACCENT) ?>33; --tw-ring-color: <?= esc_attr($ACCENT) ?>;">
-                        </label>
-                    </div>
-
-                    <label class="block">
-                        <span class="block text-sm mb-1">Комментарий</span>
-                        <textarea name="message" rows="5" placeholder="Коротко опишите вопрос"
-                            class="w-full rounded-xl border px-3 py-2 bg-white placeholder-neutral-400 outline-none focus:ring-2"
-                            style="border-color:<?= esc_attr($ACCENT) ?>33; --tw-ring-color: <?= esc_attr($ACCENT) ?>;"></textarea>
+                    <label class="contacts-field">
+                        <span class="contacts-field__label">Ваше имя</span>
+                        <input name="name" type="text" required placeholder="Иван" class="contacts-field__control">
                     </label>
 
-                    <button id="contact-submit" type="submit"
-                        class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-semibold text-white active:translate-y-px transition"
-                        style="background:<?= esc_attr($ACCENT) ?>;">
-                        Отправить
+                    <label class="contacts-field">
+                        <span class="contacts-field__label">Номер телефона</span>
+                        <input name="phone" type="tel" required placeholder="+7 999 123-45-67" class="contacts-field__control">
+                    </label>
+
+                    <label class="contacts-field">
+                        <span class="contacts-field__label">Email</span>
+                        <input name="email" type="email" placeholder="mail@example.com" class="contacts-field__control">
+                    </label>
+
+                    <label class="contacts-field">
+                        <span class="contacts-field__label">Комментарий</span>
+                        <textarea name="message" rows="5" placeholder="Ваш вопрос или комментарий..." class="contacts-field__control"></textarea>
+                    </label>
+
+                    <button id="contact-submit" type="submit" class="contacts-submit">
+                        Отправить сообщение
                     </button>
 
-                    <div id="contact-alert" class="hidden mt-3 text-sm rounded-xl px-3 py-2 border"
-                        style="border-color:<?= esc_attr($ACCENT) ?>33"></div>
+                    <p class="contacts-privacy">Ваши данные конфиденциальны и не будут переданы третьим лицам.</p>
+
+                    <div id="contact-alert" class="hidden"></div>
                 </form>
-            </div>
+            </section>
         </section>
     </div>
 </main>
@@ -269,7 +492,6 @@ $nonce    = wp_create_nonce('contacts_form_nonce');
             e.preventDefault();
             alertBox.classList.add('hidden');
             submitBtn.disabled = true;
-            submitBtn.classList.add('opacity-60', 'cursor-not-allowed');
 
             try {
                 const fd = new FormData(form);
@@ -292,7 +514,6 @@ $nonce    = wp_create_nonce('contacts_form_nonce');
                 setAlert(err.message || 'Не удалось отправить. Попробуйте позже.');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.classList.remove('opacity-60', 'cursor-not-allowed');
             }
         });
     })();
