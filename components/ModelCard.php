@@ -353,7 +353,7 @@ $wa_number = $contacts['wa'] ?? '';
                     <?php endif; ?>
 
                     <?php if ($tg_link): ?>
-                        <a href="<?= esc_url($tg_link) ?>" target="_blank" rel="nofollow noopener"
+                        <a href="<?= esc_url($tg_link) ?>" data-go="tg" target="_blank" rel="nofollow noopener"
                            onclick="event.stopPropagation();"
                            style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 4px; background-color: #229ED9; color: #fff; flex-shrink: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -363,7 +363,7 @@ $wa_number = $contacts['wa'] ?? '';
                     <?php endif; ?>
 
                     <?php if ($wa_link): ?>
-                        <a href="<?= esc_url($wa_link) ?>" target="_blank" rel="nofollow noopener"
+                        <a href="<?= esc_url($wa_link) ?>" data-go="wa" target="_blank" rel="nofollow noopener"
                            onclick="event.stopPropagation();"
                            style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 4px; background-color: #25D366; color: #fff; flex-shrink: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

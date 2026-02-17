@@ -154,6 +154,7 @@ $nonce    = wp_create_nonce('contacts_form_nonce');
                         <a class="hover:underline font-medium protected-contact" 
                         href="javascript:void(0);" 
                         data-enc="<?= esc_attr($enc_wa) ?>" 
+                        data-go="wa"
                         target="_blank" 
                         rel="noopener">
                             WhatsApp: +77275467994
@@ -173,6 +174,7 @@ $nonce    = wp_create_nonce('contacts_form_nonce');
                         <a class="hover:underline font-medium protected-contact" 
                         href="javascript:void(0);" 
                         data-enc="<?= esc_attr($enc_tg) ?>" 
+                        data-go="tg"
                         target="_blank" 
                         rel="noopener">
                             Telegram

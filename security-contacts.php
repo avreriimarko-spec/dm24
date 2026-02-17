@@ -68,6 +68,9 @@ add_action('wp_footer', function() {
 
             // 3. Обрабатываем клик
             link.addEventListener('click', function(e) {
+                // Если элемент помечен как data-go, обработку берет на себя глобальный JS.
+                if (this.hasAttribute('data-go')) return;
+
                 // Получаем зашифрованные данные
                 var enc = this.getAttribute('data-enc');
                 

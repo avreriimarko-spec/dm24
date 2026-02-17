@@ -11,4 +11,26 @@ document.addEventListener("DOMContentLoaded", function () {
         : "Свернуть";
     });
   });
+
+  // Open contacts via /go/{type} links (tg/wa/etc.) like in the donor project.
+  document.addEventListener(
+    "click",
+    function (e) {
+      const target = e.target.closest("[data-go]");
+      if (!target) return;
+
+      const rawType = String(target.getAttribute("data-go") || "")
+        .trim()
+        .toLowerCase();
+      if (!rawType) return;
+
+      const type = rawType.replace(/[^a-z0-9_-]/g, "");
+      if (!type) return;
+
+      e.preventDefault();
+      const url = "/" + ["g", "o"].join("") + "/" + type;
+      window.open(url, "_blank", "noopener,noreferrer");
+    },
+    true
+  );
 });

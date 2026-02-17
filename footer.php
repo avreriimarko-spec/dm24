@@ -146,15 +146,18 @@ $year      = $year ?? date_i18n('Y');
         <p>© <?= esc_html($site_name) ?>, <?= esc_html($year) ?></p>
         <?php
             $contact_links = [];
-            if (!empty($tg_user_handle)) $contact_links[] = ['label' => 'Telegram', 'enc' => $enc_tg_user];
+            if (!empty($tg_user_handle)) $contact_links[] = ['label' => 'Telegram', 'enc' => $enc_tg_user, 'go' => 'tg'];
             if (!empty($tg_channel_handle)) $contact_links[] = ['label' => 'Telegram Channel', 'enc' => $enc_tg_channel];
-            if (!empty($wa_number_digits)) $contact_links[] = ['label' => 'WhatsApp', 'enc' => $enc_wa_number];
+            if (!empty($wa_number_digits)) $contact_links[] = ['label' => 'WhatsApp', 'enc' => $enc_wa_number, 'go' => 'wa'];
         ?>
         <?php if (!empty($contact_links)): ?>
             <p class="site-footer__contacts">
                 <span>Связаться:</span>
                 <?php foreach ($contact_links as $idx => $c): ?>
-                    <a href="javascript:void(0);" data-enc="<?= esc_attr($c['enc']) ?>" class="protected-contact"><?= esc_html($c['label']) ?></a>
+                    <a href="javascript:void(0);"
+                       data-enc="<?= esc_attr($c['enc']) ?>"
+                       <?php if (!empty($c['go'])): ?>data-go="<?= esc_attr($c['go']) ?>"<?php endif; ?>
+                       class="protected-contact"><?= esc_html($c['label']) ?></a>
                     <?php if ($idx < count($contact_links) - 1): ?>
                         <span class="site-footer__dot">•</span>
                     <?php endif; ?>

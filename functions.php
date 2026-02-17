@@ -345,6 +345,74 @@ function get_contact_telegram()
 add_shortcode('telegram_button', 'get_contact_telegram');
 
 
+// Contact redirect router: /go/tg and /go/wa
+add_action('template_redirect', function () {
+    if (is_admin()) {
+        return;
+    }
+
+    $request_uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
+    if ($request_uri === '') {
+        return;
+    }
+
+    $request_path = trim((string) parse_url($request_uri, PHP_URL_PATH), '/');
+    if ($request_path === '') {
+        return;
+    }
+
+    if (!preg_match('~^go/([a-z0-9_-]+)$~i', $request_path, $m)) {
+        return;
+    }
+
+    $type = strtolower((string) ($m[1] ?? ''));
+    $normalize_tg = static function ($value) {
+        $value = trim((string) $value);
+        if ($value === '') return '';
+        $value = preg_replace('~^https?://t\.me/~i', '', $value);
+        $value = ltrim($value, '@');
+        return preg_replace('~[^a-z0-9_]+~i', '', $value);
+    };
+    $normalize_wa = static function ($value) {
+        return preg_replace('~\D+~', '', (string) $value);
+    };
+
+    $pick_from_theme_mods = static function (string $mod_base, callable $normalizer) {
+        $pool = [];
+        $main = get_theme_mod($mod_base);
+        if (!empty($main)) {
+            $clean = $normalizer($main);
+            if ($clean !== '') $pool[] = $clean;
+        }
+        for ($i = 1; $i <= 5; $i++) {
+            $value = get_theme_mod("{$mod_base}_{$i}");
+            if (empty($value)) continue;
+            $clean = $normalizer($value);
+            if ($clean !== '') $pool[] = $clean;
+        }
+        if (empty($pool)) return '';
+        return $pool[array_rand($pool)];
+    };
+
+    $target = '';
+    if ($type === 'tg') {
+        $tg = $pick_from_theme_mods('contact_telegram', $normalize_tg);
+        if ($tg !== '') $target = 'https://t.me/' . $tg;
+    } elseif ($type === 'wa') {
+        $wa = $pick_from_theme_mods('contact_whatsapp', $normalize_wa);
+        if ($wa !== '') $target = 'https://wa.me/' . $wa;
+    }
+
+    if ($target === '') {
+        wp_safe_redirect(home_url('/kontakty/'), 302);
+        exit;
+    }
+
+    wp_redirect($target, 302, 'Contact Go Router');
+    exit;
+}, 0);
+
+
 add_filter('redirect_canonical', function ($redirect_url, $requested_url) {
     if (strpos($requested_url, 'sitemap.xml') !== false) {
         return false; // отключаем редирект именно для sitemap.xml
