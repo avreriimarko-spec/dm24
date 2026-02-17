@@ -255,6 +255,7 @@ $GLOBALS['seo_descr'] = $descr;
 $menu = [
     'escort_almaty' => ['Эскорт', '/escort'], // Добавлен слэш для корректной работы из любого раздела
     'novye'         => ['Новые', '/novye'],
+    's_video'       => ['С видео', '/s-video'],
     
     // Выпадающий список "Доступность"
     'accessibility' => [

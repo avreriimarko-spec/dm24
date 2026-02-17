@@ -138,6 +138,36 @@ $get_story_thumb = static function ($post_id) {
 #stories-container { user-select:none; cursor:grab; }
 #stories-container.active { cursor:grabbing; }
 
+/* Принудительно возвращаем круглые сторис, т.к. в style.css есть глобальный reset border-radius */
+#stories-container .story-btn.story-ig {
+    width: 5.75rem !important;
+    height: 5.75rem !important;
+    min-width: 5.75rem !important;
+    aspect-ratio: 1 / 1;
+    padding: 5px !important;
+    border-radius: 9999px !important;
+}
+@media (min-width: 768px) {
+    #stories-container .story-btn.story-ig {
+        width: 6.5rem !important;
+        height: 6.5rem !important;
+        min-width: 6.5rem !important;
+        padding: 6px !important;
+    }
+}
+#stories-container .story-btn.story-ig > span.relative,
+#stories-container .story-btn.story-ig img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 9999px !important;
+}
+#stories-container .story-btn.story-ig img {
+    object-fit: cover;
+    object-position: center;
+}
+
 /* === ПАНЕЛЬ ПАРАМЕТРОВ === */
 #story-panel {
     transform: translate(-50%, -50%) scale(0.9);
@@ -180,6 +210,45 @@ document.addEventListener("DOMContentLoaded", function () {
     }));
     let current = 0;
     let toastTimer = null;
+    const storiesContainer = document.getElementById("stories-container");
+    let storyDragActive = false;
+    let storyDragMoved = false;
+    let storyDragStartX = 0;
+    let storyDragStartScroll = 0;
+    let storyDragSuppressUntil = 0;
+    const STORY_DRAG_THRESHOLD = 8;
+
+    // === DRAG SCROLL ДЛЯ ЛЕНТЫ СТОРИС (desktop) ===
+    if (storiesContainer) {
+        storiesContainer.addEventListener("dragstart", e => e.preventDefault());
+        storiesContainer.addEventListener("mousedown", (e) => {
+            if (e.button !== 0) return;
+            storyDragActive = true;
+            storyDragMoved = false;
+            storyDragStartX = e.clientX;
+            storyDragStartScroll = storiesContainer.scrollLeft;
+            storiesContainer.classList.add("active");
+        });
+
+        window.addEventListener("mousemove", (e) => {
+            if (!storyDragActive) return;
+            const dx = e.clientX - storyDragStartX;
+            if (Math.abs(dx) > STORY_DRAG_THRESHOLD) {
+                storyDragMoved = true;
+                storyDragSuppressUntil = Date.now() + 220;
+            }
+            storiesContainer.scrollLeft = storyDragStartScroll - dx;
+            if (storyDragMoved) e.preventDefault();
+        });
+
+        const finishStoryDrag = () => {
+            if (!storyDragActive) return;
+            storyDragActive = false;
+            storiesContainer.classList.remove("active");
+        };
+        window.addEventListener("mouseup", finishStoryDrag);
+        window.addEventListener("blur", finishStoryDrag);
+    }
 
     // === ФУНКЦИЯ ИЗБРАННОГО ===
     function toggleFavorite(id) {
@@ -290,7 +359,14 @@ document.addEventListener("DOMContentLoaded", function () {
     function next(){ if (current < stories.length-1) openStory(current+1); }
     function prev(){ if (current > 0) openStory(current-1); }
 
-    document.querySelectorAll(".story-btn").forEach((btn,i)=> btn.addEventListener("click", ()=>openStory(i)));
+    document.querySelectorAll(".story-btn").forEach((btn,i)=> btn.addEventListener("click", (e) => {
+        if (Date.now() < storyDragSuppressUntil) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+        openStory(i);
+    }));
 
     // === КНОПКИ ===
     btnNext.onclick = (e) => { killEvent(e); next(); }
