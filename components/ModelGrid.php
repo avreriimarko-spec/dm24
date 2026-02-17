@@ -179,7 +179,8 @@ function render_model_grid_with_filters()
   if ($is_individual_page) {
     $base_tax = $base_tax ?: ['taxonomy' => 'drygie_tax', 'terms' => [ (int) (get_term_by('slug', 'individualki', 'drygie_tax')->term_id ?? 0) ]];
     $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['individualki'], 'operator' => 'IN'];
-    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['eskort', 'soderzhanki', 'kizdar'], 'operator' => 'NOT IN'];
+    // Не исключаем "eskort": в текущих данных анкеты могут одновременно иметь оба терма.
+    $tax_query[] = ['taxonomy' => 'drygie_tax', 'field' => 'slug', 'terms' => ['soderzhanki', 'kizdar'], 'operator' => 'NOT IN'];
   }
   if ($is_soderzhanki_page) {
     $base_tax = $base_tax ?: ['taxonomy' => 'drygie_tax', 'terms' => [ (int) (get_term_by('slug', 'soderzhanki', 'drygie_tax')->term_id ?? 0) ]];
@@ -330,10 +331,11 @@ function render_model_grid_with_filters()
   $is_tax_ctx = is_tax() || (!empty($base_tax) && !$is_main_listing && !$is_novye);
   if ($is_paginated_page) $is_tax_ctx = false;
   if (!$append && !$is_tax_ctx && $total_pages > 1) {
-    $base_url = untrailingslashit(get_pagenum_link(1));
+    $big = 999999999;
+    $pagination_base = str_replace((string) $big, '%#%', esc_url_raw(get_pagenum_link($big)));
     $pagination_links = paginate_links([
-      'base'      => $base_url . '/%_%',
-      'format'    => 'page/%#%',
+      'base'      => $pagination_base,
+      'format'    => '',
       'current'   => $paged,
       'total'     => $total_pages,
       'type'      => 'array',
@@ -460,6 +462,9 @@ function render_model_grid_with_filters()
                 $text = wp_strip_all_tags($link);
                 preg_match('~href=["\']([^"\']+)~', $link, $m);
                 $href = $m[1] ?? '#';
+                if ($href !== '#' && preg_match('~/page/1/?([?#].*)?$~', $href)) {
+                  $href = esc_url_raw(get_pagenum_link(1));
+                }
                 $is_cur = strpos($link, 'current') !== false;
                 $page_num = 0;
                 if (preg_match('~page/([0-9]+)/?~', $href, $pm)) $page_num = (int) $pm[1];

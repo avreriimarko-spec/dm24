@@ -208,9 +208,11 @@ $q = new WP_Query([
 
             <?php
             // Пагинация
+            $big = 999999999;
+            $pagination_base = str_replace((string) $big, '%#%', esc_url_raw(get_pagenum_link($big)));
             $links = paginate_links([
-                'base'      => untrailingslashit(get_pagenum_link(1)) . '/%_%',
-                'format'    => 'page/%#%',
+                'base'      => $pagination_base,
+                'format'    => '',
                 'current'   => $paged,
                 'total'     => $q->max_num_pages,
                 'type'      => 'array',
@@ -226,6 +228,9 @@ $q = new WP_Query([
                             $text   = wp_strip_all_tags($l);
                             preg_match('~href=["\']([^"\']+)~', $l, $m);
                             $href = $m[1] ?? '#';
+                            if ($href !== '#' && preg_match('~/page/1/?([?#].*)?$~', $href)) {
+                                $href = esc_url_raw(get_pagenum_link(1));
+                            }
                         ?>
                             <li>
                                 <?php if ($is_cur): ?>
