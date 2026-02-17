@@ -15,6 +15,10 @@ $acf_html = '';
 if (function_exists('get_field')) {
     $acf_html = (string) get_field('html'); // ACF WYSIWYG/textarea с HTML
 }
+
+// Если в контенте уже есть H1, не выводим дополнительный H1 шаблона.
+$content_source = $acf_html !== '' ? $acf_html : (string) get_post_field('post_content', get_the_ID());
+$content_has_h1 = preg_match('~<h1\b[^>]*>~iu', $content_source) === 1;
 ?>
 
 <main class="bg-white text-black px-4 py-8 md:py-12">
@@ -22,9 +26,11 @@ if (function_exists('get_field')) {
         <!-- Контентный контейнер -->
         <div class="bg-white text-black rounded-sm p-6 md:p-8">
 
-            <h1 class="text-2xl md:text-4xl text-center font-extrabold mb-3 text-black">
-                <?php echo esc_html($h1); ?>
-            </h1>
+            <?php if (!$content_has_h1): ?>
+                <h1 class="text-2xl md:text-4xl text-center font-extrabold mb-3 text-black">
+                    <?php echo esc_html($h1); ?>
+                </h1>
+            <?php endif; ?>
 
             <?php if ($lead): ?>
                 <p class="mb-5 text-black/80">
